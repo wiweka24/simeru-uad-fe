@@ -1,0 +1,46 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "room_id": 1,
+      "name": "Nesciunt delectus non.",
+      "quota": 75
+    },
+    {
+      "room_id": 2,
+      "name": "Nobis nobis porro.",
+      "quota": 90
+    },
+    {
+      "room_id": 3,
+      "name": "Assumenda provident veritatis rerum.",
+      "quota": 75
+    },
+    {
+      "room_id": 4,
+      "name": "Nemo nisi commodi.",
+      "quota": 90
+    },
+    {
+      "room_id": 5,
+      "name": "Rerum omnis impedit natus voluptas.",
+      "quota": 75
+    },
+    {
+      "room_id": 6,
+      "name": "Voluptas aspernatur qui nostrum corporis.",
+      "quota": 75
+    },
+    {
+      "room_id": 7,
+      "name": "Animi maiores.",
+      "quota": 90
+    },
+    {
+      "room_id": 8,
+      "name": "Explicabo perferendis aut.",
+      "quota": 75
+    }
+  ],
+  "data_count": 8
+}

@@ -1,0 +1,54 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "room_time_id": 1,
+      "time_id": 1,
+      "room_id": 1,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 2,
+      "time_id": 3,
+      "room_id": 1,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 3,
+      "time_id": 5,
+      "room_id": 1,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 4,
+      "time_id": 7,
+      "room_id": 1,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 5,
+      "time_id": 1,
+      "room_id": 2,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 6,
+      "time_id": 3,
+      "room_id": 2,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    },
+    {
+      "room_time_id": 7,
+      "time_id": 5,
+      "room_id": 2,
+      "academic_year_id": 2,
+      "is_occupied": 0
+    }
+  ]
+}
