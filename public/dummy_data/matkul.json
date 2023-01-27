@@ -1,90 +1,54 @@
 {
   "status": "success",
   "data": [
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 3,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    },
-    {
-      "sub_class_id": 4,
-      "name": "Magni exercitationem architecto soluta veniam.",
-      "quota": 76,
-      "credit": 1,
-      "semester": 1
-    }
+      {
+          "sub_class_id": 1,
+          "course_id": 2,
+          "name": "Aut quaerat esse suscipit.",
+          "quota": 73,
+          "credit": 2,
+          "semester": 4
+      },
+      {
+          "sub_class_id": 2,
+          "course_id": 1,
+          "name": "In amet officia.",
+          "quota": 89,
+          "credit": 3,
+          "semester": 1
+      },
+      {
+          "sub_class_id": 3,
+          "course_id": 3,
+          "name": "Unde molestiae voluptatum.",
+          "quota": 77,
+          "credit": 3,
+          "semester": 3
+      },
+      {
+          "sub_class_id": 4,
+          "course_id": 3,
+          "name": "Qui ipsam suscipit quia.",
+          "quota": 77,
+          "credit": 2,
+          "semester": 7
+      },
+      {
+          "sub_class_id": 5,
+          "course_id": 1,
+          "name": "Modi minus tempore.",
+          "quota": 64,
+          "credit": 2,
+          "semester": 8
+      },
+      {
+          "sub_class_id": 6,
+          "course_id": 1,
+          "name": "Quibusdam et sed harum.",
+          "quota": 62,
+          "credit": 2,
+          "semester": 7
+      }
   ],
-  "data_count": 2
+  "data_count": 12
 }

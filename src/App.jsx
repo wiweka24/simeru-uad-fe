@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 import Sidebar from './components/Sidebar';
 import SubClass from './pages/SubClass';
+import LecturerCourse from './pages/LecturerCourse';
 
 export default function App() {
   return (
@@ -18,6 +19,8 @@ export default function App() {
       <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
       <Routes>
         <Route path='/' element={<SubClass/>} />
+        <Route path='/DosenMatkul' element={<LecturerCourse/>} />
+
       </Routes>
       </div>
 
