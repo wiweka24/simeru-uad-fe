@@ -11,10 +11,13 @@ export default function Table() {
   const [subClass, setSubClass] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [postsPerPage, setPostPerPage] = useState(10)
+  const [term, setTerm] = useState("")
 
-  const indexOfLastSubClass = currentPage * postsPerPage
-  const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage
-  const currentSubClass = subClass.slice(indexOfFirstSubClass, indexOfLastSubClass)
+  const indexOfLastSubClass = Math.min(currentPage * postsPerPage, subClass.length)
+  const indexOfFirstSubClass = currentPage * postsPerPage - postsPerPage
+  const currentSubClass = subClass
+                            .filter(item => item.name.toLowerCase().includes(term.toLowerCase()))
+                            .slice(indexOfFirstSubClass, indexOfLastSubClass)
   const totalPages = Math.ceil(subClass.length / postsPerPage)
 
   const pageNumber = ["10","25","50","100"]
@@ -27,7 +30,7 @@ export default function Table() {
       } catch(err) {
         // catch here
       }
-      })()
+    })()
   }, [])
 
   function changePage(value) {
@@ -40,15 +43,16 @@ export default function Table() {
   }
 
   return (
-    <div  className="relative overflow-x-auto">
+    <div  className=" overflow-x-auto">
 
-      {/* Search */}
+      {/* Dropdown & Search */}
       <nav className="mx-8 flex mb-3 items-center justify-between">
         <Dropdown
           label={postsPerPage}
           color="dark"
           outline="true"
           className="bg-grey-light"
+          size="sm"
         >
           {
             pageNumber.map((number) => (
@@ -68,7 +72,9 @@ export default function Table() {
             type="text" 
             id="table-search"  
             className="block p-2 pl-10 text-sm border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
-            placeholder="Search for items"/>
+            placeholder="Cari Item"
+            onChange={(e) => setTerm(e.target.value.toLowerCase())}
+          />
         </div>
       </nav>
 
@@ -120,7 +126,7 @@ export default function Table() {
       {/* Pagination */}
       <nav  className="mx-8 flex mt-3 items-center justify-between" aria-label="Table navigation">
         <span  className="text-sm font-normal text-gray-500">
-          Data 
+          Data ke 
           <span  className="font-semibold text-gray-900"> {indexOfFirstSubClass + 1} - {indexOfLastSubClass} </span> 
           dari 
           <span  className="font-semibold text-gray-900"> {subClass.length} </span>
