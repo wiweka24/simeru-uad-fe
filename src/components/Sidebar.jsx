@@ -5,11 +5,32 @@ import {
   ClockIcon,
   ClipboardDocumentIcon,
   BookmarkIcon,
-} from "@heroicons/react/24/outline";
-import SidebarLink from './SidebarLink';
-import SidebarTitle from "./SidebarTitle";
+} from "@heroicons/react/24/outline"
 
 export default function Sidebar() {
+
+  function SidebarTitle({text}) {
+    return (
+      <div className='text-grey font-bold ml-3 py-2'>
+        {text}
+      </div>
+    )
+  }
+
+  function SidebarLink({ Icon, text, active }) {
+    return (
+      <div
+        className={`text-grey flex items-center justify-start text-md space-x-3 hoverAnimation ${
+          active && "font-bold"
+        }`}
+        onClick={() => active}
+      >
+        <Icon className="h-5" />
+        <span className="hidden md:inline truncate">{text}</span>
+      </div>
+    )
+  }
+
   return (
     <div className='col-span-1 border-r '>
       <div className="text-grey items-center px-2 mt-6 ml-3" >
