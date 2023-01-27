@@ -98,7 +98,7 @@ export default function SubClass() {
         </label>
       </div>
       
-      <div className="p-7 border-2 rounded-lg bg-white col-span-4">
+      <div className="py-7 border-2 rounded-lg bg-white col-span-4">
         <Table/>
       </div>
     </div>
