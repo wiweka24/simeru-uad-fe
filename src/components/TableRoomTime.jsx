@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { axiosInstance } from "../atoms/config";
 import {
   ChevronRightIcon,
@@ -14,27 +14,12 @@ export default function TableSubClassTime() {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
-  const [scrollClass, setScrollClass] = useState("");
-  const elementRef = useRef("");
-
   const indexOfLastSubClass = currentPage * postsPerPage;
   const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
   const currentRooms = room.slice(indexOfFirstSubClass, indexOfLastSubClass);
   const totalPages = Math.ceil(room.length / postsPerPage);
 
   const pageNumber = ["10", "25", "50", "100"];
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setScrollClass("fixed ");
-      } else {
-        setScrollClass("");
-      }
-    });
-    observer.observe(elementRef.current);
-    return () => observer.disconnect();
-  }, [elementRef]);
 
   useEffect(() => {
     (async () => {
@@ -56,7 +41,7 @@ export default function TableSubClassTime() {
   }
 
   return (
-    <div className="relative overflow-x-auto">
+    <div className="relative">
       {/* Search */}
       <nav className="mx-8 flex mb-3 items-center justify-between">
         <Dropdown
@@ -86,50 +71,33 @@ export default function TableSubClassTime() {
       </nav>
 
       {/* Table */}
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead
-          ref={elementRef}
-          className={`border-y text-gray-700/50 bg-gray-50 ${scrollClass}`}
-        >
-          <tr>
-            <th scope="col" className="pl-8 pr-6 py-3">
+      <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="">
+          <tr className="border-y text-gray-700/50 ">
+            <th className="sticky top-0 pl-6 px-6 py-3 bg-gray-50">
               Ruang Kelas
             </th>
-            <th scope="col" className="px-6 py-3">
-              Jam
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Senin
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Selasa
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Rabu
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Kamis
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Jumat
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Sabtu
-            </th>
+            <th className="sticky top-0 pl-5 bg-gray-50">Sesi</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Senin</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Selasa</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Rabu</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Kamis</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Jumat</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Sabtu</th>
           </tr>
         </thead>
         <tbody className="">
           {currentRooms.map((room) => (
             <tr key={room.room_id} className="bg-white border-b">
-              <td className="pl-6 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <td className="pl-5 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
                 {room.name}
               </td>
-              <td className="px-6 py-4">
-                <div className="flex items-start flex-col space-y-4 divide-y">
-                  <TimePlaceholder text="07:00-09:00" />
-                  <TimePlaceholder text="09:00-12:00" />
-                  <TimePlaceholder text="12:00-15:00" />
-                  <TimePlaceholder text="15:00-18:00" />
+              <td className="px-5 py-4">
+                <div className="flex items-start flex-col space-y-4">
+                  <TimePlaceholder text="07:00-09:00" number="1" />
+                  <TimePlaceholder text="09:00-12:00" number="2" />
+                  <TimePlaceholder text="12:00-15:00" number="3" />
+                  <TimePlaceholder text="15:00-18:00" number="4" />
                 </div>
               </td>
               <td className="px-6 py-5 ">

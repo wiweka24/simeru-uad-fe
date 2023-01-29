@@ -1,11 +1,7 @@
-import { 
-  BrowserRouter as Router,  
-  Route, 
-  Routes
-} from 'react-router-dom'
-import Sidebar from './components/Sidebar';
-import SubClass from './pages/SubClass';
-import LecturerCourse from './pages/LecturerCourse';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import SubClass from "./pages/SubClass";
+import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
 
 export default function App() {
@@ -15,17 +11,13 @@ export default function App() {
         {/* Sidebar */}
         <Sidebar />
 
-      {/* Sidebar */}
-      <Sidebar />
-      
-      {/* Pages */}
-      <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
-      <Routes>
-        <Route path='/' element={<SubClass/>} />
-        <Route path='/DosenMatkul' element={<LecturerCourse/>} />
+        {/* Pages */}
+        <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
+          <Routes>
+            <Route path="/" element={<SubClass />} />
+            <Route path="/DosenMatkul" element={<LecturerCourse />} />
 
             <Route path="/ruangwaktu" element={<RoomTime />} />
-
           </Routes>
         </div>
       </Router>
