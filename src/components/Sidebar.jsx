@@ -6,6 +6,7 @@ import {
   ClipboardDocumentIcon,
   BookmarkIcon,
 } from "@heroicons/react/24/outline"
+import { Link } from "react-router-dom"
 
 export default function Sidebar() {
 
@@ -17,9 +18,9 @@ export default function Sidebar() {
     )
   }
 
-  function SidebarLink({ Icon, text, active }) {
+  function SidebarLink({ Icon, text, active, linkto }) {
     return (
-      <div
+      <Link to={linkto}
         className={`text-grey flex items-center justify-start text-md space-x-3 hoverAnimation ${
           active && "font-bold"
         }`}
@@ -27,7 +28,7 @@ export default function Sidebar() {
       >
         <Icon className="h-5" />
         <span className="hidden md:inline truncate">{text}</span>
-      </div>
+      </Link>
     )
   }
 
@@ -48,13 +49,13 @@ export default function Sidebar() {
       </div>
       <div className="space-y-1 px-2">
         <SidebarTitle text="Input Data" />
-        <SidebarLink text="Matkul" Icon={BookOpenIcon} />
+        <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/" />
         <SidebarLink text="Dosen" Icon={UserIcon} />
         <SidebarLink text="Ruang Kelas" Icon={HomeIcon} />
 
         <SidebarTitle text="Konfigurasi" />
-        <SidebarLink text="Dosen Matkul" Icon={ClipboardDocumentIcon} />
-        <SidebarLink text="Ruang Kelas dan Waktu" Icon={ClockIcon} />
+        <SidebarLink text="Dosen Matkul" Icon={ClipboardDocumentIcon} linkto="/DosenMatkul"/>
+        <SidebarLink text="Ruang Kelas dan Waktu" Icon={ClockIcon} linkto="/RuangWaktu"/>
 
         <SidebarTitle text="Jadwal" />
         <SidebarLink text="Jadwal Matkul" Icon={BookmarkIcon} />
