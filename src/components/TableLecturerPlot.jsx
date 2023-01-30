@@ -19,13 +19,73 @@ export default function TableLecturerPlot() {
   const currentSubClass = subClass.slice(indexOfFirstSubClass, indexOfLastSubClass)
   const totalPages = Math.ceil(subClass.length / postsPerPage)
 
+  // Enter Input Dosen Value'
+  const Cell = ({value, onChange}) => {
+  	const [mode, setMode] = useState('read');
+  	const [text, setText] = useState(value ?? '');
+    useEffect(() => {
+    	setText(value);
+  	}, [value]); // <--- when value is changed text state is changed too
+	if (mode === 'edit') {
+        const handleInputChange = (e) => {
+    		setText(e.target.value);
+        };
+        const handleSaveClick = () => {
+            setMode('read');
+          	if (onChange) {
+          		onChange(text);
+            }
+        };
+        return (
+          
+            <div className="px-6 py-4 ">
+              <input 
+                  type="text" 
+                  className=" text-sm -ml-2 border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"    
+                  value={text}
+                  onChange={handleInputChange}/>
+                
+                  <button onClick={handleSaveClick} className='inline-table bg-sky-500 hover:bg-sky-600 text-white rounded font-medium px-3 py-2 ml-3 '>Ok</button>
+                
+               
+            </div>
+           
+            
+        );
+    }
+  	if (mode === 'read') {
+        const handleEditClick = () => {
+            setMode('edit');
+        };
+        return (
+          <div  onClick={handleEditClick}>{text}</div>
+        );
+    }
+  	return null;
+};
+  //   const[dosen, setDosen] = useState('')
+  // const[dosenUpdated, setDosenUpdated] = ('')
+
+
+  // const handleChangeDosen = (event) => {
+  //   console.log('dosen: ', event.target.value)
+  //   setDosen(event.target.value);
+  // };
+
+  // const handleKeyDownDosen = (event) => {
+  //   if (event.key === 'Enter') {
+  //     // 👇 Get input value
+  //     setDosenUpdated(dosen);
+  //   }
+  // };
+
   const pageNumber = ["10","25","50","100"]
   
   
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get('dummy_data/matkul.json')
+        const res = await axiosInstance.get('dummy_data/lecturerplot.json')
         setSubClass(res.data.data)
       } catch(err) {
         // catch here
@@ -111,19 +171,17 @@ export default function TableLecturerPlot() {
                 {subcls.sub_class_id}
               </th>
               <td  className="px-6 py-4">
-                {subcls.name}
+                {subcls.sub_classes_name}
               </td>
               <td  className="px-6 py-4">
                 {subcls.semester}
               </td>
               <td  className="px-6 py-4">
-                {subcls.course_id}
+                {subcls.credit}
               </td>
-              <td  className="px-6 py-4">
-                <input 
-                type="text"  
-                className="block p-2 pl-2 text-sm border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
-                placeholder="Dosen"/>
+              <td>
+                <Cell value={subcls.lecturer_name} />
+
               </td>
             </tr>
           ))
@@ -132,7 +190,7 @@ export default function TableLecturerPlot() {
       </table>
 
       {/* Pagination */}
-      <nav  className="mx-8 flex my-3 items-center justify-between" aria-label="Table navigation">
+      <nav  className="mx-8 flex m-3 items-center justify-between" aria-label="Table navigation">
         <span  className="text-sm font-normal text-gray-500">
           Data 
           <span  className="font-semibold text-gray-900"> {indexOfFirstSubClass + 1} - {indexOfLastSubClass} </span> 

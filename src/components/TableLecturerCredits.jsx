@@ -25,7 +25,7 @@ export default function TableLecturerCredits() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get('dummy_data/lecturercredit.json')
+        const res = await axiosInstance.get('dummy_data/dosen.json')
         setSubClass(res.data.data)
       } catch(err) {
         // catch here
@@ -47,7 +47,7 @@ export default function TableLecturerCredits() {
     <div  className="relative overflow-x-auto">
 
     {/* Search */}
-    <p className=" text-xl font-bold mx-8 my-4">Data Dosen</p>
+    <p className=" text-xl font-bold mx-4 my-4">Data Dosen</p>
     <nav className="mx-8 flex mb-3 items-center justify-between">
       <Dropdown
         label={postsPerPage}
@@ -101,11 +101,11 @@ export default function TableLecturerCredits() {
       {
         currentSubClass.map((subcls) => (
           <tr 
-            key={subcls.lecturer_credit_id} 
+            key={subcls.lecturer_id} 
             className="bg-white border-b"
           >
             <th scope="row"  className="pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-              {subcls.lecturer_id}
+              {subcls.name}
             </th>
             <td  className="px-6 py-4">
               {subcls.academic_year_id}

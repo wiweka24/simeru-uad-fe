@@ -14,9 +14,6 @@ export default function App() {
       <Router>
         {/* Sidebar */}
         <Sidebar />
-
-      {/* Sidebar */}
-      <Sidebar />
       
       {/* Pages */}
       <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
