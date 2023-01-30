@@ -10,27 +10,76 @@ import TimePlaceholder from "./TimePlaceholder";
 import Checkbox from "./Checkbox";
 
 export default function TableSubClassTime() {
-  const [room, setRoom] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
+  const [rooms, setRooms] = useState([]);
+  const [roomtimes, setRoomTimes] = useState([]);
+
   const indexOfLastSubClass = currentPage * postsPerPage;
   const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
-  const currentRooms = room.slice(indexOfFirstSubClass, indexOfLastSubClass);
-  const totalPages = Math.ceil(room.length / postsPerPage);
+  const currentRooms = rooms.slice(indexOfFirstSubClass, indexOfLastSubClass);
+  const totalPages = Math.ceil(rooms.length / postsPerPage);
 
   const pageNumber = ["10", "25", "50", "100"];
+
+  const daysDivider = [
+    {
+      start: 0,
+      end: 4,
+    },
+    {
+      start: 4,
+      end: 8,
+    },
+    {
+      start: 8,
+      end: 12,
+    },
+    {
+      start: 12,
+      end: 16,
+    },
+    {
+      start: 16,
+      end: 20,
+    },
+    {
+      start: 20,
+      end: 24,
+    },
+  ];
 
   useEffect(() => {
     (async () => {
       try {
         const res = await axiosInstance.get("dummy_data/room.json");
-        setRoom(res.data.data);
+        setRooms(res.data.data);
       } catch (err) {
         // catch here
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axiosInstance.get("dummy_data/roomtime.json");
+        setRoomTimes(assignRoom(res.data.data));
+      } catch (err) {
+        // catch here
+      }
+    })();
+  }, []);
+
+  function assignRoom(roomTime) {
+    // console.log(roomTime.filter((item) => item.room_id === 1));
+    const arrRooms = [];
+    for (let i = 0; i < rooms.length(); i++) {
+      arrRooms[i] = roomTime.filter((item) => item.room_id === i + 1);
+    }
+    return arrRooms;
+  }
 
   function changePage(value) {
     if (value === "increment" && currentPage < totalPages) {
@@ -39,6 +88,12 @@ export default function TableSubClassTime() {
       setCurrentPage((previousCurrentPage) => previousCurrentPage - 1);
     }
   }
+
+  // roomtimes.map((item) => {
+  // roomtimes[0].map((item2) => {
+  //   console.log(item2.room_id);
+  // });
+  // });
 
   return (
     <div className="relative">
@@ -87,11 +142,9 @@ export default function TableSubClassTime() {
           </tr>
         </thead>
         <tbody className="">
-          {currentRooms.map((room) => (
-            <tr key={room.room_id} className="bg-white border-b">
-              <td className="pl-5 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {room.name}
-              </td>
+          {roomtimes.map((room) => (
+            <tr className="bg-white border-b">
+              <td className="pl-5 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap"></td>
               <td className="px-5 py-4">
                 <div className="flex items-start flex-col space-y-4">
                   <TimePlaceholder text="07:00-09:00" number="1" />
@@ -100,54 +153,43 @@ export default function TableSubClassTime() {
                   <TimePlaceholder text="15:00-18:00" number="4" />
                 </div>
               </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
+              {daysDivider.map((divider) => (
+                <td className="px-6 py-5 ">
+                  <div className="mt-1 flex items-start flex-col space-y-11">
+                    {room
+                      .slice(divider.start, divider.end)
+                      .map((time) =>
+                        time.time_id === 1 ? (
+                          <Checkbox
+                            isChecked={true}
+                            classid={room.room_id}
+                            value={0}
+                          />
+                        ) : time.time_id === 2 ? (
+                          <Checkbox
+                            classid={room.room_id}
+                            value={1}
+                            isChecked={true}
+                          />
+                        ) : time.time_id === 3 ? (
+                          <Checkbox
+                            classid={room.room_id}
+                            value={2}
+                            isChecked={true}
+                          />
+                        ) : time.time_id === 4 ? (
+                          <Checkbox
+                            classid={room.room_id}
+                            value={3}
+                            isChecked={true}
+                          />
+                        ) : (
+                          <Checkbox classid={room.room_id} value={4} />
+                        )
+                      )}
+                  </div>
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
@@ -165,7 +207,7 @@ export default function TableSubClassTime() {
             {indexOfFirstSubClass + 1} - {indexOfLastSubClass}{" "}
           </span>
           dari
-          <span className="font-semibold text-gray-900"> {room.length} </span>
+          <span className="font-semibold text-gray-900"> {rooms.length} </span>
         </span>
 
         <ul className="inline-flex items-center -space-x-px">
