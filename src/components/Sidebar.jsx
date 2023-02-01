@@ -5,21 +5,18 @@ import {
   ClockIcon,
   ClipboardDocumentIcon,
   BookmarkIcon,
-} from "@heroicons/react/24/outline"
+} from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 export default function Sidebar() {
-
-  function SidebarTitle({text}) {
-    return (
-      <div className='text-grey font-bold ml-3 py-2'>
-        {text}
-      </div>
-    )
+  function SidebarTitle({ text }) {
+    return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
 
-  function SidebarLink({ Icon, text, active }) {
+  function SidebarLink({ Icon, text, active, linkto }) {
     return (
-      <div
+      <Link
+        to={linkto}
         className={`text-grey flex items-center justify-start text-md space-x-3 hoverAnimation ${
           active && "font-bold"
         }`}
@@ -27,13 +24,13 @@ export default function Sidebar() {
       >
         <Icon className="h-5" />
         <span className="hidden md:inline truncate">{text}</span>
-      </div>
-    )
+      </Link>
+    );
   }
 
   return (
-    <div className='col-span-1 border-r '>
-      <div className="text-grey items-center px-2 mt-6 ml-3" >
+    <div className="col-span-1 border-r ">
+      <div className="text-grey items-center px-2 mt-6 ml-3">
         <div className="h-12 w-12 border rounded-full">
           <img
             src="https://user-images.githubusercontent.com/70740913/210069769-0251d1fd-392e-4a3f-8b25-b4dc1d42b474.gif"
@@ -48,17 +45,25 @@ export default function Sidebar() {
       </div>
       <div className="space-y-1 px-2">
         <SidebarTitle text="Input Data" />
-        <SidebarLink text="Matkul" Icon={BookOpenIcon} />
+        <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/" />
         <SidebarLink text="Dosen" Icon={UserIcon} />
         <SidebarLink text="Ruang Kelas" Icon={HomeIcon} />
 
         <SidebarTitle text="Konfigurasi" />
-        <SidebarLink text="Dosen Matkul" Icon={ClipboardDocumentIcon} />
-        <SidebarLink text="Ruang Kelas dan Waktu" Icon={ClockIcon} />
+        <SidebarLink
+          text="Dosen Matkul"
+          Icon={ClipboardDocumentIcon}
+          linkto="/DosenMatkul"
+        />
+        <SidebarLink
+          text="Ruang Kelas dan Waktu"
+          Icon={ClockIcon}
+          linkto="/RuangWaktu"
+        />
 
         <SidebarTitle text="Jadwal" />
         <SidebarLink text="Jadwal Matkul" Icon={BookmarkIcon} />
       </div>
     </div>
-  )
+  );
 }
