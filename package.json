@@ -3,7 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@autocomplete/material-ui": "0.0.17",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@heroicons/react": "^2.0.13",
+    "@material/textfield": "^14.0.0",
+    "@mui/material": "^5.11.7",
+    "@react-md/autocomplete": "^5.1.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
