@@ -1,7 +1,7 @@
 import Papa from "papaparse";
 import Button from "../components/Button";
 import { ArrowUpTrayIcon, PlusSmallIcon } from "@heroicons/react/24/outline";
-import TableRoomTime from "../components/TableRoomTime";
+import TableRoomTime from "../components/RoomTime/TableRoomTime";
 
 export default function RoomTime() {
   const handleChange = (e) => {

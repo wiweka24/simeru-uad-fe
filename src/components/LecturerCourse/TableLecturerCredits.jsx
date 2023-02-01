@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { axiosInstance } from "../atoms/config";
+import { axiosInstance } from "../../atoms/config";
 import { Dropdown } from "flowbite-react";
 import {
   ChevronRightIcon,

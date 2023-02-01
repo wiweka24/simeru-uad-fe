@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { axiosInstance } from "../atoms/config";
+import { axiosInstance } from "../../atoms/config";
 
 export default function Checkbox({ value, roomTimeId, isChecked }) {
   const handleChange = (e) => {

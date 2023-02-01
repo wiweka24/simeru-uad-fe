@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { axiosInstance } from "../atoms/config";
+import { axiosInstance } from "../../atoms/config";
 import {
   ChevronRightIcon,
   ChevronLeftIcon,
