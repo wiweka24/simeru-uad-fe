@@ -1,7 +1,10 @@
-export default function TimePlaceholder({ text }) {
+export default function TimePlaceholder({ text, number }) {
   return (
-    <div class="px-5 py-3 overflow-hidden font-medium text-gray-600 bg-gray-100 border border-gray-100 rounded-lg  border-solid border-b-2 border-black-500">
-      <span>{text}</span>
+    <div className="overflow-hidden flex space-x-3 font-medium text-gray-600 border border-gray-200 rounded-lg">
+      <div className="bg-gray-100 items-center flex justify-center w-11 rounded-lg border border-gray-200">
+        {number}
+      </div>
+      <span className=" py-3 pr-4">{text}</span>
     </div>
   );
 }

@@ -1,11 +1,7 @@
-import { 
-  BrowserRouter as Router,  
-  Route, 
-  Routes
-} from 'react-router-dom'
-import Sidebar from './components/Sidebar';
-import SubClass from './pages/SubClass';
-import LecturerCourse from './pages/LecturerCourse';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import SubClass from "./pages/SubClass";
+import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
 
 export default function App() {

@@ -49,6 +49,13 @@
       "room_id": 2,
       "academic_year_id": 2,
       "is_occupied": 0
+    },
+    {
+      "room_time_id": 8,
+      "time_id": 1,
+      "room_id": 1,
+      "academic_year_id": 2,
+      "is_occupied": 0
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { axiosInstance } from "../atoms/config";
 import {
   ChevronRightIcon,
@@ -10,68 +10,54 @@ import TimePlaceholder from "./TimePlaceholder";
 import Checkbox from "./Checkbox";
 
 export default function TableSubClassTime() {
-  const [room, setRoom] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostPerPage] = useState(10);
-
-  const [scrollClass, setScrollClass] = useState("");
-  const elementRef = useRef("");
-
-  const indexOfLastSubClass = currentPage * postsPerPage;
-  const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
-  const currentRooms = room.slice(indexOfFirstSubClass, indexOfLastSubClass);
-  const totalPages = Math.ceil(room.length / postsPerPage);
-
-  const pageNumber = ["10", "25", "50", "100"];
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setScrollClass("fixed ");
-      } else {
-        setScrollClass("");
-      }
-    });
-    observer.observe(elementRef.current);
-    return () => observer.disconnect();
-  }, [elementRef]);
+  const [rooms, setRooms] = useState([]);
+  const [roomtimes, setRoomTimes] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
         const res = await axiosInstance.get("dummy_data/room.json");
-        setRoom(res.data.data);
+        const res1 = await axiosInstance.get("dummy_data/roomtime.json");
+        setRooms(res.data.data);
+        setRoomTimes(assignRoom(res.data.data.length, res1.data.data));
       } catch (err) {
         // catch here
       }
     })();
   }, []);
 
-  function changePage(value) {
-    if (value === "increment" && currentPage < totalPages) {
-      setCurrentPage((previousCurrentPage) => previousCurrentPage + 1);
-    } else if (value === "decrement" && currentPage > 1) {
-      setCurrentPage((previousCurrentPage) => previousCurrentPage - 1);
+  // Formating roomtimes data to manageable array
+  function assignRoom(length, roomdata) {
+    let finalArrRooms = [];
+    // todo : make i to min value of room_id, and i to length + max value
+    // todo : what if the room sparse, ex. 1,4,17,19 => how to handle?
+    for (let i = 0; i < length; i++) {
+      let tempArrRooms = roomdata.filter((item) => item.room_id === i + 1);
+      let rdTempArrRooms = [];
+      for (let j = 0; j < tempArrRooms.length; j = j + 4) {
+        rdTempArrRooms.push(tempArrRooms.slice(j, j + 4));
+      }
+      finalArrRooms.push(rdTempArrRooms);
     }
+    // console.log(finalArrRooms);
+    return finalArrRooms;
   }
 
+  // roomtimes.map((item) => {
+  //   // console.log(roomtimes);
+  //   // console.log(item);
+  //   item.map((item2) => {
+  //     // console.log(item2);
+  //     item2.map((item3) => {
+  //       console.log(item3);
+  //     });
+  //   });
+  // });
+
   return (
-    <div className="relative overflow-x-auto">
+    <div className="relative">
       {/* Search */}
       <nav className="mx-8 flex mb-3 items-center justify-between">
-        <Dropdown
-          label={postsPerPage}
-          color="dark"
-          outline="true"
-          className="bg-grey-light"
-        >
-          {pageNumber.map((number) => (
-            <Dropdown.Item onClick={() => setPostPerPage(number)}>
-              {number}
-            </Dropdown.Item>
-          ))}
-        </Dropdown>
-
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <MagnifyingGlassIcon className="h-5" />
@@ -86,100 +72,55 @@ export default function TableSubClassTime() {
       </nav>
 
       {/* Table */}
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead
-          ref={elementRef}
-          className={`border-y text-gray-700/50 bg-gray-50 ${scrollClass}`}
-        >
-          <tr>
-            <th scope="col" className="pl-8 pr-6 py-3">
+      <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="">
+          <tr className="border-y text-gray-700/50 ">
+            <th className="sticky top-0 pl-6 px-6 py-3 bg-gray-50">
               Ruang Kelas
             </th>
-            <th scope="col" className="px-6 py-3">
-              Jam
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Senin
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Selasa
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Rabu
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Kamis
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Jumat
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Sabtu
-            </th>
+            <th className="sticky top-0 pl-5 bg-gray-50">Sesi</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Senin</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Selasa</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Rabu</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Kamis</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Jumat</th>
+            <th className="sticky top-0 pl-4 bg-gray-50">Sabtu</th>
           </tr>
         </thead>
         <tbody className="">
-          {currentRooms.map((room) => (
-            <tr key={room.room_id} className="bg-white border-b">
-              <td className="pl-6 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {room.name}
+          {roomtimes.map((room, index) => (
+            <tr className="bg-white border-b">
+              <td className="pl-5 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
+                {rooms[index].name}
               </td>
-              <td className="px-6 py-4">
-                <div className="flex items-start flex-col space-y-4 divide-y">
-                  <TimePlaceholder text="07:00-09:00" />
-                  <TimePlaceholder text="09:00-12:00" />
-                  <TimePlaceholder text="12:00-15:00" />
-                  <TimePlaceholder text="15:00-18:00" />
+              <td className="px-5 py-4">
+                <div className="flex items-start flex-col space-y-4">
+                  <TimePlaceholder text="07:00-09:00" number="1" />
+                  <TimePlaceholder text="09:00-12:00" number="2" />
+                  <TimePlaceholder text="12:00-15:00" number="3" />
+                  <TimePlaceholder text="15:00-18:00" number="4" />
                 </div>
               </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
-              <td className="px-6 py-5 ">
-                <div className="mt-1 flex items-start flex-col space-y-11">
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                  <Checkbox />
-                </div>
-              </td>
+              {room.map((session) => (
+                <td className="px-6 py-5 ">
+                  <div className="mt-1 flex items-start flex-col space-y-11">
+                    {session.map((time) =>
+                      time.is_occupied === 0 ? (
+                        <Checkbox
+                          roomTimeId={time.room_time_id}
+                          value={time.time_id}
+                        />
+                      ) : (
+                        <Checkbox
+                          isChecked={true}
+                          roomTimeId={time.room_time_id}
+                          value={time.time_id}
+                        />
+                      )
+                    )}
+                  </div>
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
@@ -189,44 +130,7 @@ export default function TableSubClassTime() {
       <nav
         className="mx-8 flex mt-3 items-center justify-between"
         aria-label="Table navigation"
-      >
-        <span className="text-sm font-normal text-gray-500">
-          Data
-          <span className="font-semibold text-gray-900">
-            {" "}
-            {indexOfFirstSubClass + 1} - {indexOfLastSubClass}{" "}
-          </span>
-          dari
-          <span className="font-semibold text-gray-900"> {room.length} </span>
-        </span>
-
-        <ul className="inline-flex items-center -space-x-px">
-          <li>
-            <a
-              className="block px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
-              onClick={() => changePage("decrement")}
-            >
-              <span className="sr-only">Previous</span>
-              <ChevronLeftIcon className="h-5" />
-            </a>
-          </li>
-
-          {/* Page Number - Stil Confused */}
-          {/* <li>
-            <a className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">1</a>
-          </li> */}
-
-          <li>
-            <a
-              className="block px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
-              onClick={() => changePage("increment")}
-            >
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-5" />
-            </a>
-          </li>
-        </ul>
-      </nav>
+      ></nav>
     </div>
   );
 }
