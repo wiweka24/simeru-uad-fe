@@ -1,16 +1,20 @@
+import { Link } from "react-router-dom";
 
-export default function Button({ text, Icon, linkto }) {
+export default function Button({ text, linkto, color }) {
+  const code = {
+    dark: "grey-dark",
+    danger: "red-500",
+  };
+
   return (
-    <a href={linkto} className="relative mt-2 inline-flex items-center justify-center px-4 py-1.5 overflow-hidden font-medium transition duration-300 ease-out border-2 border-grey-dark rounded-lg shadow-md group">
-      <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-grey-dark group-hover:translate-x-0 ease">
-        <Icon className="h-5"/>
-      </span>
-      <span className="absolute flex items-center justify-center w-full h-full text-grey transition-all duration-300 transform group-hover:translate-x-full ease">
+    <Link
+      to={linkto}
+      class={`relative mt-2 inline-flex items-center justify-start px-4 py-1.5 overflow-hidden font-medium transition-all border-2 border-${code[color]} bg-white rounded hover:bg-white group`}
+    >
+      <span class="w-48 h-48 rounded rotate-[-40deg] bg-grey-dark absolute bottom-0 left-0 -translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0" />
+      <span class="relative w-full text-left text-gray-dark transition-colors duration-300 ease-in-out group-hover:text-white">
         {text}
       </span>
-      <span className="relative invisible">
-        {text}
-      </span>
-    </a>
-  )
+    </Link>
+  );
 }

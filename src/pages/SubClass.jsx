@@ -1,7 +1,7 @@
 import Papa from "papaparse"
 import Button from "../components/Button"
-import { ArrowUpTrayIcon, PlusSmallIcon } from "@heroicons/react/24/outline"
-import Table from "../components/Table"
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline"
+import TableInputData from "../components/InputData/TableInputData"
 import { useState } from "react"
 
 export default function SubClass() {
@@ -59,6 +59,10 @@ export default function SubClass() {
     }
   }
 
+  const handleClick = () => {
+    
+  }
+
   return (
     <div className="relative">
       <div className="h-10 border-b bg-white"></div>
@@ -95,8 +99,9 @@ export default function SubClass() {
           <div className="flex justify-end">
             <Button
               text = "Add"
-              Icon = {PlusSmallIcon}
+              color= "dark"
               linkto = "/"
+              onClick = {handleClick}
             />
           </div>
         </div>
@@ -124,7 +129,7 @@ export default function SubClass() {
         </div>
         
         <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
-          <Table/>
+          <TableInputData/>
         </div>
       </div>
     </div>
