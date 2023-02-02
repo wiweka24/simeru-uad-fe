@@ -17,28 +17,7 @@ export default function RoomTime() {
 
   return (
     <>
-      {/* Import CSV Field */}
-      <div className="p-7 border-2 rounded-lg col-span-1 bg-white">
-        <p className="text-xl font-bold mb-2">Import CSV</p>
-        <label className="flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none">
-          <span className="flex items-center space-x-2">
-            <ArrowUpTrayIcon className="h-5" />
-            <span className="font-medium text-gray-600">
-              Drop file di sini, atau
-              <span className="text-blue-600"> cari</span>
-            </span>
-          </span>
-          <input
-            type="file"
-            name="file_upload"
-            className="hidden"
-            accept=".csv"
-            onChange={handleChange}
-          />
-        </label>
-      </div>
-
-      <div className="py-7 border-2 rounded-lg bg-white col-span-4">
+      <div className="py-7 border-2 rounded-lg bg-white col-span-4 m-10">
         <TableRoomTime />
       </div>
     </>
