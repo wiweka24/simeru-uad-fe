@@ -56,6 +56,10 @@ export default function TableLecturerPlot() {
     // 	setText(value);
     // }, [value]); // <--- when value is changed text state is changed too
 
+    if (text.lecturer_name === "") {
+      setText({ ...text, lecturer_name: "Mohon Isi Dosen" });
+    }
+
     if (mode === "edit") {
       const handleInputChange = (e) => {
         setText({ ...text, [e.target.id]: e.target.value });
@@ -93,6 +97,13 @@ export default function TableLecturerPlot() {
       const handleEditClick = () => {
         setMode("edit");
       };
+      if (text.lecturer_name === "Mohon Isi Dosen") {
+        return (
+          <div className="font-bold text-red-500 " onClick={handleEditClick}>
+            "Mohon Isi Dosen"
+          </div>
+        );
+      }
       return <div onClick={handleEditClick}>{text.lecturer_name}</div>;
     }
     return null;
