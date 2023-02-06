@@ -1,38 +1,76 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
-import {
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
 import { Dropdown } from "flowbite-react";
 import TimePlaceholder from "./TimePlaceholder";
 import Checkbox from "./Checkbox";
 
 export default function TableSubClassTime() {
   const [rooms, setRooms] = useState([]);
-  const [roomtimes, setRoomTimes] = useState([]);
+  const [roomtimes, setRoomtimes] = useState([]);
+  const [currentRoomtimes, setCurrentRoomtimes] = useState([]);
+  const [currentLabel, setCurrentLabel] = useState({
+    name: "All",
+    room_id: 0,
+  });
+  const [roomList, setRoomList] = useState([]);
+  const [roomsLabel, setRoomsLabel] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get("dummy_data/room.json");
-        const res1 = await axiosInstance.get("dummy_data/roomtime.json");
+        const res = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/room"
+        );
         setRooms(res.data.data);
-        setRoomTimes(assignRoom(res.data.data.length, res1.data.data));
+
+        const res1 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/room_time_helper"
+        );
+        setRoomtimes(res1.data.data);
       } catch (err) {
         // catch here
       }
     })();
   }, []);
 
+  useEffect(() => {
+    const extraRoom = {
+      room_id: 0,
+      name: "All",
+      quota: 1,
+    };
+    const newRoom = [extraRoom, ...rooms];
+    setRoomList(newRoom);
+  }, [rooms]);
+
+  useEffect(() => {
+    if (currentLabel.name !== "All") {
+      setCurrentRoomtimes(
+        assignRoom(
+          // todo : if class not only one
+          currentLabel.room_id - 1,
+          currentLabel.room_id,
+          roomtimes.filter((item) =>
+            item.room_id.includes(currentLabel.room_id)
+          )
+        )
+      );
+      setRoomsLabel([currentLabel]);
+    } else {
+      setCurrentRoomtimes(assignRoom(0, rooms.length, roomtimes));
+      setRoomsLabel(rooms);
+    }
+  }, [rooms, currentLabel, roomtimes]);
+
+  console.log(currentRoomtimes);
+
   // Formating roomtimes data to manageable array
-  function assignRoom(length, roomdata) {
+  function assignRoom(start, length, roomdata) {
     let finalArrRooms = [];
     // todo : make i to min value of room_id, and i to length + max value
-    // todo : what if the room sparse, ex. 1,4,17,19 => how to handle?
-    for (let i = 0; i < length; i++) {
-      let tempArrRooms = roomdata.filter((item) => item.room_id === i + 1);
+    // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
+    for (let i = start; i < length; i++) {
+      let tempArrRooms = roomdata.filter((item) => item.room_id == i + 1);
       let rdTempArrRooms = [];
       for (let j = 0; j < tempArrRooms.length; j = j + 4) {
         rdTempArrRooms.push(tempArrRooms.slice(j, j + 4));
@@ -56,19 +94,21 @@ export default function TableSubClassTime() {
 
   return (
     <div className="relative">
-      {/* Search */}
+      {/* Dropdown */}
       <nav className="mx-8 flex mb-3 items-center justify-between">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <MagnifyingGlassIcon className="h-5" />
-          </div>
-          <input
-            type="text"
-            id="table-search"
-            className="block p-2 pl-10 text-sm border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
-            placeholder="Search for items"
-          />
-        </div>
+        <Dropdown
+          label={currentLabel.name}
+          color="dark"
+          outline="true"
+          className="bg-grey-light"
+          size="sm"
+        >
+          {roomList.map((room) => (
+            <Dropdown.Item onClick={() => setCurrentLabel(room)}>
+              {room.name}
+            </Dropdown.Item>
+          ))}
+        </Dropdown>
       </nav>
 
       {/* Table */}
@@ -88,10 +128,10 @@ export default function TableSubClassTime() {
           </tr>
         </thead>
         <tbody className="">
-          {roomtimes.map((room, index) => (
+          {currentRoomtimes.map((room, index) => (
             <tr className="bg-white border-b">
               <td className="pl-5 pr-5 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {rooms[index].name}
+                {roomsLabel[index].name}
               </td>
               <td className="px-5 py-4">
                 <div className="flex items-start flex-col space-y-4">
@@ -105,15 +145,16 @@ export default function TableSubClassTime() {
                 <td className="px-6 py-5 ">
                   <div className="mt-1 flex items-start flex-col space-y-11">
                     {session.map((time) =>
-                      time.is_occupied === 0 ? (
+                      time.is_possible === "0" ? (
                         <Checkbox
-                          roomTimeId={time.room_time_id}
+                          isChecked={false}
+                          roomTimeId={time.room_id}
                           value={time.time_id}
                         />
                       ) : (
                         <Checkbox
                           isChecked={true}
-                          roomTimeId={time.room_time_id}
+                          roomTimeId={time.room_id}
                           value={time.time_id}
                         />
                       )

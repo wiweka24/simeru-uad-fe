@@ -5,17 +5,17 @@ export default function Checkbox({ value, roomTimeId, isChecked }) {
   const handleChange = (e) => {
     const roomTimeId = e.target.id;
     const timeId = e.target.value;
-
-    (async () => {
-      try {
-        const res = await axiosInstance.put("dummy_data/room.json", {
-          room_time_id: roomTimeId,
-          time_id: timeId,
-        });
-      } catch (err) {
-        // catch here
-      }
-    })();
+    console.log(roomTimeId, timeId);
+    // (async () => {
+    //   try {
+    //     const res = await axiosInstance.put("dummy_data/room.json", {
+    //       room_time_id: roomTimeId,
+    //       time_id: timeId,
+    //     });
+    //   } catch (err) {
+    //     // catch here
+    //   }
+    // })();
   };
 
   return (
