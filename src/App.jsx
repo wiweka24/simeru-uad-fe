@@ -10,12 +10,12 @@ export default function App() {
       <Router>
         {/* Sidebar */}
         <Sidebar />
-      
+
         {/* Pages */}
         <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
           <Routes>
-            <Route path="/" element={<SubClass/>} />
-            <Route path="/DosenMatkul" element={<LecturerCourse/>} />
+            <Route path="/" element={<SubClass />} />
+            <Route path="/DosenMatkul" element={<LecturerCourse />} />
             <Route path="/RuangWaktu" element={<RoomTime />} />
           </Routes>
         </div>
