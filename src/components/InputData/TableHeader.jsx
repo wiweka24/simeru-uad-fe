@@ -14,7 +14,7 @@ export default function TableHeader({ onClick, onChange, postsPerPage }) {
         size="sm"
       >
         {pageNumber.map((number) => (
-          <Dropdown.Item onClick={() => onClick(number)}>
+          <Dropdown.Item key={number} onClick={() => onClick(number)}>
             {number}
           </Dropdown.Item>
         ))}
