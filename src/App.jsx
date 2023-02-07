@@ -3,6 +3,8 @@ import Sidebar from "./components/Sidebar";
 import SubClass from "./pages/SubClass";
 import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   return (
@@ -13,6 +15,7 @@ export default function App() {
 
         {/* Pages */}
         <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
+          <ToastContainer />
           <Routes>
             <Route path="/" element={<SubClass />} />
             <Route path="/DosenMatkul" element={<LecturerCourse />} />
