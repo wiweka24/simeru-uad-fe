@@ -20,7 +20,6 @@ export default function TableLecturerCredits() {
     indexOfLastSubClass
   );
   const totalPages = Math.ceil(subClass.length / postsPerPage);
-
   const pageNumber = ["10", "25", "50", "100"];
 
   useEffect(() => {

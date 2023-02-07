@@ -33,7 +33,7 @@ export default function Sidebar() {
       <div className="text-grey items-center px-2 mt-6 ml-3">
         <div className="h-12 w-12 border rounded-full">
           <img
-            src="https://user-images.githubusercontent.com/70740913/210069769-0251d1fd-392e-4a3f-8b25-b4dc1d42b474.gif"
+            src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
             alt=""
             className="p-1 rounded-full"
           />
