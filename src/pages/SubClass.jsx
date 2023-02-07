@@ -125,7 +125,7 @@ export default function SubClass() {
         semester: input.semester,
       });
       notifySucces(`${input.name} ditambahkan`);
-      setInput(defaultInput)
+      setInput(defaultInput);
       setUpdate(`update${Math.random()}`);
     } catch (err) {
       console.log(err);
@@ -224,7 +224,7 @@ export default function SubClass() {
         {/* Input & Edit Field */}
         {mode === "input" ? (
           <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
-            <p className="text-xl font-bold mb-2">Tambah Matkul</p>
+            o<p className="text-xl font-bold mb-2">Tambah Matkul</p>
             <div className="grid grid-cols-6 space-x-4">
               {inputField.map((inpt) => (
                 <div
@@ -249,7 +249,6 @@ export default function SubClass() {
                 </div>
               ))}
             </div>
-
             <div className="flex justify-end">
               <Button text="Tambah" color="dark" onClick={handlePost} />
             </div>
@@ -339,6 +338,7 @@ export default function SubClass() {
                   <th scope="col" className="px-6 py-3">
                     Semester
                   </th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>
@@ -362,7 +362,6 @@ export default function SubClass() {
                       <Button
                         text="❌"
                         color="danger"
-                        value={subcls}
                         onClick={() => submitDelete(subcls)}
                       />
                     </td>
