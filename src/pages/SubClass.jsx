@@ -89,7 +89,7 @@ export default function SubClass() {
     });
   }
 
-  // handle import csv
+  // handle import Excel
   const handleChange = (e) => {
     const files = e.target.files;
     if (files) {
@@ -224,7 +224,7 @@ export default function SubClass() {
         {/* Input & Edit Field */}
         {mode === "input" ? (
           <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
-            o<p className="text-xl font-bold mb-2">Tambah Matkul</p>
+            <p className="text-xl font-bold mb-2">Tambah Matkul</p>
             <div className="grid grid-cols-6 space-x-4">
               {inputField.map((inpt) => (
                 <div
@@ -249,7 +249,7 @@ export default function SubClass() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-end">
+            <div className="flex mt-2 justify-end">
               <Button text="Tambah" color="dark" onClick={handlePost} />
             </div>
           </div>
@@ -281,7 +281,7 @@ export default function SubClass() {
               ))}
             </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end mt-2 space-x-2">
               <Button text="Edit" color="succes" onClick={submitEdit} />
               <Button
                 text="Batal"
@@ -292,9 +292,9 @@ export default function SubClass() {
           </div>
         )}
 
-        {/* Import CSV Field */}
+        {/* Import Excel Field */}
         <div className="p-7 border-2 rounded-lg col-span-1 bg-white">
-          <p className="text-xl font-bold mb-2">Import CSV</p>
+          <p className="text-xl font-bold mb-2">Import Excel</p>
           <label className="flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none">
             <span className="flex items-center space-x-2">
               <ArrowUpTrayIcon className="h-5" />
@@ -314,12 +314,14 @@ export default function SubClass() {
         </div>
 
         <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
+          <p className="px-7 text-xl font-bold mb-5">Daftar Mata Kuliah</p>
           <div className=" overflow-x-auto">
             {/* Dropdown & Search */}
             <TableHeader
               onChange={setTerm}
               onClick={setPostPerPage}
               postsPerPage={postsPerPage}
+              jsonData={currentSubClass}
             />
 
             {/* Table */}
@@ -353,7 +355,7 @@ export default function SubClass() {
                     <td className="px-6 py-4">{subcls.quota}</td>
                     <td className="px-6 py-4">{subcls.credit}</td>
                     <td className="px-6 py-4">{subcls.semester}</td>
-                    <td className="flex space-x-3">
+                    <td className="flex pt-2 space-x-3">
                       <Button
                         text="🖊"
                         color="succes"
