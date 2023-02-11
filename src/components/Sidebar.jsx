@@ -62,7 +62,11 @@ export default function Sidebar() {
         />
 
         <SidebarTitle text="Jadwal" />
-        <SidebarLink text="Jadwal Matkul" Icon={BookmarkIcon} />
+        <SidebarLink
+          text="Jadwal Matkul"
+          linkto="/Jadwal"
+          Icon={BookmarkIcon}
+        />
       </div>
     </div>
   );

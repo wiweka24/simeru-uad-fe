@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import SubClass from "./pages/SubClass";
 import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
+import Schedule from "./pages/Schedule";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/" element={<SubClass />} />
             <Route path="/DosenMatkul" element={<LecturerCourse />} />
             <Route path="/RuangWaktu" element={<RoomTime />} />
+            <Route path="/Jadwal" element={<Schedule />} />
           </Routes>
         </div>
       </Router>
