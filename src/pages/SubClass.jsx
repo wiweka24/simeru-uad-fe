@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../atoms/config";
+import PreviewExcel from "../components/InputData/PreviewExcel";
 
 export default function SubClass() {
   const URL = `${process.env.REACT_APP_BASE_URL}subclass`;
@@ -27,6 +28,8 @@ export default function SubClass() {
   const [mode, setMode] = useState("input");
   const [edit, setEdit] = useState({});
   const [input, setInput] = useState(defaultInput);
+  const [excelName, setExcelName] = useState("");
+  const [excelFile, setExcelFile] = useState([]);
 
   const inputField = [
     {
@@ -90,16 +93,26 @@ export default function SubClass() {
   }
 
   // handle import Excel
-  const handleChange = (e) => {
-    const files = e.target.files;
-    if (files) {
-      Papa.parse(files[0], {
-        complete: function (results) {
-          console.log("Finished:", results.data);
-        },
-      });
-    }
-  };
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      /* Read the file as binary string */
+      const binaryString = event.target.result;
+      const workbook = XLSX.read(binaryString, { type: "binary" });
+      /* Get the first worksheet in the workbook */
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      /* Convert the worksheet to JSON format */
+      const data = XLSX.utils.sheet_to_json(worksheet);
+      /* Do something with the data */
+      setExcelFile(data);
+    };
+
+    setExcelName(file.name);
+    reader.readAsBinaryString(file);
+    event.target.value = "";
+  }
 
   // get subclass data
   useEffect(() => {
@@ -115,7 +128,7 @@ export default function SubClass() {
   }, [update, URL]);
 
   // post new data
-  const handlePost = async () => {
+  async function handlePost() {
     try {
       await axiosInstance.post(URL, {
         name: input.name,
@@ -131,10 +144,10 @@ export default function SubClass() {
       console.log(err);
       notifyError(err.message);
     }
-  };
+  }
 
   // edit one custom data
-  const handleEdit = (obj) => {
+  function handleEdit(obj) {
     console.log(obj);
     setEdit({
       sub_class_id: obj.sub_class_id,
@@ -144,9 +157,9 @@ export default function SubClass() {
       semester: obj.semester,
     });
     setMode("edit");
-  };
+  }
 
-  const submitEdit = () => {
+  function submitEdit() {
     Swal.fire({
       html: `Anda yakin mengubah mata kuliah <b>${edit.name}</b> ?`,
       toast: true,
@@ -165,9 +178,9 @@ export default function SubClass() {
         handlePatch();
       }
     });
-  };
+  }
 
-  const handlePatch = async () => {
+  async function handlePatch() {
     try {
       console.log(edit);
       await axiosInstance.put(`${URL}/${edit.sub_class_id}`, {
@@ -183,10 +196,10 @@ export default function SubClass() {
       console.log(err);
       notifyError(err.message);
     }
-  };
+  }
 
   // delete one data
-  const submitDelete = (obj) => {
+  function submitDelete(obj) {
     Swal.fire({
       html: `Anda yakin menghapus mata kuliah <b>${obj.name}</b> ?`,
       toast: true,
@@ -205,9 +218,9 @@ export default function SubClass() {
         handleDelete(obj);
       }
     });
-  };
+  }
 
-  const handleDelete = async (obj) => {
+  async function handleDelete(obj) {
     try {
       await axiosInstance.delete(`${URL}/${obj.sub_class_id}`);
       notifySucces(`${obj.name} dihapus`);
@@ -215,7 +228,9 @@ export default function SubClass() {
     } catch (err) {
       notifyError(err.message);
     }
-  };
+  }
+
+  console.log(excelFile, excelName);
 
   return (
     <div className="relative">
@@ -307,11 +322,20 @@ export default function SubClass() {
               type="file"
               name="file_upload"
               className="hidden"
-              accept=".csv"
-              onChange={handleChange}
+              accept=".csv, .xlsx, .xls"
+              onInput={handleFileUpload}
             />
           </label>
         </div>
+
+        <PreviewExcel
+          filename={excelName}
+          file={excelFile}
+          deleteFile={() => {
+            setExcelFile([]);
+            setExcelName("");
+          }}
+        />
 
         <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
           <p className="px-7 text-xl font-bold mb-5">Daftar Mata Kuliah</p>
