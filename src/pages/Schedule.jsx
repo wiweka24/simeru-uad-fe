@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import TableHeader from "../components/InputData/TableHeader";
+
 import { axiosInstance } from "../atoms/config";
+import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
-import { RouterProvider } from "react-router-dom";
 
 export default function Schedule() {
+  const [roomtimes, setRoomtimes] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [subClass, setSubClass] = useState([]);
+
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
     ["07:00", 1],
@@ -22,9 +26,6 @@ export default function Schedule() {
     ["18:00", 12],
   ];
 
-  const [roomtimes, setRoomtimes] = useState([]);
-  const [rooms, setRooms] = useState([]);
-
   useEffect(() => {
     (async () => {
       try {
@@ -37,12 +38,18 @@ export default function Schedule() {
           "https://dev.bekisar.net/api/v1/room_time_helper"
         );
         setRoomtimes(assignRoom(res1.data.data));
-        // console.log(update);
+
+        const res2 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/lecturer_plot/1"
+        );
+        setSubClass(res2.data.data);
       } catch (err) {
         // catch here
       }
     })();
   }, []);
+
+  console.log(subClass);
 
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata) {
@@ -70,17 +77,17 @@ export default function Schedule() {
   }
 
   return (
-    <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
+    <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto overflow-x-auto">
       <div className=" overflow-x-auto">
         {/* Dropdown & Search */}
         <TableHeader />
 
         {/* Table */}
-        <table className="border-collapse border w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+        <table className="border-collapse w-full text-sm text-gray-500 dark:text-gray-400 ">
           <thead className=" text-gray-700/50 bg-gray-50">
-            <tr className="">
-              <th className="border pl-8 pr-6 py-3">Hari</th>
-              <th className="border px-6 py-3">Sesi</th>
+            <tr>
+              <th className="border py-3">Hari</th>
+              <th className="border py-3">Sesi</th>
               {rooms.map((room) => (
                 <th className="border px-6 py-3">{room.name}</th>
               ))}
@@ -88,29 +95,33 @@ export default function Schedule() {
           </thead>
           <tbody>
             {roomtimes.map((day, index) => (
-              <tr className="bg-white border-collapse">
-                <td className="border pt-6 w-28 text-center align-top font-medium text-gray-900">
+              <tr className="bg-white">
+                <td className="border pt-6 text-center align-top font-medium text-gray-900">
                   {days[index]}
                 </td>
 
-                <td className="border w-12 border-collapse font-medium text-gray-900">
+                <td className="border w-0 font-medium text-gray-900">
                   {sessions.map((session) => (
-                    <div className="p-[0.25rem] w-fit text-center flex flex-col">
-                      <TimePlaceholder
-                        className=""
-                        text={session[0]}
-                        number={session[1]}
-                      />
+                    <div className="p-1 w-fit text-center flex flex-col">
+                      <TimePlaceholder text={session[0]} number={session[1]} />
                     </div>
                   ))}
                 </td>
 
                 {day.map((dayRoom) => (
-                  <td className="relative border border-collapse font-medium text-gray-900 ">
+                  <td className="border font-medium text-gray-900 bg-grey-light">
                     <div className="flex flex-col">
-                      {dayRoom.map((session) => (
-                        <ScheduleCheckbox />
-                      ))}
+                      {dayRoom.map((session) =>
+                        session.is_possible === "1" ? (
+                          <ScheduleCheckbox
+                            time={session}
+                            room={rooms}
+                            availableClass={subClass}
+                          />
+                        ) : (
+                          <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
+                        )
+                      )}
                     </div>
                   </td>
                 ))}
