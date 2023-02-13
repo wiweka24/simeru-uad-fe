@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import Papa from "papaparse";
+import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../atoms/config";
+import PreviewExcel from "../components/InputData/PreviewExcel";
 
 export default function SubClass() {
   const URL = `${process.env.REACT_APP_BASE_URL}subclass`;
@@ -27,6 +28,8 @@ export default function SubClass() {
   const [mode, setMode] = useState("input");
   const [edit, setEdit] = useState({});
   const [input, setInput] = useState(defaultInput);
+  const [excelName, setExcelName] = useState("");
+  const [excelFile, setExcelFile] = useState([]);
 
   const inputField = [
     {
@@ -89,17 +92,27 @@ export default function SubClass() {
     });
   }
 
-  // handle import csv
-  const handleChange = (e) => {
-    const files = e.target.files;
-    if (files) {
-      Papa.parse(files[0], {
-        complete: function (results) {
-          console.log("Finished:", results.data);
-        },
-      });
-    }
-  };
+  // handle import Excel
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      /* Read the file as binary string */
+      const binaryString = event.target.result;
+      const workbook = XLSX.read(binaryString, { type: "binary" });
+      /* Get the first worksheet in the workbook */
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      /* Convert the worksheet to JSON format */
+      const data = XLSX.utils.sheet_to_json(worksheet);
+      /* Do something with the data */
+      setExcelFile(data);
+    };
+
+    setExcelName(file.name);
+    reader.readAsBinaryString(file);
+    event.target.value = "";
+  }
 
   // get subclass data
   useEffect(() => {
@@ -115,7 +128,7 @@ export default function SubClass() {
   }, [update, URL]);
 
   // post new data
-  const handlePost = async () => {
+  async function handlePost() {
     try {
       await axiosInstance.post(URL, {
         name: input.name,
@@ -125,16 +138,16 @@ export default function SubClass() {
         semester: input.semester,
       });
       notifySucces(`${input.name} ditambahkan`);
-      setInput(defaultInput)
+      setInput(defaultInput);
       setUpdate(`update${Math.random()}`);
     } catch (err) {
       console.log(err);
       notifyError(err.message);
     }
-  };
+  }
 
   // edit one custom data
-  const handleEdit = (obj) => {
+  function handleEdit(obj) {
     console.log(obj);
     setEdit({
       sub_class_id: obj.sub_class_id,
@@ -144,9 +157,9 @@ export default function SubClass() {
       semester: obj.semester,
     });
     setMode("edit");
-  };
+  }
 
-  const submitEdit = () => {
+  function submitEdit() {
     Swal.fire({
       html: `Anda yakin mengubah mata kuliah <b>${edit.name}</b> ?`,
       toast: true,
@@ -165,9 +178,9 @@ export default function SubClass() {
         handlePatch();
       }
     });
-  };
+  }
 
-  const handlePatch = async () => {
+  async function handlePatch() {
     try {
       console.log(edit);
       await axiosInstance.put(`${URL}/${edit.sub_class_id}`, {
@@ -183,10 +196,10 @@ export default function SubClass() {
       console.log(err);
       notifyError(err.message);
     }
-  };
+  }
 
   // delete one data
-  const submitDelete = (obj) => {
+  function submitDelete(obj) {
     Swal.fire({
       html: `Anda yakin menghapus mata kuliah <b>${obj.name}</b> ?`,
       toast: true,
@@ -205,9 +218,9 @@ export default function SubClass() {
         handleDelete(obj);
       }
     });
-  };
+  }
 
-  const handleDelete = async (obj) => {
+  async function handleDelete(obj) {
     try {
       await axiosInstance.delete(`${URL}/${obj.sub_class_id}`);
       notifySucces(`${obj.name} dihapus`);
@@ -215,7 +228,9 @@ export default function SubClass() {
     } catch (err) {
       notifyError(err.message);
     }
-  };
+  }
+
+  console.log(excelFile, excelName);
 
   return (
     <div className="relative">
@@ -249,8 +264,7 @@ export default function SubClass() {
                 </div>
               ))}
             </div>
-
-            <div className="flex justify-end">
+            <div className="flex mt-2 justify-end">
               <Button text="Tambah" color="dark" onClick={handlePost} />
             </div>
           </div>
@@ -282,7 +296,7 @@ export default function SubClass() {
               ))}
             </div>
 
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end mt-2 space-x-2">
               <Button text="Edit" color="succes" onClick={submitEdit} />
               <Button
                 text="Batal"
@@ -293,9 +307,9 @@ export default function SubClass() {
           </div>
         )}
 
-        {/* Import CSV Field */}
+        {/* Import Excel Field */}
         <div className="p-7 border-2 rounded-lg col-span-1 bg-white">
-          <p className="text-xl font-bold mb-2">Import CSV</p>
+          <p className="text-xl font-bold mb-2">Import Excel</p>
           <label className="flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none">
             <span className="flex items-center space-x-2">
               <ArrowUpTrayIcon className="h-5" />
@@ -308,19 +322,30 @@ export default function SubClass() {
               type="file"
               name="file_upload"
               className="hidden"
-              accept=".csv"
-              onChange={handleChange}
+              accept=".csv, .xlsx, .xls"
+              onInput={handleFileUpload}
             />
           </label>
         </div>
 
+        <PreviewExcel
+          filename={excelName}
+          file={excelFile}
+          deleteFile={() => {
+            setExcelFile([]);
+            setExcelName("");
+          }}
+        />
+
         <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
+          <p className="px-7 text-xl font-bold mb-5">Daftar Mata Kuliah</p>
           <div className=" overflow-x-auto">
             {/* Dropdown & Search */}
             <TableHeader
               onChange={setTerm}
               onClick={setPostPerPage}
               postsPerPage={postsPerPage}
+              jsonData={currentSubClass}
             />
 
             {/* Table */}
@@ -339,6 +364,7 @@ export default function SubClass() {
                   <th scope="col" className="px-6 py-3">
                     Semester
                   </th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>
@@ -353,7 +379,7 @@ export default function SubClass() {
                     <td className="px-6 py-4">{subcls.quota}</td>
                     <td className="px-6 py-4">{subcls.credit}</td>
                     <td className="px-6 py-4">{subcls.semester}</td>
-                    <td className="flex space-x-3">
+                    <td className="flex pt-2 space-x-3">
                       <Button
                         text="🖊"
                         color="succes"
@@ -362,7 +388,6 @@ export default function SubClass() {
                       <Button
                         text="❌"
                         color="danger"
-                        value={subcls}
                         onClick={() => submitDelete(subcls)}
                       />
                     </td>
