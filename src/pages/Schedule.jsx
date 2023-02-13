@@ -6,7 +6,9 @@ import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 
 export default function Schedule() {
-  const [roomtimes, setRoomtimes] = useState([]);
+  const [roomTimeHelper, setRoomTimeHelper] = useState([]);
+  const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
+  const [roomTime, setRoomTime] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [subClass, setSubClass] = useState([]);
 
@@ -37,19 +39,42 @@ export default function Schedule() {
         const res1 = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/room_time_helper"
         );
-        setRoomtimes(assignRoom(res1.data.data));
+        setNormalRoomTimeHelper(res1.data.data);
+        // setRoomTimeHelper(assignRoom(res1.data.data));
 
         const res2 = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/lecturer_plot/1"
         );
         setSubClass(res2.data.data);
+
+        const res3 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/room_time"
+        );
+        setRoomTime(res3.data.data);
       } catch (err) {
         // catch here
       }
     })();
   }, []);
 
-  console.log(subClass);
+  useEffect(() => {
+    console.log(roomTime);
+    const mergeData = normalRoomTimeHelper.map((item) => ({
+      // roomTime.find((i) => i.time_id === item.time_id) &&
+      // roomTime.find((i) => i.room_id === item.room_id) &&
+      // roomTime.find((i) => i.academic_year_id === item.academic_year_id)
+      ...item,
+      ...roomTime.find(
+        (item2) =>
+          item2.time_id === item.time_id &&
+          item2.room_id === item.room_id &&
+          item2.academic_year_id === item.academic_year_id
+      ),
+    }));
+
+    console.log(mergeData);
+    setRoomTimeHelper(assignRoom(mergeData));
+  }, [normalRoomTimeHelper, roomTime]);
 
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata) {
@@ -72,29 +97,29 @@ export default function Schedule() {
       finalArrRooms.push(arrRooms);
       // console.log(arrRooms);
     }
-    console.log(finalArrRooms);
+    // console.log(finalArrRooms);
     return finalArrRooms;
   }
 
   return (
-    <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto overflow-x-auto">
-      <div className=" overflow-x-auto">
+    <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
+      <div className="">
         {/* Dropdown & Search */}
         <TableHeader />
 
         {/* Table */}
-        <table className="border-collapse w-full text-sm text-gray-500 dark:text-gray-400 ">
-          <thead className=" text-gray-700/50 bg-gray-50">
+        <table className="relative border-collapse w-full text-sm text-gray-500 dark:text-gray-400 ">
+          <thead className=" text-gray-700/50 bg-gray-50 sticky top-0">
             <tr>
-              <th className="border py-3">Hari</th>
-              <th className="border py-3">Sesi</th>
+              <th className="bg-gray-50 border py-3 ">Hari</th>
+              <th className="bg-gray-50 border py-3 ">Sesi</th>
               {rooms.map((room) => (
-                <th className="border px-6 py-3">{room.name}</th>
+                <th className="bg-gray-50 border px-6 py-3 ">{room.name}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {roomtimes.map((day, index) => (
+            {roomTimeHelper.map((day, index) => (
               <tr className="bg-white">
                 <td className="border pt-6 text-center align-top font-medium text-gray-900">
                   {days[index]}
