@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
+// import { store, useGlobalState } from "state-pool";
 import TableHeader from "../InputData/TableHeader";
 import TablePagination from "../InputData/TablePagination";
 import { Dropdown } from "flowbite-react";
@@ -11,8 +12,10 @@ import {
 } from "@heroicons/react/24/outline";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { createGlobalstate, useGlobalState } from "state-pool";
 
 export default function TableLecturerPlot() {
+  const URL = `${process.env.REACT_APP_BASE_URL}lecturer_plot/1`;
   const [subClass, setSubClass] = useState([]);
   const [dosen, setDosen] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,9 +26,7 @@ export default function TableLecturerPlot() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer_plot/1"
-        );
+        const res = await axiosInstance.get(URL);
         setSubClass(res.data.data);
       } catch (err) {
         // catch here
