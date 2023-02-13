@@ -25,8 +25,11 @@ export default function TableLecturerCredits() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get("dummy_data/dosen.json");
+        const res = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/lecturer/1"
+        );
         setSubClass(res.data.data);
+        console.log(res.data.data);
       } catch (err) {
         // catch here
       }
@@ -83,7 +86,7 @@ export default function TableLecturerCredits() {
               Dosen
             </th>
             <th scope="col" className="px-6 py-3">
-              Jadwal Kelas
+              Jumlah Kelas
             </th>
             <th scope="col" className="px-6 py-3">
               Jumlah SKS
@@ -91,17 +94,20 @@ export default function TableLecturerCredits() {
           </tr>
         </thead>
         <tbody>
-          {currentSubClass.map((subcls) => (
-            <tr key={subcls.lecturer_id} className="bg-white border-b">
+          {currentSubClass.map((lectcredit) => (
+            <tr
+              key={lectcredit.lecturer_credit_id}
+              className="bg-white border-b"
+            >
               <th
                 scope="row"
                 className="pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap"
               >
-                {subcls.name}
+                {lectcredit.lecturer_credit_id}
               </th>
-              <td className="px-6 py-4">{subcls.academic_year_id}</td>
-              <td className="px-6 py-4">{subcls.credit}</td>
-              <td className="px-6 py-4">{subcls.sub_class_count}</td>
+              <td className="px-6 py-4">{lectcredit.lecturer_id}</td>
+              <td className="px-6 py-4">{lectcredit.sub_class_count}</td>
+              <td className="px-6 py-4">{lectcredit.credit}</td>
             </tr>
           ))}
         </tbody>
