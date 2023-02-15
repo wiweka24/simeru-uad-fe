@@ -7,12 +7,14 @@ import {
   ChevronLeftIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+// import { count } from "./TableLecturerPlot";
 
-export default function TableLecturerCredits() {
+export default function TableLecturerCredits(update) {
   const [subClass, setSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
+  const URL = `${process.env.REACT_APP_BASE_URL}lecturers/1`;
   const indexOfLastSubClass = currentPage * postsPerPage;
   const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
   const currentSubClass = subClass.slice(
@@ -25,16 +27,14 @@ export default function TableLecturerCredits() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer/1"
-        );
+        const res = await axiosInstance.get(URL);
         setSubClass(res.data.data);
         console.log(res.data.data);
       } catch (err) {
         // catch here
       }
     })();
-  }, []);
+  }, [update, URL]);
 
   function changePage(value) {
     if (value === "increment" && currentPage < totalPages) {
@@ -105,9 +105,11 @@ export default function TableLecturerCredits() {
               >
                 {lectcredit.lecturer_credit_id}
               </th>
-              <td className="px-6 py-4">{lectcredit.lecturer_id}</td>
-              <td className="px-6 py-4">{lectcredit.sub_class_count}</td>
-              <td className="px-6 py-4">{lectcredit.credit}</td>
+              <td className="px-6 py-4 cursor-default">{lectcredit.name}</td>
+              <td className="px-6 py-4 cursor-default">
+                {lectcredit.sub_class_count}
+              </td>
+              <td className="px-6 py-4 cursor-default">{lectcredit.credit}</td>
             </tr>
           ))}
         </tbody>
