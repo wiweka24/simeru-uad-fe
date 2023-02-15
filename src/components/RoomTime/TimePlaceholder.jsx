@@ -4,7 +4,7 @@ export default function TimePlaceholder({ text, number }) {
       <div className="bg-gray-100 items-center flex justify-center w-11 rounded-lg border border-gray-200">
         {number}
       </div>
-      <span className=" py-3 pr-4">{text}</span>
+      <span className="py-3 pr-4">{text}</span>
     </div>
   );
 }
