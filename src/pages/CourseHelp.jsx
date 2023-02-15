@@ -1,6 +1,5 @@
 import React from "react";
-import CheckboxHelper from "../components/LecturerCourse/CheckboxesHelper";
-import TableCourseHelp from "../components/LecturerCourse/TableCourseHelp";
+import CheckboxHelper from "../components/CourseHelp/CheckboxesHelper";
 
 export default function CourseHelp() {
   return (

@@ -1,20 +1,20 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
+import { notifySucces, notifyError } from "../../atoms/notification";
 import { Dropdown } from "flowbite-react";
-import HelpCheckbox from "./HelpCheckbox";
 import {
   ChevronRightIcon,
   ChevronLeftIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 
-export default function TableCourseHelp() {
-  const [subClass, setSubClass] = useState([]);
+export default function CheckboxHelper() {
+  const [update, setUpdate] = useState("");
   const [offered, setOffered] = useState([]);
+  const [subClass, setSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
-  const [update, setUpdate] = useState("");
 
   const indexOfLastSubClass = currentPage * postsPerPage;
   const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
@@ -25,11 +25,6 @@ export default function TableCourseHelp() {
   const totalPages = Math.ceil(subClass.length / postsPerPage);
   const pageNumber = ["10", "25", "50", "100"];
 
-  const rerender = () => {
-    setUpdate(`update ${Math.random()}`);
-  };
-
-  // subClass useEffect
   useEffect(() => {
     (async () => {
       try {
@@ -55,6 +50,80 @@ export default function TableCourseHelp() {
       setCurrentPage((previousCurrentPage) => previousCurrentPage - 1);
     }
   }
+
+  console.log(subClass);
+  console.log(offered);
+  const offeredID_str = offered.map((item) => item.sub_class_id);
+  const subClassID = subClass.map((item) => item.sub_class_id);
+
+  const offeredID = offeredID_str.map(function (e) {
+    return Number(e);
+  });
+
+  console.log(subClassID);
+  console.log(offeredID);
+
+  const HandleCheck = (obj) => {
+    if (offeredID.includes(obj.sub_class_id)) {
+      //remove item from offered list
+      const classIndex = subClass.findIndex(
+        (item) => item.sub_class_id === obj.sub_class_id
+      );
+      const ArrRemovedItem = [...offered, subClass[classIndex]];
+      // const lastElement = ArrRemovedItem.slice(-1)[0];
+      setOffered(ArrRemovedItem);
+      (async () => {
+        try {
+          const res = await axiosInstance.delete(
+            "https://dev.bekisar.net/api/v1/offered_classes",
+            {
+              data: {
+                data: [
+                  {
+                    sub_class_id: obj.sub_class_id,
+                    academic_year_id: 1,
+                  },
+                ],
+              },
+            }
+          );
+          setUpdate(`update${Math.random()}`);
+          notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
+        } catch (err) {
+          notifyError(err.message);
+          console.log(err);
+        }
+      })();
+    } else {
+      //add item to offered list
+      const classIndex = subClass.findIndex(
+        (item) => item.sub_class_id === obj.sub_class_id
+      );
+      const ArrAddedItem = [...offered, subClass[classIndex]];
+      // const lastElement = ArrAddedItem.slice(-1)[0];
+      setOffered(ArrAddedItem);
+      (async () => {
+        try {
+          const res1 = await axiosInstance.post(
+            "https://dev.bekisar.net/api/v1/offered_classes",
+            {
+              data: [
+                {
+                  sub_class_id: obj.sub_class_id,
+                  academic_year_id: obj.academic_year_id,
+                },
+              ],
+            }
+          );
+          setUpdate(`update${Math.random()}`);
+          notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
+        } catch (err) {
+          notifyError(err.message);
+          console.log(err);
+        }
+      })();
+    }
+  };
 
   return (
     <div className='relative overflow-x-auto'>
@@ -109,19 +178,27 @@ export default function TableCourseHelp() {
           </tr>
         </thead>
         <tbody>
-          {currentSubClass.map((subkey) => (
-            <tr key={subkey.sub_class_id} className='bg-white border-b'>
+          {currentSubClass.map((item) => (
+            <tr key={item.sub_class_id} className='bg-white border-b'>
               <th
                 scope='row'
                 className='pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap'
               >
-                {subkey.sub_class_id}
+                {item.sub_class_id}
               </th>
-              <td className='px-6 py-4'>{subkey.name}</td>
-              <td className='px-6 py-4'>{subkey.semester}</td>
-              <td className='px-6 py-4'>{subkey.credit}</td>
+              <td className='px-6 py-4'>{item.name}</td>
+              <td className='px-6 py-4'>{item.semester}</td>
+              <td className='px-6 py-4'>{item.credit}</td>
               <td>
-                <HelpCheckbox onChange={{ rerender }} />
+                <div className='mt-1 flex items-start flex-col space-y-11'>
+                  <input
+                    className='w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                    type='checkbox'
+                    value={item.sub_class_id}
+                    checked={offeredID.includes(item.sub_class_id)}
+                    onChange={() => HandleCheck(item)}
+                  />
+                </div>
               </td>
             </tr>
           ))}
