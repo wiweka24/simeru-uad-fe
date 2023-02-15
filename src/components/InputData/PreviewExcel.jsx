@@ -6,14 +6,29 @@ import Button from "../Button";
 import { axiosInstance } from "../../atoms/config";
 import { notifyError, notifySucces } from "../../atoms/notification";
 
-export default function PreviewExcel({ filename, file, deleteFile, rerender }) {
+export default function PreviewExcel({
+  filename,
+  file,
+  deleteFile,
+  rerender,
+  path,
+  URL,
+}) {
   const [isShow, setIsShow] = useState(false);
   const [modalShow, setModalShow] = useState(false);
   const [excelfile, setExcelFile] = useState([]);
   const [header, setHeader] = useState([]);
   const [notif, setNotif] = useState("");
-  const correctHeader = ["name", "quota", "credit", "semester"];
-  const URL = `${process.env.REACT_APP_BASE_URL}subclass`;
+
+  function correctHeader(path) {
+    if (path === "subclass") {
+      return ["name", "quota", "credit", "semester"];
+    } else if (path === "lecturer") {
+      return ["name", "email", "phone_number"];
+    } else {
+      return ["name", "quota"];
+    }
+  }
 
   useEffect(() => {
     if (filename !== "") {
@@ -32,11 +47,17 @@ export default function PreviewExcel({ filename, file, deleteFile, rerender }) {
 
   useEffect(() => {
     const testHeader = header.slice();
-    if (testHeader.sort().toString() !== correctHeader.sort().toString()) {
+    if (
+      testHeader.sort().toString() !== correctHeader(path).sort().toString()
+    ) {
       setNotif(
         <p className="text-red-600">
           * Header tabel salah, Header harus terdiri dari:{" "}
-          <b>name, quota, credit, semester</b>
+          <b>
+            {correctHeader(path).map((header) => (
+              <span>"{header}", </span>
+            ))}
+          </b>
         </p>
       );
     } else {

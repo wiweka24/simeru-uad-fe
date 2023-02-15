@@ -45,9 +45,9 @@ export default function Sidebar() {
       </div>
       <div className="space-y-1 px-2">
         <SidebarTitle text="Input Data" />
-        <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/" />
-        <SidebarLink text="Dosen" Icon={UserIcon} />
-        <SidebarLink text="Ruang Kelas" Icon={HomeIcon} />
+        <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/MataKuliah" />
+        <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen"/>
+        <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan"/>
 
         <SidebarTitle text="Konfigurasi" />
         <SidebarLink
