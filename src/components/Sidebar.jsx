@@ -3,12 +3,18 @@ import {
   BookOpenIcon,
   HomeIcon,
   ClockIcon,
-  ClipboardDocumentIcon,
+  ClipboardDocumentCheckIcon,
+  IdentificationIcon,
   BookmarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { Dropdown } from "flowbite-react";
+import { useState } from "react";
 
-export default function Sidebar() {
+export default function Sidebar(props) {
+  // const academicYear = [Array.from({ length: 10 }, (_, i) => i + 1)];
+  const academicYear = [1, 2, 3, 4, 5];
+  const [selectYear, setSelectYear] = useState("");
   function SidebarTitle({ text }) {
     return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
@@ -27,6 +33,24 @@ export default function Sidebar() {
       </Link>
     );
   }
+
+  //Handle and send to parent components
+  const handleInputChange = (e) => {
+    setSelectYear(e.target.value);
+    console.log(e.target.value);
+    props.getAcadYearValue(e.target.value);
+    //console.log(obj);
+  };
+
+  // function dropDown(yearlist) {
+  //   return (
+  //     <select value={selects} onChange={(e) => setSelectYear(e.target.value)}>
+  //       {yearlist.map((year) => (
+  //         <option>{year}</option>
+  //       ))}
+  //     </select>
+  //   );
+  // }
 
   return (
     <div className="col-span-1 border-r ">
@@ -51,8 +75,13 @@ export default function Sidebar() {
 
         <SidebarTitle text="Konfigurasi" />
         <SidebarLink
+          text="Matkul Terselenggara"
+          Icon={ClipboardDocumentCheckIcon}
+          linkto="/MKTerselenggara"
+        />
+        <SidebarLink
           text="Dosen Matkul"
-          Icon={ClipboardDocumentIcon}
+          Icon={IdentificationIcon}
           linkto="/DosenMatkul"
         />
         <SidebarLink
@@ -67,6 +96,17 @@ export default function Sidebar() {
           linkto="/Jadwal"
           Icon={BookmarkIcon}
         />
+        <SidebarTitle text="Atur Academic Year" />
+
+        <select
+          className="flex items-center justify-start ml-3 "
+          value={selectYear}
+          onChange={(e) => handleInputChange(e)}
+        >
+          {academicYear.map((year) => (
+            <option>{year}</option>
+          ))}
+        </select>
       </div>
     </div>
   );
