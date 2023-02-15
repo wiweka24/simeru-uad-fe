@@ -9,8 +9,9 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 
-export default function TableLecturerCredits() {
+export default function TableCourseHelp() {
   const [subClass, setSubClass] = useState([]);
+  const [offered, setOffered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const [update, setUpdate] = useState("");
@@ -28,6 +29,7 @@ export default function TableLecturerCredits() {
     setUpdate(`update ${Math.random()}`);
   };
 
+  // subClass useEffect
   useEffect(() => {
     (async () => {
       try {
@@ -35,20 +37,16 @@ export default function TableLecturerCredits() {
           "https://dev.bekisar.net/api/v1/subclass"
         );
         setSubClass(res.data.data);
+
+        const res1 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/offered_classes/1"
+        );
+        setOffered(res1.data.data);
       } catch (err) {
         // catch here
       }
     })();
-  }, []);
-
-  // Grab ID of all Sub Class
-  const classID = subClass.map((item) => {
-    return item.sub_class_id;
-  });
-  console.log(classID);
-  function checkboxStatus() {}
-
-  const Cell = ({ value }) => {};
+  }, [update]);
 
   function changePage(value) {
     if (value === "increment" && currentPage < totalPages) {
@@ -89,7 +87,7 @@ export default function TableLecturerCredits() {
         </div>
       </nav>
 
-      {/* Table */}
+      {/*Table*/}
       <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
         <thead className='border-y text-gray-700/50 bg-gray-50'>
           <tr>
@@ -123,7 +121,7 @@ export default function TableLecturerCredits() {
               <td className='px-6 py-4'>{subkey.semester}</td>
               <td className='px-6 py-4'>{subkey.credit}</td>
               <td>
-                <HelpCheckbox />
+                <HelpCheckbox onChange={{ rerender }} />
               </td>
             </tr>
           ))}
