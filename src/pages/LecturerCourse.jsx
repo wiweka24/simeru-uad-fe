@@ -15,7 +15,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 
-export default function LecturerCourse() {
+export default function LecturerCourse(acyear) {
   const URL = `${process.env.REACT_APP_BASE_URL}lecturer_plot/1`;
   const [subClass, setSubClass] = useState([]);
   const [dosen, setDosen] = useState([]);
@@ -108,7 +108,7 @@ export default function LecturerCourse() {
                 {
                   lecturer_id: text.lecturer_id,
                   sub_class_id: text.sub_class_id,
-                  academic_year_id: 1,
+                  academic_year_id: Number(acyear.acyear),
                 },
               ],
             }
@@ -116,6 +116,7 @@ export default function LecturerCourse() {
 
           setUpdateChild(`update${Math.random()}`);
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
+          console.log(acyear, "input acad");
         } catch (err) {
           console.log(err);
           notifyError(err.message);
@@ -173,6 +174,7 @@ export default function LecturerCourse() {
     <div className="grid grid-cols-6 m-10 gap-5">
       <div className=" border-2 rounded-lg bg-white col-span-4 py-5">
         <div className="relative overflow-x-autorelative overflow-x-auto">
+          <p className=" text-xl font-bold mx-4 mt-1 mb-4">Dosen dan Matkul</p>
           <TableHeader
             onChange={setTerm}
             onClick={setPostPerPage}

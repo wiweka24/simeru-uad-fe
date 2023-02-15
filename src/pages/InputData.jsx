@@ -117,7 +117,7 @@ export function Room() {
     {
       id: 2,
       name: "Kuota",
-      placeholder: "32",
+      placeholder: "75",
       valuefor: "quota",
       type: "number",
       width: "2",
