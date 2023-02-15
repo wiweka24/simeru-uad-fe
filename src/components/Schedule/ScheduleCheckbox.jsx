@@ -8,8 +8,10 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 
-export default function ScheduleCheckbox({ time, room, availableClass }) {
+export default function ScheduleCheckbox({ time, room, availableClass, setSearchQuery }) {
   const [modalShow, setModalShow] = useState(false);
+  // const [searchQuery, setSearchQuery] = useState("");
+  const [subClass, setSubClass] = useState([]);
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
     "07:00 - 09:00",
@@ -17,11 +19,6 @@ export default function ScheduleCheckbox({ time, room, availableClass }) {
     "13:00 - 15:00",
     "16:00 - 18:00",
   ];
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [subClass, setSubClass] = useState([]);
-
-  // console.log(time);
 
   const postData = (obj) => {
     (async () => {
@@ -47,10 +44,10 @@ export default function ScheduleCheckbox({ time, room, availableClass }) {
   return (
     <>
       <label className="z-0 relative border-b border-collapse h-40 w-full cursor-pointer bg-white">
-        {/* <input className="sr-only" onClick={() => setModalShow(true)} />
+        <input className="sr-only" onClick={() => setModalShow(true)} />
         <div className="w-full h-full flex items-center justify-center bg-gray-200x peer-focus:ring-4 peer-focus:ring-grey-dark dark:peer-focus:ring-yellow-800  peer-checked:after:border-white after:content-[''] after:bg-white after:border-gray-300 peer-checked:bg-grey-dark">
           <PlusCircleIcon className="h-5 hover:text-green-600 hover:h-7 duration-100" />
-        </div> */}
+        </div>
       </label>
 
       <Modal
@@ -77,7 +74,7 @@ export default function ScheduleCheckbox({ time, room, availableClass }) {
                   {subClass.lecturer_name}
                 </div>
                 <Button
-                  text="x"
+                  text="❌"
                   color="danger"
                   onClick={() => setSubClass([])}
                 />
