@@ -34,7 +34,7 @@ export default function LecturerCourse() {
         // catch here
       }
     })();
-  }, []);
+  }, [updateChild, URL]);
 
   useEffect(() => {
     (async () => {
@@ -106,9 +106,13 @@ export default function LecturerCourse() {
             }))}
             //getOptionLabel={(option) => option.name || text.lecturer_name}
             sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" size="small" />
+            )}
             type="text"
-            className=" text-sm -ml-2 border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+            className=" text-sm -ml-2 border-2 rounded-lg w-60 bg-grey-light
+              
+             "
             //value={text.lecturer_name}
             onChange={(e, value) => handleInputChange(e, value)}
           />
@@ -177,10 +181,14 @@ export default function LecturerCourse() {
                   >
                     {subcls.sub_class_id}
                   </th>
-                  <td className="px-6 py-4">{subcls.sub_classes_name}</td>
-                  <td className="px-6 py-4">{subcls.semester}</td>
-                  <td className="px-6 py-4">{subcls.credit}</td>
-                  <td>
+                  <td className="px-6 py-4 cursor-default">
+                    {subcls.sub_classes_name}
+                  </td>
+                  <td className="px-6 py-4 cursor-default">
+                    {subcls.semester}
+                  </td>
+                  <td className="px-6 py-4 cursor-default">{subcls.credit}</td>
+                  <td className="cursor-pointer">
                     <Cell value={subcls} />
                   </td>
                 </tr>

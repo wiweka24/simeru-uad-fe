@@ -105,9 +105,11 @@ export default function TableLecturerCredits(update) {
               >
                 {lectcredit.lecturer_credit_id}
               </th>
-              <td className="px-6 py-4">{lectcredit.name}</td>
-              <td className="px-6 py-4">{lectcredit.sub_class_count}</td>
-              <td className="px-6 py-4">{lectcredit.credit}</td>
+              <td className="px-6 py-4 cursor-default">{lectcredit.name}</td>
+              <td className="px-6 py-4 cursor-default">
+                {lectcredit.sub_class_count}
+              </td>
+              <td className="px-6 py-4 cursor-default">{lectcredit.credit}</td>
             </tr>
           ))}
         </tbody>
