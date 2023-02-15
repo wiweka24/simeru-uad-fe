@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
+import { notifySucces, notifyError } from "../../atoms/notification";
 import { Dropdown } from "flowbite-react";
 import {
   ChevronRightIcon,
@@ -62,12 +63,14 @@ export default function CheckboxHelper() {
   console.log(subClassID);
   console.log(offeredID);
 
-  const HandleCheck = (id) => {
-    if (offeredID.includes(id)) {
+  const HandleCheck = (obj) => {
+    if (offeredID.includes(obj.sub_class_id)) {
       //remove item from offered list
-      const classIndex = subClass.findIndex((item) => item.sub_class_id === id);
+      const classIndex = subClass.findIndex(
+        (item) => item.sub_class_id === obj.sub_class_id
+      );
       const ArrRemovedItem = [...offered, subClass[classIndex]];
-      const lastElement = ArrRemovedItem.slice(-1)[0];
+      // const lastElement = ArrRemovedItem.slice(-1)[0];
       setOffered(ArrRemovedItem);
       (async () => {
         try {
@@ -77,7 +80,7 @@ export default function CheckboxHelper() {
               data: {
                 data: [
                   {
-                    sub_class_id: lastElement.sub_class_id,
+                    sub_class_id: obj.sub_class_id,
                     academic_year_id: 1,
                   },
                 ],
@@ -85,15 +88,19 @@ export default function CheckboxHelper() {
             }
           );
           setUpdate(`update${Math.random()}`);
+          notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
         } catch (err) {
+          notifyError(err.message);
           console.log(err);
         }
       })();
     } else {
       //add item to offered list
-      const classIndex = subClass.findIndex((item) => item.sub_class_id === id);
+      const classIndex = subClass.findIndex(
+        (item) => item.sub_class_id === obj.sub_class_id
+      );
       const ArrAddedItem = [...offered, subClass[classIndex]];
-      const lastElement = ArrAddedItem.slice(-1)[0];
+      // const lastElement = ArrAddedItem.slice(-1)[0];
       setOffered(ArrAddedItem);
       (async () => {
         try {
@@ -102,14 +109,16 @@ export default function CheckboxHelper() {
             {
               data: [
                 {
-                  sub_class_id: lastElement.sub_class_id,
-                  academic_year_id: lastElement.academic_year_id,
+                  sub_class_id: obj.sub_class_id,
+                  academic_year_id: obj.academic_year_id,
                 },
               ],
             }
           );
           setUpdate(`update${Math.random()}`);
+          notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
         } catch (err) {
+          notifyError(err.message);
           console.log(err);
         }
       })();
@@ -187,7 +196,7 @@ export default function CheckboxHelper() {
                     type='checkbox'
                     value={item.sub_class_id}
                     checked={offeredID.includes(item.sub_class_id)}
-                    onChange={() => HandleCheck(item.sub_class_id)}
+                    onChange={() => HandleCheck(item)}
                   />
                 </div>
               </td>
