@@ -22,8 +22,8 @@ export default function Sidebar() {
         }`}
         onClick={() => active}
       >
-        <Icon className="h-5" />
-        <span className="hidden md:inline truncate">{text}</span>
+        <Icon className="w-5 h-5 min-h-full min-w-fit" />
+        <span className="inline truncate">{text}</span>
       </Link>
     );
   }

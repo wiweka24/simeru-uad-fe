@@ -185,7 +185,7 @@ export default function InputData({
 
   return (
     <div className="relative">
-      <div className="h-10 border-b bg-white"></div>
+      <div className="h-10 border-b bg-white"/>
       <div className="grid grid-cols-4 m-10 gap-5">
         {/* Input & Edit Field */}
         {mode === "input" ? (
