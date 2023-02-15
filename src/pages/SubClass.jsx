@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 
 import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 import Button from "../components/Button";
@@ -10,6 +9,7 @@ import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../atoms/config";
 import PreviewExcel from "../components/InputData/PreviewExcel";
+import { notifyError, notifySucces } from "../atoms/notification";
 
 export default function SubClass() {
   const URL = `${process.env.REACT_APP_BASE_URL}subclass`;
@@ -66,31 +66,9 @@ export default function SubClass() {
     },
   ];
 
-  function notifyError(message) {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
-
-  function notifySucces(message) {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
+  const rerender = () => {
+    setUpdate(`update ${Math.random()}`);
+  };
 
   // handle import Excel
   function handleFileUpload(event) {
@@ -131,15 +109,18 @@ export default function SubClass() {
   async function handlePost() {
     try {
       await axiosInstance.post(URL, {
-        name: input.name,
-        course_name: "subkelas",
-        quota: input.quota,
-        credit: input.credit,
-        semester: input.semester,
+        data: [
+          {
+            name: input.name,
+            quota: input.quota,
+            credit: input.credit,
+            semester: input.semester,
+          },
+        ],
       });
       notifySucces(`${input.name} ditambahkan`);
       setInput(defaultInput);
-      setUpdate(`update${Math.random()}`);
+      rerender();
     } catch (err) {
       console.log(err);
       notifyError(err.message);
@@ -191,7 +172,7 @@ export default function SubClass() {
       });
       notifySucces(`${edit.name} diubah`);
       setMode("input");
-      setUpdate(`update${Math.random()}`);
+      rerender();
     } catch (err) {
       console.log(err);
       notifyError(err.message);
@@ -224,13 +205,11 @@ export default function SubClass() {
     try {
       await axiosInstance.delete(`${URL}/${obj.sub_class_id}`);
       notifySucces(`${obj.name} dihapus`);
-      setUpdate(`update${Math.random()}`);
+      rerender();
     } catch (err) {
       notifyError(err.message);
     }
   }
-
-  console.log(excelFile, excelName);
 
   return (
     <div className="relative">
@@ -331,6 +310,7 @@ export default function SubClass() {
         <PreviewExcel
           filename={excelName}
           file={excelFile}
+          rerender={rerender}
           deleteFile={() => {
             setExcelFile([]);
             setExcelName("");
