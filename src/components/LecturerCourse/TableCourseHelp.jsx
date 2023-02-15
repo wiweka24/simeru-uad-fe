@@ -2,19 +2,20 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
 import { Dropdown } from "flowbite-react";
+import HelpCheckbox from "./HelpCheckbox";
 import {
   ChevronRightIcon,
   ChevronLeftIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-// import { count } from "./TableLecturerPlot";
 
-export default function TableLecturerCredits(update) {
+export default function TableCourseHelp() {
   const [subClass, setSubClass] = useState([]);
+  const [offered, setOffered] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
+  const [update, setUpdate] = useState("");
 
-  const URL = `${process.env.REACT_APP_BASE_URL}lecturers/1`;
   const indexOfLastSubClass = currentPage * postsPerPage;
   const indexOfFirstSubClass = indexOfLastSubClass - postsPerPage;
   const currentSubClass = subClass.slice(
@@ -24,17 +25,28 @@ export default function TableLecturerCredits(update) {
   const totalPages = Math.ceil(subClass.length / postsPerPage);
   const pageNumber = ["10", "25", "50", "100"];
 
+  const rerender = () => {
+    setUpdate(`update ${Math.random()}`);
+  };
+
+  // subClass useEffect
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(URL);
+        const res = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/subclass"
+        );
         setSubClass(res.data.data);
-        console.log(res.data.data);
+
+        const res1 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/offered_classes/1"
+        );
+        setOffered(res1.data.data);
       } catch (err) {
         // catch here
       }
     })();
-  }, [update, URL]);
+  }, [update]);
 
   function changePage(value) {
     if (value === "increment" && currentPage < totalPages) {
@@ -47,7 +59,7 @@ export default function TableLecturerCredits(update) {
   return (
     <div className='relative overflow-x-auto'>
       {/* Search */}
-      <p className=' text-xl font-bold mx-4 my-4'>Data Dosen</p>
+      <p className=' text-xl font-bold mx-4 my-4'>Mata Kuliah Terselenggara</p>
       <nav className='mx-8 flex mb-3 items-center justify-between'>
         <Dropdown
           label={postsPerPage}
@@ -75,39 +87,42 @@ export default function TableLecturerCredits(update) {
         </div>
       </nav>
 
-      {/* Table */}
+      {/*Table*/}
       <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
         <thead className='border-y text-gray-700/50 bg-gray-50'>
           <tr>
             <th scope='col' className='px-6 py-3'>
-              Id
+              ID
             </th>
             <th scope='col' className='pl-8 pr-6 py-3'>
-              Dosen
+              Nama Mata Kuliah
             </th>
             <th scope='col' className='px-6 py-3'>
-              Jumlah Kelas
+              Semester
             </th>
             <th scope='col' className='px-6 py-3'>
-              Jumlah SKS
+              SKS
+            </th>
+            <th scope='col' className='px-6 py-3'>
+              Terselenggara
             </th>
           </tr>
         </thead>
         <tbody>
-          {currentSubClass.map((lectcredit) => (
-            <tr
-              key={lectcredit.lecturer_credit_id}
-              className='bg-white border-b'
-            >
+          {currentSubClass.map((subkey) => (
+            <tr key={subkey.sub_class_id} className='bg-white border-b'>
               <th
                 scope='row'
                 className='pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap'
               >
-                {lectcredit.lecturer_credit_id}
+                {subkey.sub_class_id}
               </th>
-              <td className='px-6 py-4'>{lectcredit.name}</td>
-              <td className='px-6 py-4'>{lectcredit.sub_class_count}</td>
-              <td className='px-6 py-4'>{lectcredit.credit}</td>
+              <td className='px-6 py-4'>{subkey.name}</td>
+              <td className='px-6 py-4'>{subkey.semester}</td>
+              <td className='px-6 py-4'>{subkey.credit}</td>
+              <td>
+                <HelpCheckbox onChange={{ rerender }} />
+              </td>
             </tr>
           ))}
         </tbody>
