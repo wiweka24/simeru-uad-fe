@@ -13,6 +13,7 @@ export default function Schedule() {
   const [subClass, setSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [schedules, setSchedules] = useState([]);
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -48,24 +49,24 @@ export default function Schedule() {
           "https://dev.bekisar.net/api/v1/lecturer_plot/1"
         );
         setSubClass(res2.data.data);
-        console.log(res2.data.data);
+        // console.log(res2.data.data);
 
         const res3 = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/room_time"
         );
         setRoomTime(res3.data.data);
+        const res4 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/schedule/1"
+        );
+        setSchedules(res4.data.data);
       } catch (err) {
-        // catch here
+        console.log(err);
       }
     })();
   }, []);
 
   useEffect(() => {
-    console.log(roomTime);
     const mergeData = normalRoomTimeHelper.map((item) => ({
-      // roomTime.find((i) => i.time_id === item.time_id) &&
-      // roomTime.find((i) => i.room_id === item.room_id) &&
-      // roomTime.find((i) => i.academic_year_id === item.academic_year_id)
       ...item,
       ...roomTime.find(
         (item2) =>
@@ -75,7 +76,6 @@ export default function Schedule() {
       ),
     }));
 
-    console.log(mergeData);
     setRoomTimeHelper(assignRoom(mergeData));
   }, [normalRoomTimeHelper, roomTime]);
 
@@ -89,8 +89,6 @@ export default function Schedule() {
       let arrDays = roomdata.filter(
         (item) => item.time_id > i && item.time_id <= i + 4
       );
-      // console.log(arrDays);
-      // console.log(arrDays.length);
       let arrRooms = [];
       // For setting the data into 8 rooms, 4 session each
       for (let j = 0; j < arrDays.length; j = j + 4) {
@@ -98,9 +96,7 @@ export default function Schedule() {
       }
       //Push to make final array
       finalArrRooms.push(arrRooms);
-      // console.log(arrRooms);
     }
-    // console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -113,26 +109,32 @@ export default function Schedule() {
   }, [subClass, searchQuery]);
 
   return (
-    <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
-      <div className="">
+    <div className="relative">
+      <div className="h-10 border-b bg-white" />
+      <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
+        <p className="px-7 mb-5 text-xl font-bold">
+          Jadwal Kuliah Terselenggara
+        </p>
         {/* Dropdown & Search */}
         <TableHeader />
 
         {/* Table */}
-        <table className="relative border-collapse w-full text-sm text-gray-500 dark:text-gray-400 ">
-          <thead className=" text-gray-700/50 bg-gray-50 sticky top-0">
+        <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
+          <thead className="text-gray-700/50 bg-gray-50 sticky top-0">
             <tr>
-              <th className="bg-gray-50 border py-3 ">Hari</th>
-              <th className="bg-gray-50 border py-3 ">Sesi</th>
+              <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
+              <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
               {rooms.map((room) => (
-                <th className="bg-gray-50 border px-6 py-3 ">{room.name}</th>
+                <th className="bg-gray-50 w-40 border px-6 py-3 ">
+                  {room.name}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {roomTimeHelper.map((day, index) => (
               <tr className="bg-white">
-                <td className="border pt-6 text-center align-top font-medium text-gray-900">
+                <td className="border w-20 pt-6 text-center align-top font-medium text-gray-900">
                   {days[index]}
                 </td>
 
@@ -145,7 +147,7 @@ export default function Schedule() {
                 </td>
 
                 {day.map((dayRoom) => (
-                  <td className="border font-medium text-gray-900 bg-grey-light">
+                  <td className="border w-40 font-medium text-gray-900 bg-grey-light">
                     <div className="flex flex-col">
                       {dayRoom.map((session) =>
                         session.is_possible === "1" ? (
@@ -154,6 +156,13 @@ export default function Schedule() {
                             room={rooms}
                             availableClass={currentSubClass}
                             setSearchQuery={setSearchQuery}
+                            availableSchedule={schedules.find(
+                              (item) =>
+                                item.time_id === session.time_id &&
+                                item.room_id === session.room_id &&
+                                item.academic_year_id ===
+                                  session.academic_year_id
+                            )}
                           />
                         ) : (
                           <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
