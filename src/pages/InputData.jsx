@@ -130,7 +130,7 @@ export function Room() {
       inputField={inputField}
       path="room"
       attribute="room_id"
-      title="Ruangan"
+      title="Ruang Kelas"
     />
   );
 }
