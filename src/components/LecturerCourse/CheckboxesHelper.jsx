@@ -28,22 +28,23 @@ export default function CheckboxHelper() {
   console.log(subClass);
   console.log(offered);
   const offeredID = offered.map((item) => item.sub_class_id);
-  console.log(offeredID.map(Number));
+  const subClassID = subClass.map((item) => item.sub_class_id);
+  console.log(subClassID);
+  console.log(offeredID);
 
   const HandleCheck = (id) => {
     if (offeredID.includes(id)) {
-      //remove item from itemsUnder list
-      const newArrWithRemoveditem = offered.filter((item) => {
+      //remove item from offered list
+      const ArrRemovedItem = offered.filter((item) => {
         return item.sub_class_id !== id;
       });
-      setOffered(newArrWithRemoveditem, () => console.log(setOffered));
+      setOffered(ArrRemovedItem);
     } else {
-      //add item to itemsUnder list
+      //add item to offered list
       const classIndex = subClass.findIndex((item) => item.sub_class_id === id);
+      const ArrAddedItem = [...offered, subClass[classIndex]];
 
-      const newArrWithAddeditem = [...offered, subClass[classIndex]];
-
-      setOffered(newArrWithAddeditem, () => console.log(setOffered));
+      setOffered(ArrAddedItem);
     }
   };
 
