@@ -11,6 +11,8 @@ export default function Schedule() {
   const [roomTime, setRoomTime] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [subClass, setSubClass] = useState([]);
+  const [currentSubClass, setCurrentSubClass] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -46,6 +48,7 @@ export default function Schedule() {
           "https://dev.bekisar.net/api/v1/lecturer_plot/1"
         );
         setSubClass(res2.data.data);
+        console.log(res2.data.data);
 
         const res3 = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/room_time"
@@ -101,6 +104,14 @@ export default function Schedule() {
     return finalArrRooms;
   }
 
+  useEffect(() => {
+    setCurrentSubClass(
+      subClass.filter((item) =>
+        item.sub_classes_name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [subClass, searchQuery]);
+
   return (
     <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
       <div className="">
@@ -141,7 +152,8 @@ export default function Schedule() {
                           <ScheduleCheckbox
                             time={session}
                             room={rooms}
-                            availableClass={subClass}
+                            availableClass={currentSubClass}
+                            setSearchQuery={setSearchQuery}
                           />
                         ) : (
                           <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
