@@ -1,10 +1,10 @@
 import { TableContext } from "flowbite-react/lib/esm/components/Table/TableContext";
 import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
-import TableLecturerPlot from "../components/LecturerCourse/TableLecturerPlot";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { toast } from "react-toastify";
 import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../atoms/config";
@@ -49,6 +49,32 @@ export default function LecturerCourse() {
     })();
   }, []);
 
+  function notifyError(message) {
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+
+  function notifySucces(message) {
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+
   const Cell = ({ value }) => {
     const [mode, setMode] = useState("read");
     const [text, setText] = useState(value);
@@ -89,8 +115,10 @@ export default function LecturerCourse() {
           );
 
           setUpdateChild(`update${Math.random()}`);
+          notifySucces("Dosen Pengampu Berhasil Ditambahkan");
         } catch (err) {
           console.log(err);
+          notifyError(err.message);
         }
         console.log(text);
       };
