@@ -15,6 +15,12 @@ export default function Schedule() {
   const [searchQuery, setSearchQuery] = useState("");
   const [schedules, setSchedules] = useState([]);
 
+  const [update, setUpdate] = useState("");
+
+  const rerender = () => {
+    setUpdate(`update ${Math.random()}`);
+  };
+
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
     ["07:00", 1],
@@ -63,7 +69,7 @@ export default function Schedule() {
         console.log(err);
       }
     })();
-  }, []);
+  }, [update]);
 
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
@@ -156,13 +162,14 @@ export default function Schedule() {
                             room={rooms}
                             availableClass={currentSubClass}
                             setSearchQuery={setSearchQuery}
-                            availableSchedule={schedules.find(
+                            occupiedSchedule={schedules.find(
                               (item) =>
                                 item.time_id === session.time_id &&
                                 item.room_id === session.room_id &&
                                 item.academic_year_id ===
                                   session.academic_year_id
                             )}
+                            onChange={rerender} 
                           />
                         ) : (
                           <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
