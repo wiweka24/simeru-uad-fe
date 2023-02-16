@@ -96,7 +96,7 @@ export default function Sidebar({ props }) {
               {academicYear.map((year) => (
                 <Dropdown.Item
                   key={year}
-                  onClick={() => handleInputChange(year)}
+                  onChange={() => handleInputChange(year)}
                 >
                   {year}
                 </Dropdown.Item>

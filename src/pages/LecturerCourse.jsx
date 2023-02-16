@@ -108,7 +108,7 @@ export default function LecturerCourse(acyear) {
                 {
                   lecturer_id: text.lecturer_id,
                   sub_class_id: text.sub_class_id,
-                  academic_year_id: Number(acyear.acyear),
+                  academic_year_id: 1,
                 },
               ],
             }

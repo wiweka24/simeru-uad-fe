@@ -15,6 +15,8 @@ export default function App() {
   // Get value from Child Components
   const [acadYear, setAcadYear] = useState("");
   const getAcadYear = (value) => {
+    console.log(value, "gotacadyear");
+
     setAcadYear(value);
   };
 
