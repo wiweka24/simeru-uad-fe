@@ -5,7 +5,8 @@ import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 
-export default function Schedule() {
+export default function Schedule({acyear}) {
+  const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
@@ -40,30 +41,20 @@ export default function Schedule() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room"
-        );
+        const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
-        const res1 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room_time_helper"
-        );
+        const res1 = await axiosInstance.get(`${URL}room_time_helper`);
         setNormalRoomTimeHelper(res1.data.data);
         // setRoomTimeHelper(assignRoom(res1.data.data));
 
-        const res2 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer_plot/1"
-        );
+        const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setSubClass(res2.data.data);
         // console.log(res2.data.data);
 
-        const res3 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room_time"
-        );
+        const res3 = await axiosInstance.get(`${URL}room_time`);
         setRoomTime(res3.data.data);
-        const res4 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/schedule/1"
-        );
+        const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
       } catch (err) {
         console.log(err);
