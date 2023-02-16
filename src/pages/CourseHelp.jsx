@@ -1,5 +1,4 @@
 import React from "react";
-import CheckboxHelper from "../components/CourseHelp/CheckboxesHelper";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../atoms/config";
 import { notifySucces, notifyError } from "../atoms/notification";
@@ -28,7 +27,7 @@ export default function CourseHelp({acyear}) {
         );
         setOffered(res1.data.data);
       } catch (err) {
-        // catch here
+        notifyError(err)
       }
     })();
   }, [update, acyear]);
@@ -74,7 +73,7 @@ export default function CourseHelp({acyear}) {
         setUpdate(`update${Math.random()}`);
         notifySucces(`Mata kuliah ${obj.name} berhasil dihapus`);
       } catch (err) {
-        notifyError(err.message);
+        notifyError(err);
       }
     } else {
       //add item to offered list
@@ -99,8 +98,7 @@ export default function CourseHelp({acyear}) {
         setUpdate(`update${Math.random()}`);
         notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
       } catch (err) {
-        notifyError(err.message);
-        console.log(err);
+        notifyError(err);
       }
     }
   }

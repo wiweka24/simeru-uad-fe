@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { axiosInstance } from "../../atoms/config";
+import { notifyError } from "../../atoms/notification";
 import TableHeader from "../InputData/TableHeader";
 import TablePagination from "../InputData/TablePagination";
 
@@ -19,9 +20,8 @@ export default function TableLecturerCredits(update) {
       try {
         const res = await axiosInstance.get(URL);
         setSubClass(res.data.data);
-        console.log(res.data.data);
       } catch (err) {
-        // catch here
+        notifyError(err)
       }
     })();
   }, [update, URL]);
@@ -33,6 +33,7 @@ export default function TableLecturerCredits(update) {
         onChange={setTerm}
         onClick={setPostPerPage}
         postsPerPage={postsPerPage}
+        jsonData={subClass}
       />
 
       {/* Table */}
