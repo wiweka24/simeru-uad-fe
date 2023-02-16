@@ -90,7 +90,8 @@ export default function InputData({
         // "dummy_data/matkul.json"
         setSubClass(res.data.data);
       } catch (err) {
-        notifyError(err.message);
+        console.log(err)
+        notifyError(err);
       }
     })();
   }, [update, URL]);
@@ -105,8 +106,7 @@ export default function InputData({
       setInput(defaultInput);
       rerender();
     } catch (err) {
-      console.log(err);
-      notifyError(err.message);
+      notifyError(err);
     }
   }
 
@@ -146,8 +146,7 @@ export default function InputData({
       setMode("input");
       rerender();
     } catch (err) {
-      console.log(err);
-      notifyError(err.message);
+      notifyError(err);
     }
   }
 
@@ -179,7 +178,7 @@ export default function InputData({
       notifySucces(`${obj.name} dihapus`);
       rerender();
     } catch (err) {
-      notifyError(err.message);
+      notifyError(err);
     }
   }
 

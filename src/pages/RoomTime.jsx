@@ -3,18 +3,19 @@ import { axiosInstance } from "../atoms/config";
 import { Dropdown } from "flowbite-react";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import Checkbox from "../components/RoomTime/Checkbox";
+import { notifyError } from "../atoms/notification";
 
 export default function RoomTime() {
   const [rooms, setRooms] = useState([]);
   const [roomtimes, setRoomtimes] = useState([]);
   const [currentRoomtimes, setCurrentRoomtimes] = useState([]);
+  const [roomList, setRoomList] = useState([]);
+  const [roomsLabel, setRoomsLabel] = useState([]);
+  const [update, setUpdate] = useState("");
   const [currentLabel, setCurrentLabel] = useState({
     name: "All",
     room_id: 0,
   });
-  const [roomList, setRoomList] = useState([]);
-  const [roomsLabel, setRoomsLabel] = useState([]);
-  const [update, setUpdate] = useState("");
 
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
@@ -32,9 +33,9 @@ export default function RoomTime() {
           "https://dev.bekisar.net/api/v1/room_time_helper"
         );
         setRoomtimes(res1.data.data);
-        // console.log(update);
+
       } catch (err) {
-        // catch here
+        notifyError(err)
       }
     })();
   }, [update]);

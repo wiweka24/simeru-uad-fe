@@ -35,8 +35,6 @@ export default function TablePagination({
     }
   }
 
-  // console.log("index awal: " + indexOfFirstSubClass + " index akhir: " + indexOfLastSubClass)
-
   return (
     <nav
       className="mx-8 flex mt-3 items-center justify-between"

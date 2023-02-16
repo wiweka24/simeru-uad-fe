@@ -4,10 +4,11 @@ import { axiosInstance } from "../atoms/config";
 import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
+import { Dropdown } from "flowbite-react";
 
 import Spinner from "../atoms/Spinner";
 
-export default function Schedule() {
+export default function Schedule({ acyear }) {
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
@@ -16,8 +17,50 @@ export default function Schedule() {
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [schedules, setSchedules] = useState([]);
-
   const [update, setUpdate] = useState("");
+  const [currentDays, setCurrentDays] = useState([]);
+  const [currentLabel, setCurrentLabel] = useState({
+    day: "All",
+    start: 1,
+    end: 24,
+  });
+  const dateList = [
+    {
+      day: "All",
+      start: 1,
+      end: 24,
+    },
+    {
+      day: "Senin",
+      start: 1,
+      end: 4,
+    },
+    {
+      day: "Selasa",
+      start: 5,
+      end: 8,
+    },
+    {
+      day: "Rabu",
+      start: 9,
+      end: 12,
+    },
+    {
+      day: "Kamis",
+      start: 13,
+      end: 16,
+    },
+    {
+      day: "Jumat",
+      start: 17,
+      end: 20,
+    },
+    {
+      day: "Sabtu",
+      start: 21,
+      end: 24,
+    },
+  ];
 
   const [loading, setLoading] = useState(true);
 
@@ -45,30 +88,21 @@ export default function Schedule() {
     (async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room"
-        );
+        const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
-        const res1 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room_time_helper"
-        );
+        const res1 = await axiosInstance.get(`${URL}room_time_helper`);
         setNormalRoomTimeHelper(res1.data.data);
         // setRoomTimeHelper(assignRoom(res1.data.data));
 
-        const res2 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer_plot/1"
-        );
+        const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setSubClass(res2.data.data);
         // console.log(res2.data.data);
 
-        const res3 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room_time"
-        );
+        const res3 = await axiosInstance.get(`${URL}room_time`);
         setRoomTime(res3.data.data);
-        const res4 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/schedule/1"
-        );
+
+        const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
 
         // setLoading(false);
@@ -79,7 +113,7 @@ export default function Schedule() {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [update]);
+  }, [update, acyear]);
 
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
@@ -92,16 +126,29 @@ export default function Schedule() {
       ),
     }));
 
-    setRoomTimeHelper(assignRoom(mergeData));
-  }, [normalRoomTimeHelper, roomTime]);
+    const splitData = mergeData.filter(
+      (item) =>
+        item.time_id >= currentLabel.start && item.time_id <= currentLabel.end
+    );
+
+    if (currentLabel.day === "All") {
+      setCurrentDays(days);
+    } else {
+      setCurrentDays([currentLabel.day]);
+    }
+
+    setRoomTimeHelper(
+      assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
+    );
+  }, [normalRoomTimeHelper, roomTime, currentLabel]);
 
   // Formating roomtimes data to manageable array
-  function assignRoom(roomdata) {
+  function assignRoom(roomdata, start, end) {
     let finalArrRooms = [];
     // todo : make i to min value of room_id, and i to length + max value
     // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
     // For dividing data to 6 days
-    for (let i = 0; i < 24; i = i + 4) {
+    for (let i = start; i < end; i = i + 4) {
       let arrDays = roomdata.filter(
         (item) => item.time_id > i && item.time_id <= i + 4
       );
@@ -124,6 +171,18 @@ export default function Schedule() {
     );
   }, [subClass, searchQuery]);
 
+  // useEffect(() => {
+  //   const lolo = [roomTimeHelper[0]];
+  //   console.log(
+  //     lolo.map((day) => (
+  //       day
+  //     ))
+  //   );
+  //   setCurrentRoomTimeHelper([roomTimeHelper[0]])
+  // }, [roomTimeHelper, currentLabel]);
+
+  console.log(currentDays);
+
   return (
     <div className="relative">
       <div className="h-10 border-b bg-white" />
@@ -132,13 +191,27 @@ export default function Schedule() {
           Jadwal Kuliah Terselenggara
         </p>
         {/* Dropdown & Search */}
-        <TableHeader />
+        <nav className="mx-8 flex mb-3 items-center justify-between">
+          <Dropdown
+            label={currentLabel.day}
+            color="dark"
+            outline="true"
+            className="bg-grey-light"
+            size="sm"
+          >
+            {dateList.map((date) => (
+              <Dropdown.Item onClick={() => setCurrentLabel(date)}>
+                {date.day}
+              </Dropdown.Item>
+            ))}
+          </Dropdown>
+        </nav>
 
         <Spinner isLoading={loading} />
 
         {/* Table */}
         <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
-          <thead className="text-gray-700/50 bg-gray-50 sticky top-0">
+          <thead className="text-gray-700/50 bg-gray-50 sticky top-0 z-50">
             <tr>
               <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
               <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
@@ -153,7 +226,7 @@ export default function Schedule() {
             {roomTimeHelper.map((day, index) => (
               <tr className="bg-white">
                 <td className="border w-20 pt-6 text-center align-top font-medium text-gray-900">
-                  {days[index]}
+                  {currentDays[index]}
                 </td>
 
                 <td className="border w-0 font-medium text-gray-900">
