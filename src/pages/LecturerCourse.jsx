@@ -11,7 +11,7 @@ export default function LecturerCourse(acyear) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [offeredSubClass, setOfferedSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
-  const [subClass, setSubClass] = useState([])
+  const [subClass, setSubClass] = useState([]);
   const [lecturerPlot, setLecturerPlot] = useState([]);
   const [dosen, setDosen] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,15 +22,17 @@ export default function LecturerCourse(acyear) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(`${URL}offered_classes/1`);
+        const res = await axiosInstance.get(
+          `${URL}offered_classes/${acyear.acyear}`
+        );
         setOfferedSubClass(res.data.data);
 
-        const res1 = await axiosInstance.get(`${URL}lecturer_plot/1`);
+        const res1 = await axiosInstance.get(
+          `${URL}lecturer_plot/${acyear.acyear}`
+        );
         setLecturerPlot(res1.data.data);
 
-        const res2 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer"
-        );
+        const res2 = await axiosInstance.get(`${URL}lecturer`);
         setDosen(res2.data.data);
       } catch (err) {
         // catch here
@@ -40,7 +42,9 @@ export default function LecturerCourse(acyear) {
 
   useEffect(() => {
     const mergeData = offeredSubClass.map((item) => {
-      const lecturer = lecturerPlot.find((item2) => item2.sub_class_id === item.sub_class_id);
+      const lecturer = lecturerPlot.find(
+        (item2) => item2.sub_class_id === item.sub_class_id
+      );
       return {
         ...item,
         lecturer_name: lecturer ? lecturer.lecturer_name : "Mohon Isi Dosen",
@@ -52,7 +56,7 @@ export default function LecturerCourse(acyear) {
   function Cell({ value }) {
     const [mode, setMode] = useState("read");
     const [text, setText] = useState(value);
-    
+
     if (mode === "edit") {
       const handleInputChange = (e, obj) => {
         setText({
@@ -65,18 +69,15 @@ export default function LecturerCourse(acyear) {
       const handleSaveClick = async () => {
         setMode("read");
         try {
-          await axiosInstance.put(
-            "https://dev.bekisar.net/api/v1/lecturer_plot",
-            {
-              data: [
-                {
-                  lecturer_id: text.lecturer_id,
-                  sub_class_id: text.sub_class_id,
-                  academic_year_id: 1,
-                },
-              ],
-            }
-          );
+          await axiosInstance.put(`${URL}lecturer_plot`, {
+            data: [
+              {
+                lecturer_id: text.lecturer_id,
+                sub_class_id: text.sub_class_id,
+                academic_year_id: acyear.acyear,
+              },
+            ],
+          });
 
           setUpdateChild(`update${Math.random()}`);
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
@@ -106,7 +107,7 @@ export default function LecturerCourse(acyear) {
             className=" text-sm -ml-2 border-2 rounded-lg w-60 bg-grey-light
               
              "
-            //value={text.lecturer_name}
+            value={text.lecturer_name}
             onChange={(e, label) => handleInputChange(e, label)}
           />
           <button
@@ -131,7 +132,7 @@ export default function LecturerCourse(acyear) {
       }
       return <div onClick={handleEditClick}>{text.lecturer_name}</div>;
     }
-  };
+  }
 
   return (
     <div className="grid grid-cols-6 m-10 gap-5">
