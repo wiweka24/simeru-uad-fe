@@ -134,6 +134,7 @@ export default function LecturerCourse({ acyear }) {
               onChange={setTerm}
               onClick={setPostPerPage}
               postsPerPage={postsPerPage}
+              jsonData={subClass}
             />
 
             {/* Table */}
