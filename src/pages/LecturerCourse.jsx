@@ -10,7 +10,7 @@ import { notifyError, notifySucces } from "../atoms/notification";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-export default function LecturerCourse(acyear) {
+export default function LecturerCourse({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [offeredSubClass, setOfferedSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
@@ -25,10 +25,10 @@ export default function LecturerCourse(acyear) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(`${URL}offered_classes/1`);
+        const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOfferedSubClass(res.data.data);
 
-        const res1 = await axiosInstance.get(`${URL}lecturer_plot/1`);
+        const res1 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res1.data.data);
 
         const res2 = await axiosInstance.get(`${URL}lecturer`);
@@ -68,18 +68,15 @@ export default function LecturerCourse(acyear) {
       async function handleSaveClick() {
         setMode("read");
         try {
-          await axiosInstance.put(
-            "https://dev.bekisar.net/api/v1/lecturer_plot",
-            {
-              data: [
-                {
-                  lecturer_id: text.lecturer_id,
-                  sub_class_id: text.sub_class_id,
-                  academic_year_id: Number(acyear.acyear),
-                },
-              ],
-            }
-          );
+          await axiosInstance.put(`${URL}lecturer_plot`, {
+            data: [
+              {
+                lecturer_id: text.lecturer_id,
+                sub_class_id: text.sub_class_id,
+                academic_year_id: acyear,
+              },
+            ],
+          });
 
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
           setUpdateChild(`update${Math.random()}`);
@@ -104,6 +101,7 @@ export default function LecturerCourse(acyear) {
             )}
             type="text"
             className="text-sm border-2 rounded-lg w-60 bg-grey-light"
+            value={text.lecturer_name}
             onChange={(e, label) => handleInputChange(e, label)}
           />
           <Button text="ok" color="succes" onClick={handleSaveClick} />

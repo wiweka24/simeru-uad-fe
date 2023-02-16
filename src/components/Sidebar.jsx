@@ -9,26 +9,36 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
+import { useState } from "react";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
-  const academicYear = [{ year: "2022/2023", value: 1 }, { year: "2023/2024", value: 2 }, { year: "2024/2025", value: 3 }, { year: "2025/2026", value: 4 }, { year: "2026/2027", value: 5 }];
-  // const academicYear = [Array.from({ length: 10 }, (_, i) => i + 1)];
-  // const academicYear = [1, 2, 3, 4, 5];
+  const [activePage, setActivePage] = useState("/");
+  const academicYear = [
+    { year: "2022/2023", value: 1 },
+    { year: "2023/2024", value: 2 },
+    { year: "2024/2025", value: 3 },
+    { year: "2025/2026", value: 4 },
+    { year: "2026/2027", value: 5 },
+  ];
 
   function SidebarTitle({ text }) {
     return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
 
-  function SidebarLink({ Icon, text, active, linkto }) {
+  function SidebarLink({ Icon, text, linkto }) {
     return (
       <Link
         to={linkto}
         className={`text-grey flex items-center justify-start text-md space-x-3 hoverAnimation ${
-          active && "font-bold"
+          activePage === linkto ? "font-semibold bg-gray-100" : "font-normal"
         }`}
-        onClick={() => active}
+        onClick={() => setActivePage(linkto)}
       >
-        <Icon className="w-5 h-5 min-h-full min-w-fit" />
+        <Icon
+          className={`w-5 h-5 min-h-full stroke-current ${
+            activePage === linkto ? "stroke-2" : "stroke-1"
+          }`}
+        />
         <span className="inline truncate">{text}</span>
       </Link>
     );
@@ -93,7 +103,10 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         <div className="pl-2">
           <Dropdown label={acyear.year} color="dark" outline="false" size="md">
             {academicYear.map((acadyear) => (
-              <Dropdown.Item key={acadyear.value} onClick={() => getAcadYearValue(acadyear)}>
+              <Dropdown.Item
+                key={acadyear.value}
+                onClick={() => getAcadYearValue(acadyear)}
+              >
                 {acadyear.year}
               </Dropdown.Item>
             ))}

@@ -33,8 +33,11 @@ export default function App() {
               element={<LecturerCourse acyear={acadYear.value} />}
             />
             <Route path="/RuangWaktu" element={<RoomTime />} />
-            <Route path="/MKTerselenggara" element={<CourseHelp />} />
-            <Route path="/Jadwal" element={<Schedule />} />
+            <Route
+              path="/MKTerselenggara"
+              element={<CourseHelp acyear={acadYear.value} />}
+            />
+            <Route path="/Jadwal" element={<Schedule acyear={acadYear.value} />} />
           </Routes>
         </div>
       </Router>
