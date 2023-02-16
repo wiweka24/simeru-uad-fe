@@ -11,8 +11,9 @@ import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
+  const academicYear = [{ year: "2022/2023", value: 1 }, { year: "2023/2024", value: 2 }, { year: "2024/2025", value: 3 }, { year: "2025/2026", value: 4 }, { year: "2026/2027", value: 5 }];
   // const academicYear = [Array.from({ length: 10 }, (_, i) => i + 1)];
-  const academicYear = [1, 2, 3, 4, 5];
+  // const academicYear = [1, 2, 3, 4, 5];
 
   function SidebarTitle({ text }) {
     return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
@@ -34,66 +35,69 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   return (
-    <div className="col-span-1 border-r">
-      <div className="text-grey items-center px-2 mt-6 ml-3">
-        <div className="h-12 w-12 border rounded-full">
-          <img
-            src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
-            alt=""
-            className="p-1 rounded-full"
-          />
+    <div className="flex flex-col justify-between col-span-1 border-r">
+      <div>
+        <div className="text-grey items-center px-2 mt-6 ml-3">
+          <div className="h-12 w-12 border rounded-full">
+            <img
+              src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
+              alt=""
+              className="p-1 rounded-full"
+            />
+          </div>
+          <div className="py-4 leading-5">
+            <h4 className="">Admin</h4>
+            <p className="text-xl text-grey-dark font-bold">Scheduler</p>
+          </div>
         </div>
-        <div className="py-4 leading-5">
-          <h4 className="">Admin</h4>
-          <p className="text-xl text-grey-dark font-bold">Scheduler</p>
+        <div className="space-y-1 px-2">
+          <div>
+            <SidebarTitle text="Input Data" />
+            <SidebarLink
+              text="Matkul"
+              Icon={BookOpenIcon}
+              linkto="/MataKuliah"
+            />
+            <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen" />
+            <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan" />
+
+            <SidebarTitle text="Konfigurasi" />
+            <SidebarLink
+              text="Matkul Terselenggara"
+              Icon={ClipboardDocumentCheckIcon}
+              linkto="/MKTerselenggara"
+            />
+            <SidebarLink
+              text="Dosen Matkul"
+              Icon={IdentificationIcon}
+              linkto="/DosenMatkul"
+            />
+            <SidebarLink
+              text="Ruang Kelas dan Waktu"
+              Icon={ClockIcon}
+              linkto="/RuangWaktu"
+            />
+
+            <SidebarTitle text="Jadwal" />
+            <SidebarLink
+              text="Jadwal Matkul"
+              linkto="/Jadwal"
+              Icon={BookmarkIcon}
+            />
+          </div>
         </div>
       </div>
-      <div className="space-y-1 px-2">
-        <div>
-          <SidebarTitle text="Input Data" />
-          <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/MataKuliah" />
-          <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen" />
-          <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan" />
 
-          <SidebarTitle text="Konfigurasi" />
-          <SidebarLink
-            text="Matkul Terselenggara"
-            Icon={ClipboardDocumentCheckIcon}
-            linkto="/MKTerselenggara"
-          />
-          <SidebarLink
-            text="Dosen Matkul"
-            Icon={IdentificationIcon}
-            linkto="/DosenMatkul"
-          />
-          <SidebarLink
-            text="Ruang Kelas dan Waktu"
-            Icon={ClockIcon}
-            linkto="/RuangWaktu"
-          />
-
-          <SidebarTitle text="Jadwal" />
-          <SidebarLink
-            text="Jadwal Matkul"
-            linkto="/Jadwal"
-            Icon={BookmarkIcon}
-          />
-        </div>
-
-        <div className="pt-5">
-          <SidebarTitle text="Atur Tahun Ajaran" />
-          <div className="pl-2">
-            <Dropdown label={acyear} color="dark" outline="false" size="md">
-              {academicYear.map((year) => (
-                <Dropdown.Item
-                  key={year}
-                  onClick={() => getAcadYearValue(year)}
-                >
-                  {year}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-          </div>
+      <div className="px-2 mb-5">
+        <SidebarTitle text="Atur Tahun Ajaran" />
+        <div className="pl-2">
+          <Dropdown label={acyear.year} color="dark" outline="false" size="md">
+            {academicYear.map((acadyear) => (
+              <Dropdown.Item key={acadyear.value} onClick={() => getAcadYearValue(acadyear)}>
+                {acadyear.year}
+              </Dropdown.Item>
+            ))}
+          </Dropdown>
         </div>
       </div>
     </div>
