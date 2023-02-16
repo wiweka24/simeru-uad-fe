@@ -5,6 +5,8 @@ import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 
+import Spinner from "../atoms/Spinner";
+
 export default function Schedule() {
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
@@ -16,6 +18,8 @@ export default function Schedule() {
   const [schedules, setSchedules] = useState([]);
 
   const [update, setUpdate] = useState("");
+
+  const [loading, setLoading] = useState(true);
 
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
@@ -40,6 +44,7 @@ export default function Schedule() {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/room"
         );
@@ -65,10 +70,15 @@ export default function Schedule() {
           "https://dev.bekisar.net/api/v1/schedule/1"
         );
         setSchedules(res4.data.data);
+
+        // setLoading(false);
       } catch (err) {
         console.log(err);
       }
     })();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [update]);
 
   useEffect(() => {
@@ -124,6 +134,8 @@ export default function Schedule() {
         {/* Dropdown & Search */}
         <TableHeader />
 
+        <Spinner isLoading={loading} />
+
         {/* Table */}
         <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
           <thead className="text-gray-700/50 bg-gray-50 sticky top-0">
@@ -169,7 +181,7 @@ export default function Schedule() {
                                 item.academic_year_id ===
                                   session.academic_year_id
                             )}
-                            onChange={rerender} 
+                            onChange={rerender}
                           />
                         ) : (
                           <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
