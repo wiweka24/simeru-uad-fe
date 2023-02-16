@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-
+import Login from "./pages/Login";
 import Sidebar from "./components/Sidebar";
 import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
@@ -25,6 +25,7 @@ export default function App() {
         <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
           <ToastContainer />
           <Routes>
+            <Route path="/Login" element={<Login />}></Route>
             <Route path="/MataKuliah" element={<Subclass />} />
             <Route path="/Dosen" element={<Lecturer />} />
             <Route path="/Ruangan" element={<Room />} />
@@ -37,7 +38,10 @@ export default function App() {
               path="/MKTerselenggara"
               element={<CourseHelp acyear={acadYear.value} />}
             />
-            <Route path="/Jadwal" element={<Schedule acyear={acadYear.value} />} />
+            <Route
+              path="/Jadwal"
+              element={<Schedule acyear={acadYear.value} />}
+            />
           </Routes>
         </div>
       </Router>
