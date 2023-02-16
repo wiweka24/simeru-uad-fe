@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { notifyError } from "../../atoms/notification";
+import Spinner from "../../atoms/Spinner";
 
 export default function ScheduleCheckbox({
   time,
@@ -29,19 +30,21 @@ export default function ScheduleCheckbox({
     "16:00 - 18:00",
   ];
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     setSubClass(occupiedSchedule);
 
     occupiedSchedule
-      ? setCursorMode("cursor-not-allowed")
+      ? setCursorMode("pointer-events-none cursor-not-allowed ")
       : setCursorMode("cursor-pointer");
   }, [occupiedSchedule]);
 
   // Add Data
   async function postData(obj) {
       try {
-        // console.log(obj);
-        await axiosInstance.post(
+        console.log(obj);
+        const res = await axiosInstance.post(
           "https://dev.bekisar.net/api/v1/schedule",
           {
             data: [
@@ -54,6 +57,7 @@ export default function ScheduleCheckbox({
           }
         );
         setModalShow(false);
+        setLoading(false);
         onChange();
       } catch (err) {
         notifyError(err)
@@ -79,6 +83,7 @@ export default function ScheduleCheckbox({
           }
         );
         // setModalShow(false);
+        setLoading(false);
         onChange();
       } catch (err) {
         notifyError(err)
@@ -125,6 +130,8 @@ export default function ScheduleCheckbox({
 
         <Modal.Body className=" ">
           <div className="mb-4">
+            {/* Loading Screen */}
+            <Spinner isLoading={loading} />
             <b>
               <h3>Mata Kuliah</h3>
             </b>
@@ -138,7 +145,10 @@ export default function ScheduleCheckbox({
                 <Button
                   text="❌"
                   color="danger"
-                  onClick={() => deleteBtAction(Object.assign(subClass, time))}
+                  onClick={() => {
+                    setLoading(true);
+                    deleteBtAction(Object.assign(subClass, time));
+                  }}
                 />
               </div>
             ) : (
@@ -186,7 +196,10 @@ export default function ScheduleCheckbox({
           <Button
             text="Tambah"
             color="succes"
-            onClick={() => postData(Object.assign(subClass, time))}
+            onClick={() => {
+              setLoading(true);
+              postData(Object.assign(subClass, time));
+            }}
           />
           <Button
             text="Tutup"
