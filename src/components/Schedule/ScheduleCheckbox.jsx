@@ -7,6 +7,7 @@ import {
   PlusCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import { notifyError } from "../../atoms/notification";
 
 export default function ScheduleCheckbox({
   time,
@@ -17,7 +18,6 @@ export default function ScheduleCheckbox({
   onChange,
 }) {
   const [modalShow, setModalShow] = useState(false);
-  // const [searchQuery, setSearchQuery] = useState("");
   const [subClass, setSubClass] = useState();
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
 
@@ -29,8 +29,6 @@ export default function ScheduleCheckbox({
     "16:00 - 18:00",
   ];
 
-  // console.log(subClass);
-
   useEffect(() => {
     setSubClass(occupiedSchedule);
 
@@ -40,11 +38,10 @@ export default function ScheduleCheckbox({
   }, [occupiedSchedule]);
 
   // Add Data
-  const postData = (obj) => {
-    (async () => {
+  async function postData(obj) {
       try {
-        console.log(obj);
-        const res = await axiosInstance.post(
+        // console.log(obj);
+        await axiosInstance.post(
           "https://dev.bekisar.net/api/v1/schedule",
           {
             data: [
@@ -56,41 +53,39 @@ export default function ScheduleCheckbox({
             ],
           }
         );
-        // console.log(obj);
         setModalShow(false);
         onChange();
       } catch (err) {
-        console.log(err);
+        notifyError(err)
       }
-    })();
   };
 
   // Delete data
-  const deleteBtAction = (obj) => {
-    occupiedSchedule
-      ? (async () => {
-          try {
-            const res = await axiosInstance.delete(
-              "https://dev.bekisar.net/api/v1/schedule",
-              {
-                data: {
-                  data: [
-                    {
-                      lecturer_plot_id: Number(obj.lecturer_plot_id),
-                      room_time_id: obj.room_time_id,
-                      academic_year_id: Number(obj.academic_year_id),
-                    },
-                  ],
+  async function deleteBtAction(obj) {
+    if (occupiedSchedule) {
+      try {
+        await axiosInstance.delete(
+          "https://dev.bekisar.net/api/v1/schedule",
+          {
+            data: {
+              data: [
+                {
+                  lecturer_plot_id: Number(obj.lecturer_plot_id),
+                  room_time_id: obj.room_time_id,
+                  academic_year_id: Number(obj.academic_year_id),
                 },
-              }
-            );
-            // setModalShow(false);
-            onChange();
-          } catch (err) {
-            console.log(err);
+              ],
+            },
           }
-        })()
-      : setSubClass();
+        );
+        // setModalShow(false);
+        onChange();
+      } catch (err) {
+        notifyError(err)
+      }
+    } else {
+      setSubClass();
+    }
   };
 
   return (

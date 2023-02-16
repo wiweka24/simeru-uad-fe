@@ -106,7 +106,6 @@ export default function InputData({
       setInput(defaultInput);
       rerender();
     } catch (err) {
-      console.log(err);
       notifyError(err);
     }
   }
