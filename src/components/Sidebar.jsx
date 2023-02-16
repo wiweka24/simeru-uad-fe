@@ -9,12 +9,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
-import { useState } from "react";
 
-export default function Sidebar({ props }) {
+export default function Sidebar({ getAcadYearValue, acyear }) {
   // const academicYear = [Array.from({ length: 10 }, (_, i) => i + 1)];
   const academicYear = [1, 2, 3, 4, 5];
-  const [selectYear, setSelectYear] = useState(1);
+
   function SidebarTitle({ text }) {
     return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
@@ -32,14 +31,6 @@ export default function Sidebar({ props }) {
         <span className="inline truncate">{text}</span>
       </Link>
     );
-  }
-
-  //Handle and send to parent components
-  function handleInputChange(value) {
-    setSelectYear(value);
-    props.getAcadYearValue(value);
-    // console.log(value);
-    //console.log(obj);
   }
 
   return (
@@ -92,11 +83,11 @@ export default function Sidebar({ props }) {
         <div className="pt-5">
           <SidebarTitle text="Atur Tahun Ajaran" />
           <div className="pl-2">
-            <Dropdown label={selectYear} color="dark" outline="false" size="md">
+            <Dropdown label={acyear} color="dark" outline="false" size="md">
               {academicYear.map((year) => (
                 <Dropdown.Item
                   key={year}
-                  onChange={() => handleInputChange(year)}
+                  onClick={() => getAcadYearValue(year)}
                 >
                   {year}
                 </Dropdown.Item>
