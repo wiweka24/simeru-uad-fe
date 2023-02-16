@@ -1,35 +1,37 @@
-import { TableContext } from "flowbite-react/lib/esm/components/Table/TableContext";
 import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
 import TableHeader from "../components/InputData/TableHeader";
+import { useState, useEffect } from "react";
 import TablePagination from "../components/InputData/TablePagination";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { toast } from "react-toastify";
-import React from "react";
-import { useState, useEffect } from "react";
 import { axiosInstance } from "../atoms/config";
-import { Dropdown } from "flowbite-react";
-import {
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+import { notifyError, notifySucces } from "../atoms/notification";
 
 export default function LecturerCourse(acyear) {
-  const URL = `${process.env.REACT_APP_BASE_URL}lecturer_plot/1`;
-  const [subClass, setSubClass] = useState([]);
+  const URL = process.env.REACT_APP_BASE_URL;
+  const [offeredSubClass, setOfferedSubClass] = useState([]);
+  const [currentSubClass, setCurrentSubClass] = useState([]);
+  const [subClass, setSubClass] = useState([])
+  const [lecturerPlot, setLecturerPlot] = useState([]);
   const [dosen, setDosen] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const [term, setTerm] = useState("");
-  const [currentSubClass, setCurrentSubClass] = useState([]);
   const [updateChild, setUpdateChild] = useState();
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(URL);
-        setSubClass(res.data.data);
+        const res = await axiosInstance.get(`${URL}offered_classes/1`);
+        setOfferedSubClass(res.data.data);
+
+        const res1 = await axiosInstance.get(`${URL}lecturer_plot/1`);
+        setLecturerPlot(res1.data.data);
+
+        const res2 = await axiosInstance.get(
+          "https://dev.bekisar.net/api/v1/lecturer"
+        );
+        setDosen(res2.data.data);
       } catch (err) {
         // catch here
       }
@@ -37,65 +39,27 @@ export default function LecturerCourse(acyear) {
   }, [updateChild, URL]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/lecturer"
-        );
-        setDosen(res.data.data);
-      } catch (err) {
-        // catch here
-      }
-    })();
-  }, []);
-
-  function notifyError(message) {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
+    const mergeData = offeredSubClass.map((item) => {
+      const lecturer = lecturerPlot.find((item2) => item2.sub_class_id === item.sub_class_id);
+      return {
+        ...item,
+        lecturer_name: lecturer ? lecturer.lecturer_name : "Mohon Isi Dosen",
+      };
     });
-  }
+    setSubClass(mergeData);
+  }, [offeredSubClass, lecturerPlot]);
 
-  function notifySucces(message) {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  }
-
-  const Cell = ({ value }) => {
+  function Cell({ value }) {
     const [mode, setMode] = useState("read");
     const [text, setText] = useState(value);
-
-    // useEffect(() => {
-    // 	setText(value);
-    // }, [value]); // <--- when value is changed text state is changed too
-
-    if (text.lecturer_name === "") {
-      setText({ ...text, lecturer_name: "Mohon Isi Dosen" });
-    }
-
+    
     if (mode === "edit") {
       const handleInputChange = (e, obj) => {
         setText({
           ...text,
-          lecturer_name: obj.label,
-          lecturer_id: obj.id,
+          lecturer_name: obj.name,
+          lecturer_id: obj.lecturer_id,
         });
-        console.log(obj);
-        //console.log(obj);
       };
 
       const handleSaveClick = async () => {
@@ -116,10 +80,9 @@ export default function LecturerCourse(acyear) {
 
           setUpdateChild(`update${Math.random()}`);
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
-          console.log(acyear, "input acad");
         } catch (err) {
-          console.log(err);
           notifyError(err.message);
+          setUpdateChild(`update${Math.random()}`);
         }
         console.log(text);
       };
@@ -129,11 +92,12 @@ export default function LecturerCourse(acyear) {
           <Autocomplete
             disablePortal
             id="combo-box-demo"
-            options={dosen.map((option) => ({
-              id: option.lecturer_id,
-              label: option.name,
-            }))}
-            //getOptionLabel={(option) => option.name || text.lecturer_name}
+            options={dosen}
+            //   .map((option) => ({
+            //   id: option.lecturer_id,
+            //   label: option.name || text.lecturer_name,
+            // }))}
+            getOptionLabel={(option) => option.name || text.lecturer_name}
             sx={{ width: 300 }}
             renderInput={(params) => (
               <TextField {...params} variant="standard" size="small" />
@@ -143,7 +107,7 @@ export default function LecturerCourse(acyear) {
               
              "
             //value={text.lecturer_name}
-            onChange={(e, value) => handleInputChange(e, value)}
+            onChange={(e, label) => handleInputChange(e, label)}
           />
           <button
             onClick={handleSaveClick}
@@ -167,7 +131,6 @@ export default function LecturerCourse(acyear) {
       }
       return <div onClick={handleEditClick}>{text.lecturer_name}</div>;
     }
-    return null;
   };
 
   return (
@@ -211,9 +174,7 @@ export default function LecturerCourse(acyear) {
                   >
                     {subcls.sub_class_id}
                   </th>
-                  <td className="px-6 py-4 cursor-default">
-                    {subcls.sub_classes_name}
-                  </td>
+                  <td className="px-6 py-4 cursor-default">{subcls.name}</td>
                   <td className="px-6 py-4 cursor-default">
                     {subcls.semester}
                   </td>
@@ -234,7 +195,7 @@ export default function LecturerCourse(acyear) {
             currentPage={currentPage}
             postsPerPage={postsPerPage}
             term={term}
-            columnName="sub_classes_name"
+            columnName="name"
           />
         </div>
 

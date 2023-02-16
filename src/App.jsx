@@ -12,18 +12,14 @@ import Schedule from "./pages/Schedule";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
 
 export default function App() {
-  // Get value from Child Components
-  const [acadYear, setAcadYear] = useState("");
-  const getAcadYear = (value) => {
-    setAcadYear(value);
-  };
+  const [acadYear, setAcadYear] = useState(1);
 
   //App
   return (
     <div className="grid grid-cols-7 overflow-hidden h-screen">
       <Router>
         {/* Sidebar */}
-        <Sidebar getAcadYearValue={getAcadYear} />
+        <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear}/>
 
         {/* Pages */}
         <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
