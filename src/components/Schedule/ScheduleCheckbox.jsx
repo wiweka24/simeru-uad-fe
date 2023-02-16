@@ -13,7 +13,8 @@ export default function ScheduleCheckbox({
   room,
   availableClass,
   setSearchQuery,
-  availableSchedule,
+  occupiedSchedule,
+  onChange,
 }) {
   const [modalShow, setModalShow] = useState(false);
   // const [searchQuery, setSearchQuery] = useState("");
@@ -31,13 +32,14 @@ export default function ScheduleCheckbox({
   // console.log(subClass);
 
   useEffect(() => {
-    setSubClass(availableSchedule);
+    setSubClass(occupiedSchedule);
 
-    availableSchedule
+    occupiedSchedule
       ? setCursorMode("cursor-not-allowed")
       : setCursorMode("cursor-pointer");
-  }, [availableSchedule]);
+  }, [occupiedSchedule]);
 
+  // Add Data
   const postData = (obj) => {
     (async () => {
       try {
@@ -56,10 +58,39 @@ export default function ScheduleCheckbox({
         );
         // console.log(obj);
         setModalShow(false);
+        onChange();
       } catch (err) {
         console.log(err);
       }
     })();
+  };
+
+  // Delete data
+  const deleteBtAction = (obj) => {
+    occupiedSchedule
+      ? (async () => {
+          try {
+            const res = await axiosInstance.delete(
+              "https://dev.bekisar.net/api/v1/schedule",
+              {
+                data: {
+                  data: [
+                    {
+                      lecturer_plot_id: Number(obj.lecturer_plot_id),
+                      room_time_id: obj.room_time_id,
+                      academic_year_id: Number(obj.academic_year_id),
+                    },
+                  ],
+                },
+              }
+            );
+            // setModalShow(false);
+            onChange();
+          } catch (err) {
+            console.log(err);
+          }
+        })()
+      : setSubClass();
   };
 
   return (
@@ -67,14 +98,14 @@ export default function ScheduleCheckbox({
       <label className="relative w-full border-b border-collapse h-40 cursor-pointer bg-white">
         <input className="sr-only" onClick={() => setModalShow(true)} />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x peer-focus:ring-4 peer-focus:ring-grey-dark  peer-checked:after:border-white after:content-[''] after:bg-white after:border-gray-300 peer-checked:bg-grey-dark">
-          {availableSchedule ? (
+          {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
               <b>
-                <p className="mb-2">{availableSchedule.sub_class_name}</p>
+                <p className="mb-2">{occupiedSchedule.sub_class_name}</p>
               </b>
-              <p className="mb-2">{availableSchedule.lecturer_name}</p>
+              <p className="mb-2">{occupiedSchedule.lecturer_name}</p>
               <p className="mb-2">
-                Semester {availableSchedule.sub_class_credit}
+                Semester {occupiedSchedule.sub_class_credit}
               </p>
             </div>
           ) : (
@@ -86,7 +117,10 @@ export default function ScheduleCheckbox({
       <Modal
         className="h-96"
         show={modalShow}
-        onClose={() => setModalShow(false)}
+        onClose={() => {
+          occupiedSchedule ? setSubClass(occupiedSchedule) : setSubClass();
+          setModalShow(false);
+        }}
       >
         <Modal.Header>
           {days[Math.ceil(time.time_id / 4) - 1]},{" "}
@@ -109,7 +143,7 @@ export default function ScheduleCheckbox({
                 <Button
                   text="❌"
                   color="danger"
-                  onClick={() => setSubClass([])}
+                  onClick={() => deleteBtAction(Object.assign(subClass, time))}
                 />
               </div>
             ) : (
