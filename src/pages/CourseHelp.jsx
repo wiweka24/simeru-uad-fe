@@ -5,7 +5,9 @@ import { notifySucces, notifyError } from "../atoms/notification";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 
-export default function CourseHelp({acyear}) {
+import Spinner from "../atoms/Spinner";
+
+export default function CourseHelp({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [term, setTerm] = useState("");
   const [update, setUpdate] = useState("");
@@ -16,20 +18,24 @@ export default function CourseHelp({acyear}) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(`${URL}subclass`);
         setSubClass(res.data.data);
 
-        const res1 = await axiosInstance.get(
-          `${URL}offered_classes/${acyear}`
-        );
+        const res1 = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOffered(res1.data.data);
       } catch (err) {
-        notifyError(err)
+        notifyError(err);
       }
     })();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [update, acyear]);
 
   useEffect(() => {
@@ -57,6 +63,7 @@ export default function CourseHelp({acyear}) {
       // const lastElement = ArrRemovedItem.slice(-1)[0];
       // setOffered(ArrRemovedItem);
       try {
+        setLoading(true);
         await axiosInstance.delete(
           "https://dev.bekisar.net/api/v1/offered_classes",
           {
@@ -75,6 +82,9 @@ export default function CourseHelp({acyear}) {
       } catch (err) {
         notifyError(err);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     } else {
       //add item to offered list
       // const classIndex = subClass.findIndex(
@@ -84,6 +94,7 @@ export default function CourseHelp({acyear}) {
       // // const lastElement = ArrAddedItem.slice(-1)[0];
       // setOffered(ArrAddedItem);
       try {
+        setLoading(true);
         await axiosInstance.post(
           "https://dev.bekisar.net/api/v1/offered_classes",
           {
@@ -100,11 +111,15 @@ export default function CourseHelp({acyear}) {
       } catch (err) {
         notifyError(err);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   }
 
   return (
     <div className="relative">
+      <Spinner isLoading={loading} />
       <div className="h-10 border-b bg-white"></div>
       <div className="border-2 rounded-lg bg-white m-10 gap-5">
         <div className="relative py-7 overflow-x-auto">
