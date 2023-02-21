@@ -6,6 +6,7 @@ import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import { Dropdown } from "flowbite-react";
 
 import Spinner from "../atoms/Spinner";
+import Error from "./Error";
 
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
