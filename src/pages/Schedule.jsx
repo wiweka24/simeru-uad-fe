@@ -8,6 +8,7 @@ import { Dropdown } from "flowbite-react";
 import Spinner from "../atoms/Spinner";
 
 export default function Schedule({ acyear }) {
+  const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
