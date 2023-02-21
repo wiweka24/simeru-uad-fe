@@ -5,6 +5,8 @@ import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import Checkbox from "../components/RoomTime/Checkbox";
 import { notifyError } from "../atoms/notification";
 
+import Spinner from "../atoms/Spinner";
+
 export default function RoomTime() {
   const [rooms, setRooms] = useState([]);
   const [roomtimes, setRoomtimes] = useState([]);
@@ -16,6 +18,7 @@ export default function RoomTime() {
     name: "All",
     room_id: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
@@ -24,6 +27,7 @@ export default function RoomTime() {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(
           "https://dev.bekisar.net/api/v1/room"
         );
@@ -33,9 +37,11 @@ export default function RoomTime() {
           "https://dev.bekisar.net/api/v1/room_time_helper"
         );
         setRoomtimes(res1.data.data);
-
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       } catch (err) {
-        notifyError(err)
+        notifyError(err);
       }
     })();
   }, [update]);
@@ -101,6 +107,7 @@ export default function RoomTime() {
 
   return (
     <div className="relative">
+      <Spinner isLoading={loading} />
       <div className="h-10 border-b bg-white" />
       <div className=" py-7 m-10 border-2 rounded-lg bg-white">
         <p className="px-7 mb-5 text-xl font-bold">Ruang Kelas Tersedia</p>
@@ -155,7 +162,11 @@ export default function RoomTime() {
                   <td className="px-6 py-5 ">
                     <div className="mt-1 flex items-start flex-col space-y-11">
                       {session.map((time) => (
-                        <Checkbox value={time} onChange={rerender} />
+                        <Checkbox
+                          value={time}
+                          onChange={rerender}
+                          setLoading={setLoading}
+                        />
                       ))}
                     </div>
                   </td>

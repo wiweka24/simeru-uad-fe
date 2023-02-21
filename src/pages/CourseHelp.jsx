@@ -6,6 +6,8 @@ import { notifySucces, notifyError } from "../../src/atoms/notification";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 
+import Spinner from "../atoms/Spinner";
+
 export default function CourseHelp({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [term, setTerm] = useState("");
@@ -20,9 +22,12 @@ export default function CourseHelp({ acyear }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(`${URL}subclass`);
         setSubClass(res.data.data);
 
@@ -32,10 +37,13 @@ export default function CourseHelp({ acyear }) {
         const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res2.data.data);
       } catch (err) {
-        // catch here
+        notifyError(err);
       }
     })();
-  }, [update, URL]);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, [update, acyear]);
 
   useEffect(() => {
     const mergeData = offered.map((item) => {
@@ -90,6 +98,7 @@ export default function CourseHelp({ acyear }) {
       // const lastElement = ArrRemovedItem.slice(-1)[0];
       // setOffered(ArrRemovedItem);
       try {
+        setLoading(true);
         await axiosInstance
           .delete(`${URL}lecturer_plot`, {
             data: {
@@ -119,6 +128,9 @@ export default function CourseHelp({ acyear }) {
       } catch (err) {
         notifyError(err.message);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     } else {
       //add item to offered list
       // const classIndex = subClass.findIndex(
@@ -128,6 +140,7 @@ export default function CourseHelp({ acyear }) {
       // // const lastElement = ArrAddedItem.slice(-1)[0];
       // setOffered(ArrAddedItem);
       try {
+        setLoading(true);
         await axiosInstance.post(`${URL}offered_classes`, {
           data: [
             {
@@ -142,19 +155,28 @@ export default function CourseHelp({ acyear }) {
         notifyError(err.message);
         console.log(err);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   }
 
   return (
-    <div className='relative py-7 overflow-x-auto'>
-      {/* Search */}
-      <p className='px-7 mb-5 text-xl font-bold'>Mata Kuliah Terselenggara</p>
-      <TableHeader
-        onChange={setTerm}
-        onClick={setPostPerPage}
-        postsPerPage={postsPerPage}
-        jsonData={currentSubClass}
-      />
+    <div className="relative">
+      <Spinner isLoading={loading} />
+      <div className="h-10 border-b bg-white"></div>
+      <div className="border-2 rounded-lg bg-white m-10 gap-5">
+        <div className="relative py-7 overflow-x-auto">
+          {/* Search */}
+          <p className="px-7 mb-5 text-xl font-bold">
+            Mata Kuliah Terselenggara
+          </p>
+          <TableHeader
+            onChange={setTerm}
+            onClick={setPostPerPage}
+            postsPerPage={postsPerPage}
+            jsonData={currentSubClass}
+          />
 
       {/*Table*/}
       <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
