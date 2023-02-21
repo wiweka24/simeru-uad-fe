@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 import { axiosInstance } from "../atoms/config";
-import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import { Dropdown } from "flowbite-react";
