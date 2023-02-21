@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { notifyError } from "../atoms/notification";
 import { func } from "prop-types";
 
-export default function Login({setToken}) {
+export default function Login({ setToken }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const [loginInput, setLoginInput] = useState({
@@ -36,8 +36,8 @@ export default function Login({setToken}) {
             localStorage.setItem("auth_token", res.data.access_token);
             new Swal("Login Succes", res.message);
             console.log(res.data.message);
-            navigate("/MataKuliah");
-            // window.location.href = "http://localhost:3000/MataKuliah";
+            // navigate("/MataKuliah");
+            window.location.href = "http://localhost:3000/MataKuliah";
           }
         });
     } catch (err) {
