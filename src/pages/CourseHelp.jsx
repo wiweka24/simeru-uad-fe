@@ -90,33 +90,30 @@ export default function CourseHelp({ acyear }) {
       // const lastElement = ArrRemovedItem.slice(-1)[0];
       // setOffered(ArrRemovedItem);
       try {
-        await axiosInstance.delete(
-          "https://dev.bekisar.net/api/v1/offered_classes",
-          {
-            data: {
-              data: [
-                {
-                  sub_class_id: obj.sub_class_id,
-                  academic_year_id: 1,
-                },
-              ],
-            },
-          }
-        );
-        await axiosInstance.delete(
-          "https://dev.bekisar.net/api/v1/lecturer_plot",
-          {
+        await axiosInstance
+          .delete(`${URL}lecturer_plot`, {
             data: {
               data: [
                 {
                   lecturer_id: obj.lecturer_id,
                   sub_class_id: obj.sub_class_id,
-                  academic_year_id: 1,
+                  academic_year_id: acyear,
                 },
               ],
             },
-          }
-        );
+          })
+          .then(
+            await axiosInstance.delete(`${URL}offered_classes`, {
+              data: {
+                data: [
+                  {
+                    sub_class_id: obj.sub_class_id,
+                    academic_year_id: acyear,
+                  },
+                ],
+              },
+            })
+          );
         setUpdate(`update${Math.random()}`);
         notifySucces(`Mata kuliah ${obj.name} berhasil dihapus`);
       } catch (err) {
@@ -131,17 +128,14 @@ export default function CourseHelp({ acyear }) {
       // // const lastElement = ArrAddedItem.slice(-1)[0];
       // setOffered(ArrAddedItem);
       try {
-        await axiosInstance.post(
-          "https://dev.bekisar.net/api/v1/offered_classes",
-          {
-            data: [
-              {
-                sub_class_id: obj.sub_class_id,
-                academic_year_id: 1,
-              },
-            ],
-          }
-        );
+        await axiosInstance.post(`${URL}offered_classes`, {
+          data: [
+            {
+              sub_class_id: obj.sub_class_id,
+              academic_year_id: 1,
+            },
+          ],
+        });
         setUpdate(`update${Math.random()}`);
         notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
       } catch (err) {
