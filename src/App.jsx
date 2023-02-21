@@ -3,13 +3,14 @@ import { useState } from "react";
 
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-
+import Login from "./pages/Login";
 import Sidebar from "./components/Sidebar";
 import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
 import CourseHelp from "./pages/CourseHelp";
 import Schedule from "./pages/Schedule";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
+import Spinner from "./atoms/Spinner";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({ year: "2022/2023", value: 1 });
@@ -24,7 +25,9 @@ export default function App() {
         {/* Pages */}
         <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
           <ToastContainer />
+
           <Routes>
+            <Route path="/Login" element={<Login />}></Route>
             <Route path="/MataKuliah" element={<Subclass />} />
             <Route path="/Dosen" element={<Lecturer />} />
             <Route path="/Ruangan" element={<Room />} />
