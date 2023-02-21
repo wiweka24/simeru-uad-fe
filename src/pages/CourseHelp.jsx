@@ -1,10 +1,10 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from "react";
-import { axiosInstance } from "../../atoms/config";
-import { notifySucces, notifyError } from "../../atoms/notification";
-import TableHeader from "../InputData/TableHeader";
-import TablePagination from "../InputData/TablePagination";
+import { axiosInstance } from "../../src/atoms/config";
+import { notifySucces, notifyError } from "../../src/atoms/notification";
+import TableHeader from "../components/InputData/TableHeader";
+import TablePagination from "../components/InputData/TablePagination";
 
 export default function CourseHelp({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -15,6 +15,7 @@ export default function CourseHelp({ acyear }) {
   const [subClass, setSubClass] = useState([]);
   const [lecturerPlot, setLecturerPlot] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
+  const [mergeSubClass, setMergeSubClass] = useState([]);
   const [offeredID, setOfferedID] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
@@ -51,6 +52,19 @@ export default function CourseHelp({ acyear }) {
   }, [offered, lecturerPlot]);
 
   useEffect(() => {
+    const mergeSubClass = subClass.map((item) => {
+      const lecturer = lecturerPlot.find(
+        (item2) => item2.sub_class_id === item.sub_class_id
+      );
+      return {
+        ...item,
+        lecturer_id: lecturer ? lecturer.lecturer_id : "default",
+      };
+    });
+    setMergeSubClass(mergeSubClass);
+  }, [subClass, lecturerPlot]);
+
+  useEffect(() => {
     setOfferedID(mergeOffered.map((item) => Number(item.sub_class_id)));
   }, [mergeOffered]);
 
@@ -67,6 +81,7 @@ export default function CourseHelp({ acyear }) {
 
   async function HandleCheck(obj) {
     if (offeredID.includes(obj.sub_class_id)) {
+      console.log(obj);
       //remove item from offered list
       // const classIndex = subClass.findIndex(
       //   (item) => item.sub_class_id === obj.sub_class_id
@@ -195,7 +210,7 @@ export default function CourseHelp({ acyear }) {
 
       {/* Pagination */}
       <TablePagination
-        subClass={subClass}
+        subClass={mergeSubClass}
         setCurrentSubClass={setCurrentSubClass}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
