@@ -10,6 +10,8 @@ import { notifyError, notifySucces } from "../atoms/notification";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
+import Spinner from "../atoms/Spinner";
+
 export default function LecturerCourse({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [offeredSubClass, setOfferedSubClass] = useState([]);
@@ -22,9 +24,12 @@ export default function LecturerCourse({ acyear }) {
   const [term, setTerm] = useState("");
   const [updateChild, setUpdateChild] = useState();
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOfferedSubClass(res.data.data);
 
@@ -37,6 +42,9 @@ export default function LecturerCourse({ acyear }) {
         notifyError(err);
       }
     })();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [updateChild, URL]);
 
   useEffect(() => {
@@ -125,6 +133,7 @@ export default function LecturerCourse({ acyear }) {
 
   return (
     <div className="relative">
+      <Spinner isLoading={loading} />
       <div className="h-10 border-b bg-white" />
       <div className="grid grid-cols-8 m-10 gap-5">
         <div className="border-2 rounded-lg bg-white col-span-5 py-7 h-max">
