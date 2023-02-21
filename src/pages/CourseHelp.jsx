@@ -162,13 +162,13 @@ export default function CourseHelp({ acyear }) {
   }
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Spinner isLoading={loading} />
-      <div className="h-10 border-b bg-white"></div>
-      <div className="border-2 rounded-lg bg-white m-10 gap-5">
-        <div className="relative py-7 overflow-x-auto">
+      <div className='h-10 border-b bg-white'></div>
+      <div className='border-2 rounded-lg bg-white m-10 gap-5'>
+        <div className='relative py-7 overflow-x-auto'>
           {/* Search */}
-          <p className="px-7 mb-5 text-xl font-bold">
+          <p className='px-7 mb-5 text-xl font-bold'>
             Mata Kuliah Terselenggara
           </p>
           <TableHeader
@@ -178,62 +178,64 @@ export default function CourseHelp({ acyear }) {
             jsonData={currentSubClass}
           />
 
-      {/*Table*/}
-      <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-        <thead className='border-y text-gray-700/50 bg-gray-50'>
-          <tr>
-            <th scope='col' className='pl-8 pr-4 py-3'>
-              ID
-            </th>
-            <th scope='col' className='pl-8 pr-4 py-3'>
-              Nama Mata Kuliah
-            </th>
-            <th scope='col' className='pl-8 pr-4'>
-              Semester
-            </th>
-            <th scope='col' className='pl-8 pr-4'>
-              SKS
-            </th>
-            <th scope='col' className='pl-8 pr-4'>
-              Terselenggara
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentSubClass.map((item) => (
-            <tr key={item.sub_class_id} className='bg-white border-b'>
-              <td
-                scope='row'
-                className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
-              >
-                {item.sub_class_id}
-              </td>
-              <td className='pl-8 pr-4'>{item.name}</td>
-              <td className='pl-8 pr-4'>{item.semester}</td>
-              <td className='pl-8 pr-4'>{item.credit}</td>
-              <td className='pl-8 pr-4 py-4 flex items-center'>
-                <input
-                  className='w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2'
-                  type='checkbox'
-                  checked={offeredID.includes(item.sub_class_id)}
-                  onChange={() => HandleCheck(item)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          {/*Table*/}
+          <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+            <thead className='border-y text-gray-700/50 bg-gray-50'>
+              <tr>
+                <th scope='col' className='pl-8 pr-4 py-3'>
+                  ID
+                </th>
+                <th scope='col' className='pl-8 pr-4 py-3'>
+                  Nama Mata Kuliah
+                </th>
+                <th scope='col' className='pl-8 pr-4'>
+                  Semester
+                </th>
+                <th scope='col' className='pl-8 pr-4'>
+                  SKS
+                </th>
+                <th scope='col' className='pl-8 pr-4'>
+                  Terselenggara
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentSubClass.map((item) => (
+                <tr key={item.sub_class_id} className='bg-white border-b'>
+                  <td
+                    scope='row'
+                    className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
+                  >
+                    {item.sub_class_id}
+                  </td>
+                  <td className='pl-8 pr-4'>{item.name}</td>
+                  <td className='pl-8 pr-4'>{item.semester}</td>
+                  <td className='pl-8 pr-4'>{item.credit}</td>
+                  <td className='pl-8 pr-4 py-4 flex items-center'>
+                    <input
+                      className='w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2'
+                      type='checkbox'
+                      checked={offeredID.includes(item.sub_class_id)}
+                      onChange={() => HandleCheck(item)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      {/* Pagination */}
-      <TablePagination
-        subClass={mergeSubClass}
-        setCurrentSubClass={setCurrentSubClass}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-        postsPerPage={postsPerPage}
-        term={term}
-        columnName='name'
-      />
+          {/* Pagination */}
+          <TablePagination
+            subClass={mergeSubClass}
+            setCurrentSubClass={setCurrentSubClass}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            postsPerPage={postsPerPage}
+            term={term}
+            columnName='name'
+          />
+        </div>
+      </div>
     </div>
   );
 }
