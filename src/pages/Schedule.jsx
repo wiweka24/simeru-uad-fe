@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 
 import { axiosInstance } from "../atoms/config";
-import TableHeader from "../components/InputData/TableHeader";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import { Dropdown } from "flowbite-react";
 
+import Spinner from "../atoms/Spinner";
+
 export default function Schedule({ acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
@@ -61,6 +61,8 @@ export default function Schedule({ acyear }) {
     },
   ];
 
+  const [loading, setLoading] = useState(true);
+
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
   };
@@ -84,6 +86,7 @@ export default function Schedule({ acyear }) {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
@@ -100,13 +103,16 @@ export default function Schedule({ acyear }) {
 
         const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
+
+        // setLoading(false);
       } catch (err) {
         console.log(err);
       }
     })();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [update, acyear]);
-
-  console.log(acyear)
 
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
@@ -199,6 +205,8 @@ export default function Schedule({ acyear }) {
             ))}
           </Dropdown>
         </nav>
+
+        <Spinner isLoading={loading} />
 
         {/* Table */}
         <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
