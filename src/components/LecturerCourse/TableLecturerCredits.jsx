@@ -1,5 +1,5 @@
-import React from "react";
 import { useState, useEffect } from "react";
+
 import { axiosInstance } from "../../atoms/config";
 import { notifyError } from "../../atoms/notification";
 import TableHeader from "../InputData/TableHeader";

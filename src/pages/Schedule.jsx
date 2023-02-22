@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
-import { axiosInstance } from "../atoms/config";
-import TableHeader from "../components/InputData/TableHeader";
-import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
-import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
-import { Dropdown } from "flowbite-react";
-
 import Spinner from "../atoms/Spinner";
+import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
+import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
+import { Dropdown } from "flowbite-react";
+import { axiosInstance } from "../atoms/config";
+
 
 export default function Schedule({ acyear }) {
+  const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
@@ -181,7 +181,7 @@ export default function Schedule({ acyear }) {
   //   setCurrentRoomTimeHelper([roomTimeHelper[0]])
   // }, [roomTimeHelper, currentLabel]);
 
-  console.log(currentDays);
+  // console.log(currentDays);
 
   return (
     <div className="relative">
@@ -211,7 +211,7 @@ export default function Schedule({ acyear }) {
 
         {/* Table */}
         <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
-          <thead className="text-gray-700/50 bg-gray-50 sticky top-0 z-50">
+          <thead className="text-gray-700/50 bg-gray-50 sticky top-0 z-40">
             <tr>
               <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
               <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>

@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 import { axiosInstance } from "../atoms/config";
-import { notifyError, notifySucces } from "../atoms/notification";
+import { notifyError } from "../atoms/notification";
 
 import Swal from "sweetalert2";
 
 export default function Login() {
   const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -22,7 +23,7 @@ export default function Login() {
   async function loginSubmit(e) {
     e.preventDefault();
     try {
-      axiosInstance
+      await axiosInstance
         .post(`${URL}login`, {
           email: loginInput.email,
           password: loginInput.password,
@@ -30,12 +31,20 @@ export default function Login() {
         .then((res) => {
           if (res.status === 200) {
             localStorage.setItem("auth_token", res.data.access_token);
-            notifySucces(res.message)
-            // new Swal("Login Succes", res.message);
-            // console.log(res.data.message);
-            // console.log(res.data.acces_token, "dapet token");
-            // navigate("/MataKuliah");
-            window.location.href = `${CLIENT_URL}MataKuliah`;
+            Swal.fire({
+              html: `<b>${res.data.message}</b> tunggu...`,
+              toast: true,
+              width: 300,
+              icon: "success",
+              iconColor: "#16a34a",
+              showConfirmButton: false,
+              timer: 1500,
+              showClass: {
+                popup: "",
+              },
+            }).then(() => {
+              window.location.href = `${CLIENT_URL}MataKuliah`;
+            });
           }
         });
     } catch (err) {
@@ -84,7 +93,7 @@ export default function Login() {
           <div className="align-center px-4 pb-5 pt-3">
             <button
               type="submit"
-              className="w-full bg-sky-600 py-2 rounded-md text-gray-200 font-semibold"
+              className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold hover:bg-sky-600 hover:text-grey-light ease duration-100"
             >
               Login
             </button>

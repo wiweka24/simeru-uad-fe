@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { Modal } from "flowbite-react";
 
-import { axiosInstance } from "../../atoms/config";
-import Button from "../Button";
 import {
   PlusCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { notifyError } from "../../atoms/notification";
+import { Modal } from "flowbite-react";
+
+import Button from "../Button";
 import Spinner from "../../atoms/Spinner";
+import { axiosInstance } from "../../atoms/config";
+import { notifyError, notifySucces } from "../../atoms/notification";
 
 export default function ScheduleCheckbox({
   time,
@@ -42,33 +43,34 @@ export default function ScheduleCheckbox({
 
   // Add Data
   async function postData(obj) {
-      try {
-        console.log(obj);
-        const res = await axiosInstance.post(
-          "https://dev.bekisar.net/api/v1/schedule",
-          {
-            data: [
-              {
-                lecturer_plot_id: Number(obj.lecturer_plot_id),
-                room_time_id: obj.room_time_id,
-                academic_year_id: Number(obj.academic_year_id),
-              },
-            ],
-          }
-        );
-        setModalShow(false);
-        setLoading(false);
-        onChange();
-      } catch (err) {
-        notifyError(err)
-      }
-  };
+    try {
+      console.log(obj);
+      const res = await axiosInstance.post(
+        "https://dev.bekisar.net/api/v1/schedule",
+        {
+          data: [
+            {
+              lecturer_plot_id: Number(obj.lecturer_plot_id),
+              room_time_id: obj.room_time_id,
+              academic_year_id: Number(obj.academic_year_id),
+            },
+          ],
+        }
+      );
+      setModalShow(false);
+      setLoading(false);
+      onChange();
+      notifySucces("Dosen Pengampu Berhasil Ditambahkan");
+    } catch (err) {
+      notifyError(err);
+    }
+  }
 
   // Delete data
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete(
+        const res = await axiosInstance.delete(
           "https://dev.bekisar.net/api/v1/schedule",
           {
             data: {
@@ -85,13 +87,14 @@ export default function ScheduleCheckbox({
         // setModalShow(false);
         setLoading(false);
         onChange();
+        notifySucces("Dosen Pengampu Berhasil Dihapus");
       } catch (err) {
-        notifyError(err)
+        notifyError(err);
       }
     } else {
       setSubClass();
     }
-  };
+  }
 
   return (
     <>

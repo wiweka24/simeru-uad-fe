@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 
-import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 import Button from "../Button";
+import Spinner from "../../atoms/Spinner";
 import TableHeader from "./TableHeader";
 import TablePagination from "./TablePagination";
-import { axiosInstance } from "../../atoms/config";
 import PreviewExcel from "./PreviewExcel";
+import { axiosInstance } from "../../atoms/config";
 import { notifyError, notifySucces } from "../../atoms/notification";
 
 export default function InputData({
@@ -30,6 +31,8 @@ export default function InputData({
   const [input, setInput] = useState(defaultInput);
   const [excelName, setExcelName] = useState("");
   const [excelFile, setExcelFile] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   function dataJson(data) {
     if (path === "subclass") {
@@ -86,28 +89,37 @@ export default function InputData({
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true);
         const res = await axiosInstance.get(URL);
         // "dummy_data/matkul.json"
         setSubClass(res.data.data);
       } catch (err) {
-        console.log(err)
+        console.log(err);
         notifyError(err);
       }
     })();
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }, [update, URL]);
 
   // post new data
   async function handlePost() {
     try {
+      setLoading(true);
       await axiosInstance.post(URL, {
         data: [dataJson(input)],
       });
+
       notifySucces(`${input.name} ditambahkan`);
       setInput(defaultInput);
       rerender();
     } catch (err) {
       notifyError(err);
     }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }
 
   // edit one custom data
@@ -140,8 +152,12 @@ export default function InputData({
 
   async function handlePatch() {
     try {
+      setLoading(true);
       console.log(edit);
       await axiosInstance.put(`${URL}/${edit[attribute]}`, dataJson(edit));
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
       notifySucces(`${edit.name} diubah`);
       setMode("input");
       rerender();
@@ -174,17 +190,22 @@ export default function InputData({
 
   async function handleDelete(obj) {
     try {
+      setLoading(true);
       await axiosInstance.delete(`${URL}/${obj[attribute]}`);
       notifySucces(`${obj.name} dihapus`);
       rerender();
     } catch (err) {
       notifyError(err);
     }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
   }
 
   return (
     <div className="relative">
-      <div className="h-10 border-b bg-white"/>
+      <Spinner isLoading={loading} />
+      <div className="h-10 border-b bg-white" />
       <div className="grid grid-cols-4 m-10 gap-5">
         {/* Input & Edit Field */}
         {mode === "input" ? (
