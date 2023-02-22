@@ -6,12 +6,19 @@ import {
   ClipboardDocumentCheckIcon,
   IdentificationIcon,
   BookmarkIcon,
+  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
 import { useState } from "react";
+import Button from "./Button";
+import Swal from "sweetalert2";
+import { axiosInstance } from "../atoms/config";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
+  const URL = process.env.REACT_APP_BASE_URL;
+  const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
+  const Navigate = useNavigate();
   const [activePage, setActivePage] = useState("/");
   const academicYear = [
     { year: "2022/2023", value: 1 },
@@ -43,6 +50,19 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
       </Link>
     );
   }
+
+  const logoutSubmit = (e) => {
+    e.preventDefault();
+
+    axiosInstance.post(`${URL}logout`).then((res) => {
+      if (res.status === 200) {
+        //localStorage.clear();
+        localStorage.removeItem("auth_token");
+        new Swal("Success", res.data.message, "success");
+        window.location.href = `${CLIENT_URL}Login`;
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col justify-between col-span-1 border-r">
@@ -98,7 +118,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         </div>
       </div>
 
-      <div className="px-2 mb-5">
+      <div className="-mt-72 px-2 mb-4">
         <SidebarTitle text="Atur Tahun Ajaran" />
         <div className="pl-2">
           <Dropdown label={acyear.year} color="dark" outline="false" size="md">
@@ -112,6 +132,18 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             ))}
           </Dropdown>
         </div>
+      </div>
+      <div className="px-4 mb-5">
+        <Button
+          text={
+            <div className="flex items-center">
+              <ArrowRightOnRectangleIcon className="h-5 mr-1" />
+              Logout
+            </div>
+          }
+          color="dark"
+          onClick={logoutSubmit}
+        />
       </div>
     </div>
   );
