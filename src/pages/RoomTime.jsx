@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { axiosInstance } from "../atoms/config";
+
 import { Dropdown } from "flowbite-react";
-import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
-import Checkbox from "../components/RoomTime/Checkbox";
-import { notifyError } from "../atoms/notification";
 
 import Spinner from "../atoms/Spinner";
+import Checkbox from "../components/RoomTime/Checkbox";
+import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
+import { notifyError } from "../atoms/notification";
+import { axiosInstance } from "../atoms/config";
+
 
 export default function RoomTime() {
   const [rooms, setRooms] = useState([]);

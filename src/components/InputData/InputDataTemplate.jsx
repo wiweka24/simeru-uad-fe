@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
 
-import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 import Button from "../Button";
+import Spinner from "../../atoms/Spinner";
 import TableHeader from "./TableHeader";
 import TablePagination from "./TablePagination";
-import { axiosInstance } from "../../atoms/config";
 import PreviewExcel from "./PreviewExcel";
+import { axiosInstance } from "../../atoms/config";
 import { notifyError, notifySucces } from "../../atoms/notification";
-
-import Spinner from "../../atoms/Spinner";
 
 export default function InputData({
   defaultInput,

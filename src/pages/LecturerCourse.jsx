@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 
-import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
-import TablePagination from "../components/InputData/TablePagination";
-import TableHeader from "../components/InputData/TableHeader";
 import Button from "../components/Button";
+import Spinner from "../atoms/Spinner";
+import TableHeader from "../components/InputData/TableHeader";
+import TablePagination from "../components/InputData/TablePagination";
+import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
 import { axiosInstance } from "../atoms/config";
 import { notifyError, notifySucces } from "../atoms/notification";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-
-import Spinner from "../atoms/Spinner";
 
 export default function LecturerCourse({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;

@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 
-import { axiosInstance } from "../atoms/config";
-import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
-import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
-import { Dropdown } from "flowbite-react";
-
 import Spinner from "../atoms/Spinner";
-import Error from "./Error";
+import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
+import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
+import { Dropdown } from "flowbite-react";
+import { axiosInstance } from "../atoms/config";
+
 
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;

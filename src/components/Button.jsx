@@ -40,7 +40,7 @@ export default function Button({ text, linkto, color, ...buttonProps }) {
         class={`rounded-md px-4 py-1.5 overflow-hidden relative group cursor-pointer border-2 font-medium ${border[color]} ${txt[color]}`}
       >
         <span
-          class={`absolute w-64 h-0 transition-all duration-300 ${bg[color]} top-1/2 origin-center rotate-45 -translate-x-20 group-hover:h-64 group-hover:-translate-y-32 ease`}
+          class={`absolute w-64 h-0 transition-all duration-100 ${bg[color]} top-1/2 origin-center rotate-45 -translate-x-20 group-hover:h-64 group-hover:-translate-y-32 ease`}
         />
         <span
           class={`relative ${txt[color]} transition duration-300 group-hover:text-white ease`}
