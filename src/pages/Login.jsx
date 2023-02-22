@@ -36,12 +36,11 @@ export default function Login({setToken}) {
             localStorage.setItem("auth_token", res.data.access_token);
             new Swal("Login Succes", res.message);
             console.log(res.data.message);
-            navigate("/MataKuliah");
-            // window.location.href = "http://localhost:3000/MataKuliah";
+            // navigate("/MataKuliah");
+            window.location.href = "http://localhost:3000/MataKuliah";
           }
         });
     } catch (err) {
-      console.log(err);
       notifyError(err);
     }
   }

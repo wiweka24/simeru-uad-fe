@@ -19,7 +19,7 @@ export default function useToken() {
   };
 
   useEffect(() => {
-    getToken()
+    setToken(getToken())
   }, [token])
 
   // console.log(token, "settoken");

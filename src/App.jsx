@@ -17,8 +17,6 @@ import CourseHelp from "./pages/CourseHelp";
 import Schedule from "./pages/Schedule";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
 import useToken from "./pages/useToken";
-import Spinner from "./atoms/Spinner";
-import { axiosInstance } from "./atoms/config";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({ year: "2022/2023", value: 1 });
@@ -50,7 +48,6 @@ export default function App() {
           <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
           <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
             <ToastContainer />
-
             <Routes>
               <Route path="/MataKuliah" element={<Subclass />} />
               <Route path="/Dosen" element={<Lecturer />} />
