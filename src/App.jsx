@@ -22,15 +22,21 @@ import { axiosInstance } from "./atoms/config";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({ year: "2022/2023", value: 1 });
-  const { token, setToken } = useToken();
-  console.log(token, "ini token dah dipassing");
+  // const { token, setToken } = useToken();
+  // const getToken = localStorage.getItem("auth_token");
+  // console.log(getToken, "ini token dah dipassing");
 
-  // axiosInstance.interceptors.request.use(function (config) {
-  //   const tokenString = localStorage.getItem("auth_token");
-  //   console.log(tokenString);
-  //   config.headers.Authorization = tokenString ? `Bearer ${tokenString}` : "";
-  //   return config;
-  // });
+  axiosInstance.interceptors.request.use(function (config) {
+    // const tokenString = localStorage.getItem("auth_token");
+    // console.log(tokenString);
+
+    config.headers.Authorization = localStorage.getItem("auth_token")
+      ? `Bearer ${localStorage.getItem("auth_token")}`
+      : "";
+    console.log(config.headers.Authorization);
+    console.log(localStorage.getItem("auth_token"));
+    return config;
+  });
 
   // useEffect(() => {
 
@@ -40,10 +46,10 @@ export default function App() {
   return (
     <div className="grid grid-cols-7 overflow-hidden h-screen">
       <Router>
-        {!token ? (
+        {!localStorage.getItem("auth_token") ? (
           <div className="col-span-7 overflow-y-hidden h-screen bg-[#f9fafb]">
             <Routes>
-              <Route path="/Login" element={<Login setToken={setToken} />} />
+              <Route path="/Login" element={<Login />} />
             </Routes>
           </div>
         ) : (
@@ -54,6 +60,7 @@ export default function App() {
               <ToastContainer />
 
               <Routes>
+                <Route path="/Login" element={<Login />} />
                 <Route path="/MataKuliah" element={<Subclass />} />
                 <Route path="/Dosen" element={<Lecturer />} />
                 <Route path="/Ruangan" element={<Room />} />
