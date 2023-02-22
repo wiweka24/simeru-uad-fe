@@ -1,29 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
+
 import { axiosInstance } from "../atoms/config";
-import { useNavigate } from "react-router-dom";
+import { notifyError, notifySucces } from "../atoms/notification";
+
 import Swal from "sweetalert2";
-import { notifyError } from "../atoms/notification";
-import { func } from "prop-types";
-import Schedule from "./Schedule";
 
 export default function Login() {
   const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
-  const navigate = useNavigate();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
     error_list: [],
   });
 
-  const getToken = () => {
-    // constTokenString = localStorage.getItem('token');
-  };
-
-  const handleInput = (e) => {
+  function handleInput(e) {
     e.persist();
     setLoginInput({ ...loginInput, [e.target.id]: e.target.value });
-  };
+  }
 
   async function loginSubmit(e) {
     e.preventDefault();
@@ -36,9 +30,10 @@ export default function Login() {
         .then((res) => {
           if (res.status === 200) {
             localStorage.setItem("auth_token", res.data.access_token);
-            new Swal("Login Succes", res.message);
-            console.log(res.data.message);
-            console.log(res.data.acces_token, "dapet token");
+            notifySucces(res.message)
+            // new Swal("Login Succes", res.message);
+            // console.log(res.data.message);
+            // console.log(res.data.acces_token, "dapet token");
             // navigate("/MataKuliah");
             window.location.href = `${CLIENT_URL}MataKuliah`;
           }

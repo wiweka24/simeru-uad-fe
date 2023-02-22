@@ -1,22 +1,17 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useState } from "react";
 
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import Sidebar from "./components/Sidebar";
 import LecturerCourse from "./pages/LecturerCourse";
 import RoomTime from "./pages/RoomTime";
 import CourseHelp from "./pages/CourseHelp";
 import Schedule from "./pages/Schedule";
+import { axiosInstance } from "./atoms/config";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
-import useToken from "./pages/useToken";
+
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({ year: "2022/2023", value: 1 });
@@ -41,18 +36,21 @@ export default function App() {
     <div className="grid grid-cols-7 overflow-hidden h-screen">
       <Router>
         {!localStorage.getItem("auth_token") ? (
+          // Login and Logout Route
           <div className="col-span-7 overflow-y-hidden h-screen bg-[#f9fafb]">
+            <ToastContainer />
             <Routes>
               <Route path="/Login" element={<Login />} />
             </Routes>
           </div>
         ) : (
-          // Sidebar
           <>
+            {/* Sidebar */}
             <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
+
+            {/* App Route */}
             <div className="col-span-6 overflow-y-scroll bg-[#f9fafb]">
               <ToastContainer />
-
               <Routes>
                 <Route path="/Login" element={<Login />} />
                 <Route path="/MataKuliah" element={<Subclass />} />

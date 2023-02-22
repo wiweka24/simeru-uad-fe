@@ -14,11 +14,11 @@ import { useState } from "react";
 import Button from "./Button";
 import Swal from "sweetalert2";
 import { axiosInstance } from "../atoms/config";
+import { notifySucces } from "../atoms/notification";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
-  const Navigate = useNavigate();
   const [activePage, setActivePage] = useState("/");
   const academicYear = [
     { year: "2022/2023", value: 1 },
@@ -51,14 +51,15 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     );
   }
 
-  const logoutSubmit = (e) => {
+  function logoutSubmit(e) {
     e.preventDefault();
 
     axiosInstance.post(`${URL}logout`).then((res) => {
       if (res.status === 200) {
         //localStorage.clear();
         localStorage.removeItem("auth_token");
-        new Swal("Success", res.data.message, "success");
+        // new Swal("Success", res.data.message, "success");
+        notifySucces(res.data.message)
         window.location.href = `${CLIENT_URL}Login`;
       }
     });
