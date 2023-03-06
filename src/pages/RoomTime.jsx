@@ -8,7 +8,6 @@ import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import { notifyError } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 
-
 export default function RoomTime() {
   const [rooms, setRooms] = useState([]);
   const [roomtimes, setRoomtimes] = useState([]);
@@ -87,12 +86,12 @@ export default function RoomTime() {
     for (let i = start; i < length; i++) {
       let tempArrRooms = roomdata.filter((item) => item.room_id == i + 1);
       let rdTempArrRooms = [];
-      for (let j = 0; j < tempArrRooms.length; j = j + 4) {
-        rdTempArrRooms.push(tempArrRooms.slice(j, j + 4));
+      for (let j = 0; j < tempArrRooms.length; j = j + 12) {
+        rdTempArrRooms.push(tempArrRooms.slice(j, j + 12));
       }
       finalArrRooms.push(rdTempArrRooms);
     }
-    // console.log(finalArrRooms);
+    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -158,6 +157,14 @@ export default function RoomTime() {
                     <TimePlaceholder text="09:00-12:00" number="2" />
                     <TimePlaceholder text="12:00-15:00" number="3" />
                     <TimePlaceholder text="15:00-18:00" number="4" />
+                    <TimePlaceholder text="15:00-18:00" number="5" />
+                    <TimePlaceholder text="15:00-18:00" number="6" />
+                    <TimePlaceholder text="15:00-18:00" number="7" />
+                    <TimePlaceholder text="15:00-18:00" number="8" />
+                    <TimePlaceholder text="15:00-18:00" number="9" />
+                    <TimePlaceholder text="15:00-18:00" number="10" />
+                    <TimePlaceholder text="15:00-18:00" number="11" />
+                    <TimePlaceholder text="15:00-18:00" number="12" />
                   </div>
                 </td>
                 {room.map((session) => (

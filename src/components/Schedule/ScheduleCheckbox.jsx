@@ -24,11 +24,20 @@ export default function ScheduleCheckbox({
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
   const sessions = [
-    "07:00 - 09:00",
-    "10:00 - 12:00",
-    "13:00 - 15:00",
-    "16:00 - 18:00",
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
   ];
 
   const [loading, setLoading] = useState(false);
@@ -98,7 +107,7 @@ export default function ScheduleCheckbox({
 
   return (
     <>
-      <label className="relative w-full border-b border-collapse h-40 cursor-pointer bg-white">
+      <label className="relative w-full border-b border-collapse h-[3.4rem] cursor-pointer bg-white">
         <input className="sr-only" onClick={() => setModalShow(true)} />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x peer-focus:ring-4 peer-focus:ring-grey-dark  peer-checked:after:border-white after:content-[''] after:bg-white after:border-gray-300 peer-checked:bg-grey-dark">
           {occupiedSchedule ? (
