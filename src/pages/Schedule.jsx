@@ -6,7 +6,6 @@ import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import { Dropdown } from "flowbite-react";
 import { axiosInstance } from "../atoms/config";
 
-
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
@@ -22,43 +21,43 @@ export default function Schedule({ acyear }) {
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
-    end: 24,
+    end: 72,
   });
   const dateList = [
     {
       day: "All",
       start: 1,
-      end: 24,
+      end: 72,
     },
     {
       day: "Senin",
       start: 1,
-      end: 4,
-    },
-    {
-      day: "Selasa",
-      start: 5,
-      end: 8,
-    },
-    {
-      day: "Rabu",
-      start: 9,
       end: 12,
     },
     {
-      day: "Kamis",
+      day: "Selasa",
       start: 13,
-      end: 16,
+      end: 24,
+    },
+    {
+      day: "Rabu",
+      start: 25,
+      end: 36,
+    },
+    {
+      day: "Kamis",
+      start: 37,
+      end: 48,
     },
     {
       day: "Jumat",
-      start: 17,
-      end: 20,
+      start: 49,
+      end: 60,
     },
     {
       day: "Sabtu",
-      start: 21,
-      end: 24,
+      start: 61,
+      end: 72,
     },
   ];
 
@@ -148,18 +147,19 @@ export default function Schedule({ acyear }) {
     // todo : make i to min value of room_id, and i to length + max value
     // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
     // For dividing data to 6 days
-    for (let i = start; i < end; i = i + 4) {
+    for (let i = start; i < end; i = i + 12) {
       let arrDays = roomdata.filter(
-        (item) => item.time_id > i && item.time_id <= i + 4
+        (item) => item.time_id > i && item.time_id <= i + 12
       );
       let arrRooms = [];
-      // For setting the data into 8 rooms, 4 session each
-      for (let j = 0; j < arrDays.length; j = j + 4) {
-        arrRooms.push(arrDays.slice(j, j + 4));
+      // For setting the data into 8 rooms, 12 session each
+      for (let j = 0; j < arrDays.length; j = j + 12) {
+        arrRooms.push(arrDays.slice(j, j + 12));
       }
       //Push to make final array
       finalArrRooms.push(arrRooms);
     }
+    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -257,7 +257,7 @@ export default function Schedule({ acyear }) {
                             onChange={rerender}
                           />
                         ) : (
-                          <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
+                          <label className="relative border-b h-[3.4rem] items-center w-full cursor-not-allowed"></label>
                         )
                       )}
                     </div>
