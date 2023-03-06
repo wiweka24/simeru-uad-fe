@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { Dropdown } from "flowbite-react";
 
 import Spinner from "../atoms/Spinner";
+import Button from "../components/Button";
 import Checkbox from "../components/RoomTime/Checkbox";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import { notifyError } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 
 export default function RoomTime() {
+  const URL = `${process.env.REACT_APP_BASE_URL}room_time`;
   const [rooms, setRooms] = useState([]);
   const [roomtimes, setRoomtimes] = useState([]);
   const [currentRoomtimes, setCurrentRoomtimes] = useState([]);
@@ -91,7 +93,7 @@ export default function RoomTime() {
       }
       finalArrRooms.push(rdTempArrRooms);
     }
-    console.log(finalArrRooms);
+    // console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -105,6 +107,66 @@ export default function RoomTime() {
   //     });
   //   });
   // });
+
+  async function checkAllSession(obj) {
+    // console.log(obj);
+    let sendData = [];
+    for (let rooms of obj) {
+      for (let days of rooms) {
+        for (let session of days) {
+          // console.log(session);
+          if (session.is_possible === "0") {
+            sendData.push({
+              room_id: session.room_id,
+              time_id: session.time_id,
+              academic_year_id: session.academic_year_id,
+            });
+          }
+        }
+      }
+    }
+    // console.log(sendData);
+
+    try {
+      await axiosInstance.post(URL, {
+        data: sendData,
+      });
+      rerender();
+    } catch (err) {
+      notifyError(err);
+    }
+  }
+
+  async function unCheckAllSession(obj) {
+    // console.log(obj);
+    let sendData = [];
+    for (let rooms of obj) {
+      for (let days of rooms) {
+        for (let session of days) {
+          // console.log(session);
+          if (session.is_possible === "1") {
+            sendData.push({
+              room_id: session.room_id,
+              time_id: session.time_id,
+              academic_year_id: session.academic_year_id,
+            });
+          }
+        }
+      }
+    }
+    // console.log(sendData);
+
+    try {
+      await axiosInstance.delete(URL, {
+        data: {
+          data: sendData,
+        },
+      });
+      rerender();
+    } catch (err) {
+      notifyError(err);
+    }
+  }
 
   return (
     <div className="relative">
@@ -127,6 +189,16 @@ export default function RoomTime() {
               </Dropdown.Item>
             ))}
           </Dropdown>
+          <Button
+            text="select all"
+            color="dark"
+            onClick={() => checkAllSession(currentRoomtimes)}
+          />
+          <Button
+            text="unselect all"
+            color="dark"
+            onClick={() => unCheckAllSession(currentRoomtimes)}
+          />
         </nav>
 
         {/* Table */}
@@ -153,18 +225,18 @@ export default function RoomTime() {
                 </td>
                 <td className="px-5 py-4">
                   <div className="flex items-start flex-col space-y-4">
-                    <TimePlaceholder text="07:00-09:00" number="1" />
-                    <TimePlaceholder text="09:00-12:00" number="2" />
-                    <TimePlaceholder text="12:00-15:00" number="3" />
-                    <TimePlaceholder text="15:00-18:00" number="4" />
-                    <TimePlaceholder text="15:00-18:00" number="5" />
-                    <TimePlaceholder text="15:00-18:00" number="6" />
-                    <TimePlaceholder text="15:00-18:00" number="7" />
-                    <TimePlaceholder text="15:00-18:00" number="8" />
-                    <TimePlaceholder text="15:00-18:00" number="9" />
-                    <TimePlaceholder text="15:00-18:00" number="10" />
-                    <TimePlaceholder text="15:00-18:00" number="11" />
-                    <TimePlaceholder text="15:00-18:00" number="12" />
+                    <TimePlaceholder text="07:00" number="1" />
+                    <TimePlaceholder text="08:00" number="2" />
+                    <TimePlaceholder text="09:00" number="3" />
+                    <TimePlaceholder text="10:00" number="4" />
+                    <TimePlaceholder text="11:00" number="5" />
+                    <TimePlaceholder text="12:00" number="6" />
+                    <TimePlaceholder text="13:00" number="7" />
+                    <TimePlaceholder text="14:00" number="8" />
+                    <TimePlaceholder text="15:00" number="9" />
+                    <TimePlaceholder text="16:00" number="10" />
+                    <TimePlaceholder text="17:00" number="11" />
+                    <TimePlaceholder text="18:00" number="12" />
                   </div>
                 </td>
                 {room.map((session) => (

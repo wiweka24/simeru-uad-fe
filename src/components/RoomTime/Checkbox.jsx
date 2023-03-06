@@ -12,11 +12,6 @@ export default function Checkbox({ value, onChange, setLoading }) {
   }, [value]);
 
   async function handleChange(obj) {
-    // const roomId = obj.room_id;
-    // const timeId = obj.time_id;
-    // const academicYearId = obj.academic_year_id;
-    console.log(obj.onLoading);
-    // obj.onLoading(true);
     if (obj.is_possible === "0") {
       try {
         await axiosInstance.post(URL, {
