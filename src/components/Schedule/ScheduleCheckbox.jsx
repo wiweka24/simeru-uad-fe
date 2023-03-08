@@ -7,6 +7,7 @@ import {
 import { Modal } from "flowbite-react";
 
 import Button from "../Button";
+import { Dropdown } from "flowbite-react";
 import Spinner from "../../atoms/Spinner";
 import { axiosInstance } from "../../atoms/config";
 import { notifyError, notifySucces } from "../../atoms/notification";
@@ -22,6 +23,7 @@ export default function ScheduleCheckbox({
   const [modalShow, setModalShow] = useState(false);
   const [subClass, setSubClass] = useState();
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
+  const [colorPalette, setColorPalette] = useState("Select Color");
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
@@ -40,13 +42,16 @@ export default function ScheduleCheckbox({
     "18:00",
   ];
 
+  const colorList = ["red", "green", "indigo"];
+
   const [loading, setLoading] = useState(false);
 
+  // Setting up cursor click able checkbox
   useEffect(() => {
     setSubClass(occupiedSchedule);
 
     occupiedSchedule
-      ? setCursorMode("pointer-events-none cursor-not-allowed ")
+      ? setCursorMode("cursor-not-allowed pointer-events-none")
       : setCursorMode("cursor-pointer");
   }, [occupiedSchedule]);
 
@@ -107,16 +112,16 @@ export default function ScheduleCheckbox({
 
   return (
     <>
-      <label className="relative w-full border-b border-collapse h-[3.4rem] cursor-pointer bg-white">
+      <label className="relative w-full border-b border-collapse h-[5rem] cursor-pointer bg-white overflow-hidden ">
         <input className="sr-only" onClick={() => setModalShow(true)} />
-        <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x peer-focus:ring-4 peer-focus:ring-grey-dark  peer-checked:after:border-white after:content-[''] after:bg-white after:border-gray-300 peer-checked:bg-grey-dark">
+        <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
               <b>
-                <p className="mb-2">{occupiedSchedule.sub_class_name}</p>
+                <p className="mb-1">{occupiedSchedule.sub_class_name}</p>
               </b>
-              <p className="mb-2">{occupiedSchedule.lecturer_name}</p>
-              <p className="mb-2">
+              <p className="mb-1">{occupiedSchedule.lecturer_name}</p>
+              <p className="mb-1">
                 Semester {occupiedSchedule.sub_class_credit}
               </p>
             </div>
@@ -148,20 +153,41 @@ export default function ScheduleCheckbox({
               <h3>Mata Kuliah</h3>
             </b>
             {subClass ? (
-              <div className="flex border w-full text-left rounded-lg my-1 py-2 px-4 bg-grey-light justify-between">
+              <div
+                className={`flex border w-full text-left rounded-lg my-1 py-2 px-4 bg-grey-light justify-between bg-${colorPalette}-400`}
+              >
                 <div>
                   <b>{subClass.sub_classes_name || subClass.sub_class_name}</b>
                   <br />
                   {subClass.lecturer_name}
                 </div>
-                <Button
-                  text="❌"
-                  color="danger"
-                  onClick={() => {
-                    setLoading(true);
-                    deleteBtAction(Object.assign(subClass, time));
-                  }}
-                />
+                <div className="flex flex-row gap-3">
+                  <Button
+                    text="❌"
+                    color="danger"
+                    onClick={() => {
+                      if (occupiedSchedule) {
+                        setLoading(true);
+                        deleteBtAction(Object.assign(subClass, time));
+                      } else {
+                        setSubClass();
+                      }
+                    }}
+                  />
+                  <Dropdown
+                    label={colorPalette}
+                    color="dark"
+                    outline="true"
+                    className="bg-grey-light"
+                    size="sm"
+                  >
+                    {colorList.map((color) => (
+                      <Dropdown.Item onClick={() => setColorPalette(color)}>
+                        {color}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown>
+                </div>
               </div>
             ) : (
               <p className="text-red-600">* Pilih Mata Kuliah</p>
@@ -216,7 +242,10 @@ export default function ScheduleCheckbox({
           <Button
             text="Tutup"
             color="danger"
-            onClick={() => setModalShow(false)}
+            onClick={() => {
+              occupiedSchedule ? setSubClass(occupiedSchedule) : setSubClass();
+              setModalShow(false);
+            }}
           />
         </Modal.Footer>
       </Modal>
