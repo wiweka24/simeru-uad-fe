@@ -79,7 +79,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   return (
     <div className="flex flex-col justify-between col-span-1 border-r">
       <div>
-
         <div className="text-grey items-center px-2 mt-6 ml-3">
           <div className="h-12 w-12 border rounded-full">
             <img
@@ -143,6 +142,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
               </Dropdown>
             </div>
           </div>
+
         </div>
       </div>
 

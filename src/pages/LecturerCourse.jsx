@@ -7,6 +7,7 @@ import TablePagination from "../components/InputData/TablePagination";
 import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
 import { axiosInstance } from "../atoms/config";
 import { notifyError, notifySucces } from "../atoms/notification";
+import { Dropdown } from "flowbite-react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -22,16 +23,17 @@ export default function LecturerCourse({ acyear }) {
   const [postsPerPage, setPostPerPage] = useState(10);
   const [term, setTerm] = useState("");
   const [updateChild, setUpdateChild] = useState();
+  const [testyear, setTestYear] = useState();
 
   const [loading, setLoading] = useState(true);
-
+  const default_acyear = [1, 2, 3, 4, 5, 6];
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOfferedSubClass(res.data.data);
-
+        console.log(acyear);
         const res1 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res1.data.data);
 
@@ -44,7 +46,7 @@ export default function LecturerCourse({ acyear }) {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [updateChild, URL]);
+  }, [updateChild, acyear]);
 
   useEffect(() => {
     const mergeData = offeredSubClass.map((item) => {
@@ -84,7 +86,6 @@ export default function LecturerCourse({ acyear }) {
               },
             ],
           });
-
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
           setUpdateChild(`update${Math.random()}`);
         } catch (err) {
@@ -130,6 +131,58 @@ export default function LecturerCourse({ acyear }) {
     }
   }
 
+  async function SaveYearTemplateClick() {
+    const getYear = Number(acyear) - 2;
+    const acadyear = `${getYear}`;
+
+    try {
+      // const res = await axiosInstance.get(`${URL}offered_classes/${acadyear}`);
+      // setOfferedSubClass(res.data.data);
+      // console.log("ini year");
+      // console.log(acyear, "ini year sekarang");
+      const res_template = await axiosInstance.get(
+        `${URL}lecturer_plot/${acadyear}`
+      );
+      setLecturerPlot(res_template.data.data);
+      console.log();
+
+      // const res2 = await axiosInstance.get(`${URL}lecturer`);
+      // setDosen(res2.data.data);
+    } catch (err) {
+      notifyError(err);
+    }
+  }
+
+  function ButtonYear() {
+    console.log(acyear, "ini year sekarang");
+    const num = Number(acyear);
+
+    if (acyear > 2) {
+      const templateyear = num - 2;
+      console.log(templateyear, " ini year yang jadi template");
+
+      return (
+        <button
+          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold hover:bg-sky-600 hover:text-grey-light ease duration-100"
+          onClick={SaveYearTemplateClick}
+        >
+          Set Template
+        </button>
+      );
+    }
+    if (acyear < 3) {
+      console.log("Button < 3");
+      return (
+        <button
+          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold"
+          disabled
+        >
+          Set Template
+        </button>
+      );
+    }
+  }
+
   return (
     <div className="relative">
       <Spinner isLoading={loading} />
@@ -144,6 +197,11 @@ export default function LecturerCourse({ acyear }) {
               postsPerPage={postsPerPage}
               jsonData={subClass}
             />
+            <ButtonYear />
+            <div className="mt-4">
+              {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
+              <div className="pl-2"></div>
+            </div>
 
             {/* Table */}
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
