@@ -110,7 +110,7 @@ export default function InputData({
       await axiosInstance.post(URL, {
         data: [dataJson(input)],
       });
-
+      
       notifySucces(`${input.name} ditambahkan`);
       setInput(defaultInput);
       rerender();
@@ -203,23 +203,23 @@ export default function InputData({
   }
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Spinner isLoading={loading} />
-      <div className="h-10 border-b bg-white" />
-      <div className="grid grid-cols-4 m-10 gap-5">
+      <div className='h-10 border-b bg-white' />
+      <div className='grid grid-cols-4 m-10 gap-5'>
         {/* Input & Edit Field */}
         {mode === "input" ? (
-          <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
-            <p className="text-xl font-bold mb-2">Tambah {title}</p>
-            <div className="grid grid-cols-6 space-x-4">
+          <div className='p-7 border-2 rounded-lg col-span-3 bg-white'>
+            <p className='text-xl font-bold mb-2'>Tambah {title}</p>
+            <div className='grid grid-cols-6 space-x-4'>
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
                   className={`col-span-${inpt.width || "2"} space-y-1`}
                 >
-                  <p className="text-grey">
+                  <p className='text-grey'>
                     {inpt.name}
-                    <span className="text-red-500">*</span>
+                    <span className='text-red-500'>*</span>
                   </p>
 
                   <input
@@ -227,7 +227,7 @@ export default function InputData({
                     type={inpt.type}
                     placeholder={inpt.placeholder}
                     value={input[inpt.valuefor]}
-                    className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                    className='border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80'
                     onChange={(e) =>
                       setInput({ ...input, [e.target.id]: e.target.value })
                     }
@@ -235,22 +235,22 @@ export default function InputData({
                 </div>
               ))}
             </div>
-            <div className="flex mt-2 justify-end">
-              <Button text="Tambah" color="dark" onClick={handlePost} />
+            <div className='flex mt-2 justify-end'>
+              <Button text='Tambah' color='dark' onClick={handlePost} />
             </div>
           </div>
         ) : (
-          <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
-            <p className="text-xl font-bold mb-2">Edit {title}</p>
-            <div className="grid grid-cols-6 space-x-4">
+          <div className='p-7 border-2 rounded-lg col-span-3 bg-white'>
+            <p className='text-xl font-bold mb-2'>Edit {title}</p>
+            <div className='grid grid-cols-6 space-x-4'>
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
                   className={`col-span-${inpt.width} space-y-1`}
                 >
-                  <p className="text-grey">
+                  <p className='text-grey'>
                     {inpt.name}
-                    <span className="text-red-500">*</span>
+                    <span className='text-red-500'>*</span>
                   </p>
 
                   <input
@@ -258,7 +258,7 @@ export default function InputData({
                     type={inpt.type}
                     placeholder={inpt.placeholder}
                     value={edit[inpt.valuefor]}
-                    className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                    className='border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80'
                     onChange={(e) =>
                       setEdit({ ...edit, [e.target.id]: e.target.value })
                     }
@@ -267,11 +267,11 @@ export default function InputData({
               ))}
             </div>
 
-            <div className="flex justify-end mt-2 space-x-2">
-              <Button text="Edit" color="succes" onClick={submitEdit} />
+            <div className='flex justify-end mt-2 space-x-2'>
+              <Button text='Edit' color='succes' onClick={submitEdit} />
               <Button
-                text="Batal"
-                color="danger"
+                text='Batal'
+                color='danger'
                 onClick={() => setMode("input")}
               />
             </div>
@@ -279,21 +279,21 @@ export default function InputData({
         )}
 
         {/* Import Excel Field */}
-        <div className="p-7 border-2 rounded-lg col-span-1 bg-white">
-          <p className="text-xl font-bold mb-2">Import Excel</p>
-          <label className="flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none">
-            <span className="flex items-center space-x-2">
-              <ArrowUpTrayIcon className="h-5" />
-              <span className="font-medium text-gray-600">
+        <div className='p-7 border-2 rounded-lg col-span-1 bg-white'>
+          <p className='text-xl font-bold mb-2'>Import Excel</p>
+          <label className='flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none'>
+            <span className='flex items-center space-x-2'>
+              <ArrowUpTrayIcon className='h-5' />
+              <span className='font-medium text-gray-600'>
                 Drop file di sini, atau
-                <span className="text-blue-600"> cari</span>
+                <span className='text-blue-600'> cari</span>
               </span>
             </span>
             <input
-              type="file"
-              name="file_upload"
-              className="hidden"
-              accept=".csv, .xlsx, .xls"
+              type='file'
+              name='file_upload'
+              className='hidden'
+              accept='.csv, .xlsx, .xls'
               onInput={handleFileUpload}
             />
           </label>
@@ -311,9 +311,9 @@ export default function InputData({
           }}
         />
 
-        <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
-          <p className="px-7 text-xl font-bold mb-5">Daftar {title}</p>
-          <div className=" overflow-x-auto">
+        <div className='py-7 border-2 rounded-lg bg-white col-span-4 h-auto'>
+          <p className='px-7 text-xl font-bold mb-5'>Daftar {title}</p>
+          <div className=' overflow-x-auto'>
             {/* Dropdown & Search */}
             <TableHeader
               onChange={setTerm}
@@ -323,44 +323,44 @@ export default function InputData({
             />
 
             {/* Table */}
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="border-y text-gray-700/50 bg-gray-50">
+            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+              <thead className='border-y text-gray-700/50 bg-gray-50'>
                 <tr>
                   {inputField.map((data) => (
-                    <th key={data.id} scope="col" className="pl-8 pr-4 py-3">
+                    <th key={data.id} scope='col' className='pl-8 pr-4 py-3'>
                       {data.name}
                     </th>
                   ))}
-                  <th scope="col"></th>
+                  <th scope='col'></th>
                 </tr>
               </thead>
               <tbody>
                 {currentSubClass.map((subcls) => (
-                  <tr key={subcls.sub_class_id} className="bg-white border-b">
+                  <tr key={subcls.sub_class_id} className='bg-white border-b'>
                     {inputField.map((data) =>
                       // <key></>
                       data.id === 1 ? (
                         <td
                           key={data.id}
-                          className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
+                          className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
                         >
                           {subcls[`${data.valuefor}`]}
                         </td>
                       ) : (
-                        <td key={data.id} className="pl-8 pr-4 py-4">
+                        <td key={data.id} className='pl-8 pr-4 py-4'>
                           {subcls[`${data.valuefor}`]}
                         </td>
                       )
                     )}
-                    <td className="flex pt-2 space-x-3">
+                    <td className='flex pt-2 space-x-3'>
                       <Button
-                        text="🖊"
-                        color="succes"
+                        text='🖊'
+                        color='success'
                         onClick={() => handleEdit(subcls)}
                       />
                       <Button
-                        text="❌"
-                        color="danger"
+                        text='❌'
+                        color='danger'
                         onClick={() => submitDelete(subcls)}
                       />
                     </td>
@@ -377,7 +377,7 @@ export default function InputData({
               currentPage={currentPage}
               postsPerPage={postsPerPage}
               term={term}
-              columnName="name"
+              columnName='name'
             />
           </div>
         </div>
