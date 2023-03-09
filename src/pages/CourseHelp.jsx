@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 
 import Spinner from "../atoms/Spinner";
+import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../../src/atoms/config";
-import { notifySucces, notifyError } from "../../src/atoms/notification";
+import { notifySucces } from "../../src/atoms/notification";
+import { toast } from "react-toastify";
 
 export default function CourseHelp({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -19,7 +21,6 @@ export default function CourseHelp({ acyear }) {
   const [offeredID, setOfferedID] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +42,20 @@ export default function CourseHelp({ acyear }) {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [update, acyear]);
+  }, [URL, update, acyear]);
+
+  function notifyError(message) {
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
 
   useEffect(() => {
     const mergeData = offered.map((item) => {
@@ -53,7 +67,7 @@ export default function CourseHelp({ acyear }) {
         lecturer_id: lecturer ? lecturer.lecturer_id : "default",
       };
     });
-    console.log(mergeData);
+    // console.log(mergeData);
     setMergeOffered(mergeData);
   }, [offered, lecturerPlot]);
 
@@ -74,20 +88,80 @@ export default function CourseHelp({ acyear }) {
     setOfferedID(mergeOffered.map((item) => Number(item.sub_class_id)));
   }, [mergeOffered]);
 
-  // console.log(subClass);
-  // console.log(offered);
+  async function selectAll(obj) {
+    let offeredData = [];
+    for (const item of obj) {
+      if (!offeredID.includes(item.sub_class_id)) {
+        offeredData.push({
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+      }
+    }
+    try {
+      setLoading(true);
+      await axiosInstance.post(`${URL}offered_classes`, {
+        data: offeredData,
+      });
+      setUpdate(`update${Math.random()}`);
+    } catch (err) {
+      notifyError("Semua mata kuliah telah terselenggara!");
+      notifyError(err.message);
+      console.log(err);
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }
 
-  // const subClassID = subClass.map((item) => item.sub_class_id);
-  // const offeredID = offeredID_str.map(function (e) {
-  //   return Number(e);
-  // });
-
-  // console.log(subClassID);
-  // console.log(offeredID);
+  async function deselectAll(obj) {
+    // console.log(obj);
+    let plotData = [];
+    let offeredData = [];
+    for (const item of obj) {
+      if (offeredID.includes(item.sub_class_id)) {
+        plotData.push({
+          lecturer_id: item.lecturer_id,
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+        offeredData.push({
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+      }
+    }
+    if (!plotData.length || !offeredData.length) {
+      notifyError("Belum ada mata kuliah yang terselenggara!");
+    } else {
+      try {
+        setLoading(true);
+        await axiosInstance
+          .delete(`${URL}lecturer_plot`, {
+            data: {
+              data: plotData,
+            },
+          })
+          .then(
+            await axiosInstance.delete(`${URL}offered_classes`, {
+              data: {
+                data: offeredData,
+              },
+            })
+          );
+        setUpdate(`update${Math.random()}`);
+      } catch (err) {
+        notifyError(err.message);
+      }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }
+  }
 
   async function HandleCheck(obj) {
     if (offeredID.includes(obj.sub_class_id)) {
-      console.log(obj);
+      // console.log(obj);
       //remove item from offered list
       // const classIndex = subClass.findIndex(
       //   (item) => item.sub_class_id === obj.sub_class_id
@@ -143,7 +217,7 @@ export default function CourseHelp({ acyear }) {
           data: [
             {
               sub_class_id: obj.sub_class_id,
-              academic_year_id: 1,
+              academic_year_id: acyear,
             },
           ],
         });
@@ -227,8 +301,18 @@ export default function CourseHelp({ acyear }) {
             postsPerPage={postsPerPage}
             jsonData={currentSubClass}
           />
-          <ButtonYear />
-
+          <div className='justify-self-end grid grid-flow-col gap-4'>
+            <Button
+              text='Pilih Semua'
+              color='dark'
+              onClick={() => selectAll(mergeSubClass)}
+            />
+            <Button
+              text='Batalkan Semua'
+              color='dark'
+              onClick={() => deselectAll(mergeSubClass)}
+            />
+          </div>
           {/*Table*/}
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="border-y text-gray-700/50 bg-gray-50">
@@ -274,7 +358,6 @@ export default function CourseHelp({ acyear }) {
               ))}
             </tbody>
           </table>
-
           {/* Pagination */}
           <TablePagination
             subClass={mergeSubClass}

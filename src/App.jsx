@@ -28,23 +28,23 @@ export default function App() {
       ? `Bearer ${localStorage.getItem("auth_token")}`
       : "";
     // console.log(config.headers.Authorization);
-    //console.log(localStorage.getItem("auth_token"));
+    // console.log(localStorage.getItem("auth_token"));
     return config;
   });
 
   //App
   return (
-    <div className="grid grid-cols-7 overflow-hidden h-screen">
+    <div className='grid grid-cols-7 overflow-hidden h-screen'>
       <Router>
         {!localStorage.getItem("auth_token") ? (
           // Login and Logout Route
-          <div className="col-span-7 overflow-y-hidden h-screen bg-grey-light">
+          <div className='col-span-7 overflow-y-hidden h-screen bg-grey-light'>
             <Routes>
-              <Route path="/Login" element={<Login />} />
+              <Route path='/Login' element={<Login />} />
               <Route
-                path="/*"
+                path='/*'
                 element={
-                  <Error redirect="/Login" message="Login terlebih dahulu" />
+                  <Error redirect='/Login' message='Login terlebih dahulu' />
                 }
               />
             </Routes>
@@ -55,16 +55,16 @@ export default function App() {
             <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
 
             {/* App Route */}
-            <div className="col-span-6 overflow-y-scroll bg-grey-light">
+            <div className='col-span-6 overflow-y-scroll bg-grey-light'>
               <Routes>
-                <Route path="/MataKuliah" element={<Subclass />} />
-                <Route path="/Dosen" element={<Lecturer />} />
-                <Route path="/Ruangan" element={<Room />} />
+                <Route path='/MataKuliah' element={<Subclass />} />
+                <Route path='/Dosen' element={<Lecturer />} />
+                <Route path='/Ruangan' element={<Room />} />
                 <Route
                   path="/DosenMatkul"
                   element={<LecturerCourse acyear={acadYear.academicyear_id} />}
                 />
-                <Route path="/RuangWaktu" element={<RoomTime />} />
+                <Route path='/RuangWaktu' element={<RoomTime />} />
                 <Route
                   path="/MKTerselenggara"
                   element={<CourseHelp acyear={acadYear.academicyear_id} />}
