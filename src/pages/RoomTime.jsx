@@ -125,8 +125,6 @@ export default function RoomTime() {
         }
       }
     }
-    // console.log(sendData);
-
     try {
       await axiosInstance.post(URL, {
         data: sendData,
@@ -154,7 +152,6 @@ export default function RoomTime() {
         }
       }
     }
-    // console.log(sendData);
 
     try {
       await axiosInstance.delete(URL, {
@@ -175,7 +172,7 @@ export default function RoomTime() {
       <div className=" py-7 m-10 border-2 rounded-lg bg-white">
         <p className="px-7 mb-5 text-xl font-bold">Ruang Kelas Tersedia</p>
         {/* Dropdown */}
-        <nav className="mx-8 flex mb-3 items-center justify-between">
+        <nav className="mx-8 grid mb-3 grid-flow-col">
           <Dropdown
             label={currentLabel.name}
             color="dark"
@@ -189,16 +186,18 @@ export default function RoomTime() {
               </Dropdown.Item>
             ))}
           </Dropdown>
-          <Button
-            text="select all"
-            color="dark"
-            onClick={() => checkAllSession(currentRoomtimes)}
-          />
-          <Button
-            text="unselect all"
-            color="dark"
-            onClick={() => unCheckAllSession(currentRoomtimes)}
-          />
+          <div className="justify-self-end grid grid-flow-col gap-4">
+            <Button
+              text="select all"
+              color="dark"
+              onClick={() => checkAllSession(currentRoomtimes)}
+            />
+            <Button
+              text="unselect all"
+              color="dark"
+              onClick={() => unCheckAllSession(currentRoomtimes)}
+            />
+          </div>
         </nav>
 
         {/* Table */}
