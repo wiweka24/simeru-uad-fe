@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "start_year": "2021", 
+	          "end_year": "2022",
+	          "semester": "0",
+            "academicyear_id": "1"
+        },
+        {
+           "start_year": "2021", 
+	         "end_year": "2022",
+	         "semester": "1",
+           "academicyear_id": "2"
+        },
+        {
+           "start_year": "2022", 
+	         "end_year": "2023",
+	         "semester": "0",
+           "academicyear_id": "3"
+        }
+    ]
+}

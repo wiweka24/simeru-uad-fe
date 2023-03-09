@@ -233,14 +233,66 @@ export default function CourseHelp({ acyear }) {
     }
   }
 
+  async function SaveYearTemplateClick(templateyear) {
+    const getYear = Number(templateyear);
+    const acadyear = getYear - 2;
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get(`${URL}subclass`);
+      setSubClass(res.data.data);
+
+      const res1 = await axiosInstance.get(
+        `${URL}offered_classes/${templateyear}`
+      );
+      setOffered(res1.data.data);
+
+      const res2 = await axiosInstance.get(
+        `${URL}lecturer_plot/${templateyear}`
+      );
+      setLecturerPlot(res2.data.data);
+    } catch (err) {
+      notifyError(err);
+    }
+
+  }
+
+  function ButtonYear() {
+    console.log(acyear);
+    const num = Number(acyear);
+
+    if (acyear > 2) {
+      const templateyear = num - 2;
+
+      return (
+        <button
+          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold hover:bg-sky-600 hover:text-grey-light ease duration-100"
+          onClick={(templateyear) => SaveYearTemplateClick(templateyear)}
+        >
+          Set Template
+        </button>
+      );
+    }
+    if (acyear < 3) {
+      console.log("Button < 3");
+      return (
+        <button
+          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold"
+          disabled
+        >
+          Set Template
+        </button>
+      );
+    }
+  }
+
   return (
-    <div className='relative'>
+    <div className="relative">
       <Spinner isLoading={loading} />
-      <div className='h-10 border-b bg-white'></div>
-      <div className='border-2 rounded-lg bg-white m-10 gap-5'>
-        <div className='relative py-7 overflow-x-auto'>
+      <div className="h-10 border-b bg-white"></div>
+      <div className="border-2 rounded-lg bg-white m-10 gap-5">
+        <div className="relative py-7 overflow-x-auto">
           {/* Search */}
-          <p className='px-7 mb-5 text-xl font-bold'>
+          <p className="px-7 mb-5 text-xl font-bold">
             Mata Kuliah Terselenggara
           </p>
           <TableHeader
@@ -262,42 +314,42 @@ export default function CourseHelp({ acyear }) {
             />
           </div>
           {/*Table*/}
-          <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-            <thead className='border-y text-gray-700/50 bg-gray-50'>
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="border-y text-gray-700/50 bg-gray-50">
               <tr>
-                <th scope='col' className='pl-8 pr-4 py-3'>
+                <th scope="col" className="pl-8 pr-4 py-3">
                   ID
                 </th>
-                <th scope='col' className='pl-8 pr-4 py-3'>
+                <th scope="col" className="pl-8 pr-4 py-3">
                   Nama Mata Kuliah
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   Semester
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   SKS
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   Terselenggara
                 </th>
               </tr>
             </thead>
             <tbody>
               {currentSubClass.map((item) => (
-                <tr key={item.sub_class_id} className='bg-white border-b'>
+                <tr key={item.sub_class_id} className="bg-white border-b">
                   <td
-                    scope='row'
-                    className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
+                    scope="row"
+                    className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
                   >
                     {item.sub_class_id}
                   </td>
-                  <td className='pl-8 pr-4'>{item.name}</td>
-                  <td className='pl-8 pr-4'>{item.semester}</td>
-                  <td className='pl-8 pr-4'>{item.credit}</td>
-                  <td className='pl-8 pr-4 py-4 flex items-center'>
+                  <td className="pl-8 pr-4">{item.name}</td>
+                  <td className="pl-8 pr-4">{item.semester}</td>
+                  <td className="pl-8 pr-4">{item.credit}</td>
+                  <td className="pl-8 pr-4 py-4 flex items-center">
                     <input
-                      className='w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2'
-                      type='checkbox'
+                      className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                      type="checkbox"
                       checked={offeredID.includes(item.sub_class_id)}
                       onChange={() => HandleCheck(item)}
                     />
@@ -314,7 +366,7 @@ export default function CourseHelp({ acyear }) {
             currentPage={currentPage}
             postsPerPage={postsPerPage}
             term={term}
-            columnName='name'
+            columnName="name"
           />
         </div>
       </div>
