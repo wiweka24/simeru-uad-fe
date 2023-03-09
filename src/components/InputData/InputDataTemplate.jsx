@@ -215,7 +215,7 @@ export default function InputData({
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
-                  className={`col-span-${inpt.width} space-y-1`}
+                  className={`col-span-${inpt.width || "2"} space-y-1`}
                 >
                   <p className='text-grey'>
                     {inpt.name}

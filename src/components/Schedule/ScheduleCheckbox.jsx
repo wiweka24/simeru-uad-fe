@@ -23,10 +23,8 @@ export default function ScheduleCheckbox({
   const [modalShow, setModalShow] = useState(false);
   const [subClass, setSubClass] = useState();
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
-  const [colorPalette, setColorPalette] = useState("Select Color");
-
+  const [colorPalette, setColorPalette] = useState();
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-
   const sessions = [
     "07:00",
     "08:00",
@@ -41,24 +39,32 @@ export default function ScheduleCheckbox({
     "17:00",
     "18:00",
   ];
-
-  const colorList = ["red", "green", "indigo"];
-
+  const colorList = ["red-400", "green-400", "indigo-400"];
   const [loading, setLoading] = useState(false);
 
   // Setting up cursor click able checkbox
   useEffect(() => {
     setSubClass(occupiedSchedule);
 
-    occupiedSchedule
-      ? setCursorMode("cursor-not-allowed pointer-events-none")
-      : setCursorMode("cursor-pointer");
+    // occupiedSchedule.color_data
+    //   ? setColorPalette(occupiedSchedule.color_data)
+    //   : setColorPalette();
+    // setColorPalette(
+    //   occupiedSchedule.color_data ? occupiedSchedule.color_data : "slate"
+    // );
+
+    if (occupiedSchedule) {
+      setCursorMode("cursor-not-allowed pointer-events-none");
+      setColorPalette(occupiedSchedule.color_data);
+    } else {
+      setCursorMode("cursor-pointer");
+    }
   }, [occupiedSchedule]);
 
   // Add Data
   async function postData(obj) {
     try {
-      console.log(obj);
+      // console.log(obj);
       const res = await axiosInstance.post(
         "https://dev.bekisar.net/api/v1/schedule",
         {
@@ -67,6 +73,7 @@ export default function ScheduleCheckbox({
               lecturer_plot_id: Number(obj.lecturer_plot_id),
               room_time_id: obj.room_time_id,
               academic_year_id: Number(obj.academic_year_id),
+              color_data: colorPalette || "white",
             },
           ],
         }
@@ -106,13 +113,29 @@ export default function ScheduleCheckbox({
         notifyError(err);
       }
     } else {
+      // if data not id db yet, reset state
       setSubClass();
     }
   }
 
+  function closeModal() {
+    if (occupiedSchedule) {
+      setSubClass(occupiedSchedule);
+      setColorPalette(occupiedSchedule.color_data);
+    } else {
+      setSubClass();
+      setColorPalette();
+    }
+    setModalShow(false);
+  }
+
   return (
     <>
-      <label className="relative w-full border-b border-collapse h-[5rem] cursor-pointer bg-white overflow-hidden ">
+      <label
+        className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
+          colorPalette || "grey"
+        } overflow-hidden`}
+      >
         <input className="sr-only" onClick={() => setModalShow(true)} />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
           {occupiedSchedule ? (
@@ -131,17 +154,10 @@ export default function ScheduleCheckbox({
         </div>
       </label>
 
-      <Modal
-        className="h-96"
-        show={modalShow}
-        onClose={() => {
-          occupiedSchedule ? setSubClass(occupiedSchedule) : setSubClass();
-          setModalShow(false);
-        }}
-      >
+      <Modal className="h-96" show={modalShow} onClose={closeModal}>
         <Modal.Header>
-          {days[Math.ceil(time.time_id / 4) - 1]},{" "}
-          {sessions[(Number(time.time_id) + 3) % 4]}, Ruang{" "}
+          {days[Math.ceil(time.time_id / 12) - 1]},{" "}
+          {sessions[(Number(time.time_id) + 11) % 12]}, Ruang{" "}
           {room[time.room_id - 1].name}
         </Modal.Header>
 
@@ -153,15 +169,19 @@ export default function ScheduleCheckbox({
               <h3>Mata Kuliah</h3>
             </b>
             {subClass ? (
-              <div
-                className={`flex border w-full text-left rounded-lg my-1 py-2 px-4 bg-grey-light justify-between bg-${colorPalette}-400`}
-              >
-                <div>
-                  <b>{subClass.sub_classes_name || subClass.sub_class_name}</b>
-                  <br />
-                  {subClass.lecturer_name}
-                </div>
-                <div className="flex flex-row gap-3">
+              <>
+                <div
+                  className={`flex border w-full rounded-lg my-1 py-2 px-4 justify-between align-middle bg-${
+                    colorPalette || "white"
+                  }`}
+                >
+                  <div>
+                    <b>
+                      {subClass.sub_classes_name || subClass.sub_class_name}
+                    </b>
+                    <br />
+                    {subClass.lecturer_name}
+                  </div>
                   <Button
                     text="❌"
                     color="danger"
@@ -172,23 +192,34 @@ export default function ScheduleCheckbox({
                       } else {
                         setSubClass();
                       }
+                      setColorPalette();
                     }}
                   />
-                  <Dropdown
-                    label={colorPalette}
-                    color="dark"
-                    outline="true"
-                    className="bg-grey-light"
-                    size="sm"
-                  >
-                    {colorList.map((color) => (
-                      <Dropdown.Item onClick={() => setColorPalette(color)}>
-                        {color}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown>
+                  {/* <div className="flex flex-row gap-3">
+                    <Dropdown
+                      label={colorPalette}
+                      color="dark"
+                      outline="true"
+                      className="bg-grey-light"
+                      size="sm"
+                    >
+                      {colorList.map((color) => (
+                        <Dropdown.Item onClick={() => setColorPalette(color)}>
+                          {color}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown>
+                  </div> */}
                 </div>
-              </div>
+                <div className="flex justify-end">
+                  {colorList.map((color) => (
+                    <button
+                      className={`border mr-1 rounded-full h-8 w-8 bg-${color}`}
+                      onClick={() => setColorPalette(color)}
+                    />
+                  ))}
+                </div>
+              </>
             ) : (
               <p className="text-red-600">* Pilih Mata Kuliah</p>
             )}
@@ -239,14 +270,7 @@ export default function ScheduleCheckbox({
               postData(Object.assign(subClass, time));
             }}
           />
-          <Button
-            text="Tutup"
-            color="danger"
-            onClick={() => {
-              occupiedSchedule ? setSubClass(occupiedSchedule) : setSubClass();
-              setModalShow(false);
-            }}
-          />
+          <Button text="Tutup" color="danger" onClick={closeModal} />
         </Modal.Footer>
       </Modal>
     </>
