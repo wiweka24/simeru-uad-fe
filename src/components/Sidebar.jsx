@@ -9,25 +9,44 @@ import {
   IdentificationIcon,
   BookmarkIcon,
   ArrowRightOnRectangleIcon,
+  DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
-
 import Button from "./Button";
+import { useEffect } from "react";
+import { notifyError, notifySucces } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
   const [activePage, setActivePage] = useState("/");
-  const academicYear = [
-    { year: "2022/2023", value: 1 },
-    { year: "2023/2024", value: 2 },
-    { year: "2024/2025", value: 3 },
-    { year: "2025/2026", value: 4 },
-    { year: "2026/2027", value: 5 },
-  ];
+  const [academicYear, setAcademicYear] = useState([]);
+  const acyear_string = `${acyear.start_year}/${acyear.end_year}(${
+    Number(acyear.semester) + 1
+  })`;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axiosInstance.get("dummy_acyear.json");
+        setAcademicYear(res.data.data);
+        console.log(res.data.data);
+      } catch (err) {
+        notifyError(err);
+      }
+    })();
+  }, []);
+
+  // const academicYear = [
+  //   { year: "2022/2023", value: 1 },
+  //   { year: "2023/2024", value: 2 },
+  //   { year: "2024/2025", value: 3 },
+  //   { year: "2025/2026", value: 4 },
+  //   { year: "2026/2027", value: 5 },
+  // ];
 
   function SidebarTitle({ text }) {
     return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
@@ -126,23 +145,39 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             <SidebarTitle text="Atur Tahun Ajaran" />
             <div className="pl-2">
               <Dropdown
-                label={acyear.year}
+                label={acyear_string}
                 color="dark"
                 outline="false"
                 size="md"
               >
                 {academicYear.map((acadyear) => (
                   <Dropdown.Item
-                    key={acadyear.value}
+                    key={acadyear.academicyear_id}
                     onClick={() => getAcadYearValue(acadyear)}
                   >
-                    {acadyear.year}
+                    {acadyear.start_year}/{acadyear.end_year}(
+                    {String(Number(acadyear.semester) + 1)})
                   </Dropdown.Item>
                 ))}
               </Dropdown>
             </div>
           </div>
+        </div>
+      </div>
 
+      <div className="px-2 mb-5">
+        <SidebarTitle text="Template Data Tahun Lalu" />
+        <div className="px-2">
+          <Button
+            text={
+              <div className="flex items-center">
+                <DocumentDuplicateIcon className="h-5 mr-1" />
+                Set Template Data
+              </div>
+            }
+            color="dark"
+            onClick={logoutSubmit}
+          />
         </div>
       </div>
 
