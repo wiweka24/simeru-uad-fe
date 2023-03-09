@@ -213,13 +213,13 @@ export default function Schedule({ acyear }) {
           <tbody>
             {roomTimeHelper.map((day, index) => (
               <tr className="bg-white">
-                <td className="border w-20 pt-6 text-enter align-top font-medium text-gray-900">
+                <td className="border-b border-r w-20 pt-6 text-center align-top font-medium text-gray-900">
                   {currentDays[index]}
                 </td>
 
-                <td className="border font-medium text-gray-900 w-full grid grid-flow-row gap-6 py-[1.5rem]">
+                <td className="border-b font-medium text-gray-900 w-max flex flex-col">
                   {sessions.map((session) => (
-                    <div className="p-1 text-center ">
+                    <div className="px-1 h-20 py-4 text-center">
                       <TimePlaceholder text={session[0]} number={session[1]} />
                     </div>
                   ))}
@@ -245,7 +245,7 @@ export default function Schedule({ acyear }) {
                             onChange={rerender}
                           />
                         ) : (
-                          <label className="relative border-b h-[5rem] items-center w-full cursor-not-allowed"></label>
+                          <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
                         )
                       )}
                     </div>

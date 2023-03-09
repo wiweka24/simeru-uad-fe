@@ -22,6 +22,7 @@ export default function Button({ text, linkto, color, ...buttonProps }) {
   return (
     <Link
       to={linkto}
+      className="flex"
       // className={`relative inline-flex items-center justify-start px-4 py-1.5 overflow-hidden font-medium transition-all border-2 ${border[color]} bg-white rounded-lg hover:bg-white group`}
     >
       {/* <button {...buttonProps}>
@@ -37,13 +38,13 @@ export default function Button({ text, linkto, color, ...buttonProps }) {
       
       <button
         {...buttonProps}
-        class={`rounded-md px-4 py-1.5 overflow-hidden relative group cursor-pointer border-2 font-medium ${border[color]} ${txt[color]}`}
+        className={`rounded-md px-4 py-1.5 overflow-hidden relative group cursor-pointer border-2 font-medium ${border[color]} ${txt[color]} bg-white`}
       >
         <span
-          class={`absolute w-64 h-0 transition-all duration-100 ${bg[color]} top-1/2 origin-center rotate-45 -translate-x-20 group-hover:h-64 group-hover:-translate-y-32 ease`}
+          className={`absolute w-64 h-0 transition-all duration-100 ${bg[color]} top-1/2 origin-center rotate-45 -translate-x-20 group-hover:h-64 group-hover:-translate-y-32 ease`}
         />
         <span
-          class={`relative ${txt[color]} transition duration-300 group-hover:text-white ease`}
+          className={`relative ${txt[color]} transition duration-300 group-hover:text-white ease`}
         >
           {text}
         </span>

@@ -204,7 +204,7 @@ export default function RoomTime() {
         <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead className="">
             <tr className="border-y text-gray-700/50 ">
-              <th className="sticky top-0 pl-6 px-6 py-3 bg-gray-50">
+              <th className="sticky top-0 text-center py-3 bg-gray-50">
                 Ruang Kelas
               </th>
               <th className="sticky top-0 pl-5 bg-gray-50">Sesi</th>
@@ -219,7 +219,7 @@ export default function RoomTime() {
           <tbody className="">
             {currentRoomtimes.map((room, index) => (
               <tr className="bg-white border-b">
-                <td className="text-center pr-10 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <td className="text-center font-medium text-gray-900 whitespace-nowrap">
                   {roomsLabel[index].name}
                 </td>
                 <td className="px-5 py-4">
