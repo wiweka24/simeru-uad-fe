@@ -143,11 +143,52 @@ export default function LecturerCourse({ acyear }) {
       const res_template = await axiosInstance.get(
         `${URL}lecturer_plot/${acadyear}`
       );
-      setLecturerPlot(res_template.data.data);
-      console.log();
+      console.log(res_template.data.data);
+      const template_data = res_template.data.data;
+      console.log(template_data);
+      const post_data = template_data.map((item) => {
+        console.log(item.lecturer_id);
+        let container = {};
+        container.lecturer_id = Number(item.lecturer_id);
+        container.sub_class_id = Number(item.sub_class_id);
+        container.academic_year_id = acyear;
+        return container;
+      });
+
+      try {
+        await axiosInstance.post(`${URL}lecturer_plot`, {
+          data: post_data,
+        });
+        setUpdateChild(`update${Math.random()}`);
+      } catch (err) {
+        notifyError(err);
+      }
+
+      // ).then ((res_template) => {
+      //   if(res_template.status == 200){
+      //     try{
+      //       await axiosInstance.post(`${URL}lecturer_plot`, {
+      //       data: [
+      //         {
+      //           lecturer_id: text.lecturer_id,
+      //           sub_class_id: text.sub_class_id,
+      //           academic_year_id: acyear,
+      //         },
+      //       ],
+      //     });
+      //     }
+      //     catch{
+
+      //     }
+
+      //   }
+      // }
+
+      //setLecturerPlot(res_template.data.data);
+      console.log(res_template.data.data);
 
       // const res2 = await axiosInstance.get(`${URL}lecturer`);
-      // setDosen(res2.data.data);
+      //  setDosen(res2.data.data);
     } catch (err) {
       notifyError(err);
     }
