@@ -18,6 +18,7 @@ export default function Schedule({ acyear }) {
   const [schedules, setSchedules] = useState([]);
   const [update, setUpdate] = useState("");
   const [currentDays, setCurrentDays] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
@@ -61,8 +62,7 @@ export default function Schedule({ acyear }) {
     },
   ];
 
-  const [loading, setLoading] = useState(true);
-
+  // Rerender value
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
   };
@@ -83,6 +83,7 @@ export default function Schedule({ acyear }) {
     ["18:00", 12],
   ];
 
+  //Get all necessary data
   useEffect(() => {
     (async () => {
       try {
@@ -90,7 +91,9 @@ export default function Schedule({ acyear }) {
         const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
-        const res1 = await axiosInstance.get(`${URL}room_time_helper`);
+        const res1 = await axiosInstance.get(
+          `${URL}room_time_helper/${acyear}`
+        );
         setNormalRoomTimeHelper(res1.data.data);
         // setRoomTimeHelper(assignRoom(res1.data.data));
 
@@ -98,22 +101,23 @@ export default function Schedule({ acyear }) {
         setSubClass(res2.data.data);
         // console.log(res2.data.data);
 
-        const res3 = await axiosInstance.get(`${URL}room_time`);
+        const res3 = await axiosInstance.get(`${URL}room_time/${acyear}`);
         setRoomTime(res3.data.data);
 
         const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
 
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
         // setLoading(false);
       } catch (err) {
         console.log(err);
       }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [update, acyear]);
 
+  //Merging and filtering data
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
       ...item,
@@ -163,6 +167,7 @@ export default function Schedule({ acyear }) {
     return finalArrRooms;
   }
 
+  //Search Logic
   useEffect(() => {
     setCurrentSubClass(
       subClass.filter((item) =>
@@ -170,6 +175,40 @@ export default function Schedule({ acyear }) {
       )
     );
   }, [subClass, searchQuery]);
+
+  //Mapping schedule by filterring the data.
+  function scheduleMapping(
+    session,
+    rooms,
+    currentSubClass,
+    setSearchQuery,
+    schedules,
+    rerender
+  ) {
+    const occupiedSchedule = schedules.find(
+      (item) =>
+        item.time_id === session.time_id &&
+        item.room_id === session.room_id &&
+        item.academic_year_id === session.academic_year_id
+    );
+
+    if (session.is_possible === "1") {
+      return (
+        <ScheduleCheckbox
+          time={session}
+          room={rooms}
+          availableClass={currentSubClass}
+          setSearchQuery={setSearchQuery}
+          occupiedSchedule={occupiedSchedule}
+          onChange={rerender}
+        />
+      );
+    } else {
+      return (
+        <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
+      );
+    }
+  }
 
   return (
     <div className="relative">
@@ -229,23 +268,13 @@ export default function Schedule({ acyear }) {
                   <td className="border w-40 font-medium text-gray-900 bg-grey-light">
                     <div className="flex flex-col">
                       {dayRoom.map((session) =>
-                        session.is_possible === "1" ? (
-                          <ScheduleCheckbox
-                            time={session}
-                            room={rooms}
-                            availableClass={currentSubClass}
-                            setSearchQuery={setSearchQuery}
-                            occupiedSchedule={schedules.find(
-                              (item) =>
-                                item.time_id === session.time_id &&
-                                item.room_id === session.room_id &&
-                                item.academic_year_id ===
-                                  session.academic_year_id
-                            )}
-                            onChange={rerender}
-                          />
-                        ) : (
-                          <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
+                        scheduleMapping(
+                          session,
+                          rooms,
+                          currentSubClass,
+                          setSearchQuery,
+                          schedules,
+                          rerender
                         )
                       )}
                     </div>
