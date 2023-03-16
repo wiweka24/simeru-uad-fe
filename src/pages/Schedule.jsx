@@ -122,6 +122,7 @@ export default function Schedule({ acyear }) {
         }, 500);
         // setLoading(false);
       } catch (err) {
+        setLoading(false);
         console.log(err);
       }
     })();

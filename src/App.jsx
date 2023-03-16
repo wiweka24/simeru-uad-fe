@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -16,14 +16,15 @@ import { Lecturer, Room, Subclass } from "./pages/InputData";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({
-    start_year: "2022",
-    end_year: "2023",
-    semester: "1",
-    academic_year_id: 1,
+    start_year: "",
+    end_year: "",
+    semester: "",
+    academic_year_id: "",
   });
+
   // const { token, setToken } = useToken();
   // const getToken = localStorage.getItem("auth_token");
-  console.log(acadYear,"ini year dipassing");
+  // console.log(acadYear,"ini year dipassing");
 
   axiosInstance.interceptors.request.use(function (config) {
     // const tokenString = localStorage.getItem("auth_token");
@@ -67,11 +68,13 @@ export default function App() {
                 <Route path="/Ruangan" element={<Room />} />
                 <Route
                   path="/DosenMatkul"
-                  element={<LecturerCourse acyear={acadYear.academic_year_id} />}
+                  element={
+                    <LecturerCourse acyear={acadYear.academic_year_id} />
+                  }
                 />
                 <Route
                   path="/RuangWaktu"
-                  element={<RoomTime acyear={acadYear.academicyear_id} />}
+                  element={<RoomTime acyear={acadYear.academic_year_id} />}
                 />
                 <Route
                   path="/MKTerselenggara"

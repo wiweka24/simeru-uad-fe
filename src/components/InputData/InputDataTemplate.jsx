@@ -202,7 +202,7 @@ export default function InputData({
   }
 
   return (
-    <div className='relative'>
+    <div className='relative h-screen'>
       <Spinner isLoading={loading} />
       <div className='h-10 border-b bg-white' />
       <div className='grid grid-cols-4 m-10 gap-5'>
@@ -214,7 +214,7 @@ export default function InputData({
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
-                  className={`col-span-${inpt.width || "2"} space-y-1`}
+                  className={`col-span-${inpt.width || '2'} space-y-1`}
                 >
                   <p className='text-grey'>
                     {inpt.name}

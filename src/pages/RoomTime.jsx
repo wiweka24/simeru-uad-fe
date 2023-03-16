@@ -79,8 +79,6 @@ export default function RoomTime({ acyear }) {
     }
   }, [rooms, currentLabel, roomtimes]);
 
-  console.log(currentRoomtimes);
-
   // Formating roomtimes data to manageable array
   function assignRoom(start, length, roomdata) {
     let finalArrRooms = [];
