@@ -166,19 +166,19 @@ export default function RoomTime({ acyear }) {
   }
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <Spinner isLoading={loading} />
-      <div className="h-10 border-b bg-white" />
-      <div className=" py-7 m-10 border-2 rounded-lg bg-white">
-        <p className="px-7 mb-5 text-xl font-bold">Ruang Kelas Tersedia</p>
+      <div className='h-10 border-b bg-white' />
+      <div className=' py-7 m-10 border-2 rounded-lg bg-white'>
+        <p className='px-7 mb-5 text-xl font-bold'>Ruang Kelas Tersedia</p>
         {/* Dropdown */}
-        <nav className="mx-8 grid mb-3 grid-flow-col">
+        <nav className='mx-8 grid mb-3 grid-flow-col'>
           <Dropdown
             label={currentLabel.name}
-            color="dark"
-            outline="true"
-            className="bg-grey-light"
-            size="sm"
+            color='dark'
+            outline='true'
+            className='bg-grey-light'
+            size='sm'
           >
             {roomList.map((room) => (
               <Dropdown.Item onClick={() => setCurrentLabel(room)}>
@@ -186,61 +186,63 @@ export default function RoomTime({ acyear }) {
               </Dropdown.Item>
             ))}
           </Dropdown>
-          <div className="justify-self-end grid grid-flow-col gap-4">
+          <div className='justify-self-end grid grid-flow-col gap-4'>
             <Button
-              text="select all"
-              color="dark"
+              text='Pilih Semua'
+              color='dark'
+              color1='succes'
               onClick={() => checkAllSession(currentRoomtimes)}
             />
             <Button
-              text="unselect all"
-              color="dark"
+              text='Batalkan Semua'
+              color='dark'
+              color1='danger'
               onClick={() => unCheckAllSession(currentRoomtimes)}
             />
           </div>
         </nav>
 
         {/* Table */}
-        <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead className="">
-            <tr className="border-y text-gray-700/50 ">
-              <th className="sticky top-0 text-center py-3 bg-gray-50">
+        <table className='relative w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+          <thead className=''>
+            <tr className='border-y text-gray-700/50 '>
+              <th className='sticky top-0 text-center py-3 bg-gray-50'>
                 Ruang Kelas
               </th>
-              <th className="sticky top-0 pl-5 bg-gray-50">Sesi</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Senin</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Selasa</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Rabu</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Kamis</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Jumat</th>
-              <th className="sticky top-0 pl-4 bg-gray-50">Sabtu</th>
+              <th className='sticky top-0 pl-5 bg-gray-50'>Sesi</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Senin</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Selasa</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Rabu</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Kamis</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Jumat</th>
+              <th className='sticky top-0 pl-4 bg-gray-50'>Sabtu</th>
             </tr>
           </thead>
-          <tbody className="">
+          <tbody className=''>
             {currentRoomtimes.map((room, index) => (
-              <tr className="bg-white border-b">
-                <td className="text-center font-medium text-gray-900 whitespace-nowrap">
+              <tr className='bg-white border-b'>
+                <td className='text-center font-medium text-gray-900 whitespace-nowrap'>
                   {roomsLabel[index].name}
                 </td>
-                <td className="px-5 py-4">
-                  <div className="flex items-start flex-col space-y-4">
-                    <TimePlaceholder text="07:00" number="1" />
-                    <TimePlaceholder text="08:00" number="2" />
-                    <TimePlaceholder text="09:00" number="3" />
-                    <TimePlaceholder text="10:00" number="4" />
-                    <TimePlaceholder text="11:00" number="5" />
-                    <TimePlaceholder text="12:00" number="6" />
-                    <TimePlaceholder text="13:00" number="7" />
-                    <TimePlaceholder text="14:00" number="8" />
-                    <TimePlaceholder text="15:00" number="9" />
-                    <TimePlaceholder text="16:00" number="10" />
-                    <TimePlaceholder text="17:00" number="11" />
-                    <TimePlaceholder text="18:00" number="12" />
+                <td className='px-5 py-4'>
+                  <div className='flex items-start flex-col space-y-4'>
+                    <TimePlaceholder text='07:00' number='1' />
+                    <TimePlaceholder text='08:00' number='2' />
+                    <TimePlaceholder text='09:00' number='3' />
+                    <TimePlaceholder text='10:00' number='4' />
+                    <TimePlaceholder text='11:00' number='5' />
+                    <TimePlaceholder text='12:00' number='6' />
+                    <TimePlaceholder text='13:00' number='7' />
+                    <TimePlaceholder text='14:00' number='8' />
+                    <TimePlaceholder text='15:00' number='9' />
+                    <TimePlaceholder text='16:00' number='10' />
+                    <TimePlaceholder text='17:00' number='11' />
+                    <TimePlaceholder text='18:00' number='12' />
                   </div>
                 </td>
                 {room.map((session) => (
-                  <td className="px-6 py-5 ">
-                    <div className="mt-1 flex items-start flex-col space-y-11">
+                  <td className='px-6 py-5 '>
+                    <div className='mt-1 flex items-start flex-col space-y-11'>
                       {session.map((time) => (
                         <Checkbox
                           value={time}
@@ -258,8 +260,8 @@ export default function RoomTime({ acyear }) {
 
         {/* Pagination */}
         <nav
-          className="mx-8 flex mt-3 items-center justify-between"
-          aria-label="Table navigation"
+          className='mx-8 flex mt-3 items-center justify-between'
+          aria-label='Table navigation'
         ></nav>
       </div>
     </div>
