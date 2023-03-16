@@ -41,13 +41,27 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     })();
   }, []);
 
-  // const academicYear = [
-  //   { year: "2022/2023", value: 1 },
-  //   { year: "2023/2024", value: 2 },
-  //   { year: "2024/2025", value: 3 },
-  //   { year: "2025/2026", value: 4 },
-  //   { year: "2026/2027", value: 5 },
-  // ];
+  const defaultInput = {
+    start_year: "",
+    end_year: "",
+    semester: 1,
+  };
+  const [input, setInput] = useState(defaultInput);
+
+  const inputField = [
+    {
+      id: 1,
+      placeholder: "Tahun Mulai",
+      valuefor: "start_year",
+      type: "number",
+    },
+    {
+      id: 2,
+      placeholder: "Tahun Akhir",
+      valuefor: "end_year",
+      type: "number",
+    },
+  ];
 
   function SidebarTitle({ text }) {
     return <div className='text-grey font-bold ml-3 py-2'>{text}</div>;
@@ -76,9 +90,9 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     console.log("test");
     try {
       await axiosInstance.post(`${URL}academic_year`, {
-        start_year: 2023,
-        end_year: 2024,
-        semester: 1,
+        start_year: input.start_year,
+        end_year: input.end_year,
+        semester: input.semester,
       });
     } catch (err) {
       notifyError(err);
@@ -200,9 +214,54 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         </div>
       </div>
 
-      <div className='px-2 mb-5'>
-        <SidebarTitle text='Template Data Tahun Lalu' />
-        <div className='px-2'>
+      <div className="px-2 mb-5">
+        <SidebarTitle text="Template Data Tahun Lalu" />
+        <div className="px-2">
+          <div className="space-y-2">
+            {inputField.map((inpt) => (
+              <input
+                id={inpt.valuefor}
+                type={inpt.type}
+                placeholder={inpt.placeholder}
+                value={input[inpt.valuefor]}
+                className="border-2 rounded-lg w-max p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                onChange={(e) =>
+                  setInput({ ...input, [e.target.id]: e.target.value })
+                }
+              />
+            ))}
+          </div>
+          <div class="flex items-center">
+            <input
+              checked
+              id="default-radio-1"
+              type="radio"
+              value="1"
+              name="default-radio"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 "
+              onClick={(e) => setInput({ ...input, semester: e.target.value })}
+            />
+            <label
+              for="default-radio-1"
+              class="ml-2 text-sm font-medium text-gray-900"
+            >
+              Ganjil
+            </label>
+            <input
+              id="default-radio-2"
+              type="radio"
+              value="2"
+              name="default-radio"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+              onClick={(e) => setInput({ ...input, semester: e.target.value })}
+            />
+            <label
+              for="default-radio-2"
+              class="ml-2 text-sm font-medium text-gray-900"
+            >
+              Genap
+            </label>
+          </div>
           <Button
             text={
               <div className='flex items-center'>
