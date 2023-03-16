@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+// Kode untuk halaman MKTerselenggara, dapat diakses melalui rute /MKTerselenggara dan tombol 
+// EN: Code for MKTerselenggara
 
+import { useState, useEffect } from "react";
 import Spinner from "../atoms/Spinner";
 import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
@@ -32,6 +34,7 @@ export default function CourseHelp({ acyear }) {
 
         const res1 = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOffered(res1.data.data);
+        console.log(acyear)
 
         const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res2.data.data);
@@ -233,86 +236,35 @@ export default function CourseHelp({ acyear }) {
     }
   }
 
-  async function SaveYearTemplateClick(templateyear) {
-    const getYear = Number(templateyear);
-    const acadyear = getYear - 2;
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`${URL}subclass`);
-      setSubClass(res.data.data);
-
-      const res1 = await axiosInstance.get(
-        `${URL}offered_classes/${templateyear}`
-      );
-      setOffered(res1.data.data);
-
-      const res2 = await axiosInstance.get(
-        `${URL}lecturer_plot/${templateyear}`
-      );
-      setLecturerPlot(res2.data.data);
-    } catch (err) {
-      notifyError(err);
-    }
-
-  }
-
-  function ButtonYear() {
-    console.log(acyear);
-    const num = Number(acyear);
-
-    if (acyear > 2) {
-      const templateyear = num - 2;
-
-      return (
-        <button
-          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold hover:bg-sky-600 hover:text-grey-light ease duration-100"
-          onClick={(templateyear) => SaveYearTemplateClick(templateyear)}
-        >
-          Set Template
-        </button>
-      );
-    }
-    if (acyear < 3) {
-      console.log("Button < 3");
-      return (
-        <button
-          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold"
-          disabled
-        >
-          Set Template
-        </button>
-      );
-    }
-  }
-
   return (
     <div className="relative">
       <Spinner isLoading={loading} />
       <div className="h-10 border-b bg-white"></div>
       <div className="border-2 rounded-lg bg-white m-10 gap-5">
         <div className="relative py-7 overflow-x-auto">
-          {/* Search */}
           <p className="px-7 mb-5 text-xl font-bold">
             Mata Kuliah Terselenggara
           </p>
+          <div className='justify-start mx-8 flex mb-3 gap-2	'>
+            <Button
+              text='Pilih Semua'
+              color='dark'
+              color1='succes'
+              onClick={() => selectAll(mergeSubClass)}
+            />
+            <Button
+              text='Batalkan Semua'
+              color='dark'
+              color1='danger'
+              onClick={() => deselectAll(mergeSubClass)}
+            />
+          </div>
           <TableHeader
             onChange={setTerm}
             onClick={setPostPerPage}
             postsPerPage={postsPerPage}
             jsonData={currentSubClass}
           />
-          <div className='justify-self-end grid grid-flow-col gap-4'>
-            <Button
-              text='Pilih Semua'
-              color='dark'
-              onClick={() => selectAll(mergeSubClass)}
-            />
-            <Button
-              text='Batalkan Semua'
-              color='dark'
-              onClick={() => deselectAll(mergeSubClass)}
-            />
-          </div>
           {/*Table*/}
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="border-y text-gray-700/50 bg-gray-50">
@@ -338,7 +290,6 @@ export default function CourseHelp({ acyear }) {
               {currentSubClass.map((item) => (
                 <tr key={item.sub_class_id} className="bg-white border-b">
                   <td
-                    scope="row"
                     className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
                   >
                     {item.sub_class_id}

@@ -88,6 +88,7 @@ export default function Schedule({ acyear }) {
     ["18:00", 12],
   ];
 
+  //Get all necessary data
   useEffect(() => {
     (async () => {
       try {
@@ -116,16 +117,17 @@ export default function Schedule({ acyear }) {
         );
         setFormattedSchedules(res5.data.data);
 
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
         // setLoading(false);
       } catch (err) {
         console.log(err);
       }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [update, acyear]);
 
+  //Merging and filtering data
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
       ...item,
@@ -185,6 +187,7 @@ export default function Schedule({ acyear }) {
     return finalArrRooms;
   }
 
+  //Search Logic
   useEffect(() => {
     setCurrentSubClass(
       subClass.filter((item) =>
@@ -192,6 +195,40 @@ export default function Schedule({ acyear }) {
       )
     );
   }, [subClass, searchQuery]);
+
+  //Mapping schedule by filterring the data.
+  function scheduleMapping(
+    session,
+    rooms,
+    currentSubClass,
+    setSearchQuery,
+    schedules,
+    rerender
+  ) {
+    const occupiedSchedule = schedules.find(
+      (item) =>
+        item.time_id === session.time_id &&
+        item.room_id === session.room_id &&
+        item.academic_year_id === session.academic_year_id
+    );
+
+    if (session.is_possible === "1") {
+      return (
+        <ScheduleCheckbox
+          time={session}
+          room={rooms}
+          availableClass={currentSubClass}
+          setSearchQuery={setSearchQuery}
+          occupiedSchedule={occupiedSchedule}
+          onChange={rerender}
+        />
+      );
+    } else {
+      return (
+        <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
+      );
+    }
+  }
 
   return (
     <div className="relative">
@@ -262,23 +299,13 @@ export default function Schedule({ acyear }) {
                   <td className="border w-40 font-medium text-gray-900 bg-grey-light">
                     <div className="flex flex-col">
                       {dayRoom.map((session) =>
-                        session.is_possible === "1" ? (
-                          <ScheduleCheckbox
-                            time={session}
-                            room={rooms}
-                            availableClass={currentSubClass}
-                            setSearchQuery={setSearchQuery}
-                            occupiedSchedule={schedules.find(
-                              (item) =>
-                                item.time_id === session.time_id &&
-                                item.room_id === session.room_id &&
-                                item.academic_year_id ===
-                                  session.academic_year_id
-                            )}
-                            onChange={rerender}
-                          />
-                        ) : (
-                          <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
+                        scheduleMapping(
+                          session,
+                          rooms,
+                          currentSubClass,
+                          setSearchQuery,
+                          schedules,
+                          rerender
                         )
                       )}
                     </div>
