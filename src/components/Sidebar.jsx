@@ -34,6 +34,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         const res = await axiosInstance.get(`${URL}academic_year`);
         setAcademicYear(res.data.data);
         console.log(res.data.data, "data acadyear");
+        console.log(acyear, "ini acyear");
       } catch (err) {
         notifyError(err);
       }
@@ -72,12 +73,12 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   async function postAcadYearTemplate() {
-    getAcadYearValue(acyear);
+    console.log("test");
     try {
       await axiosInstance.post(`${URL}academic_year`, {
-        start_year: acyear.start_year,
-        end_year: acyear.end_year,
-        semester: acyear.semester,
+        start_year: 2023,
+        end_year: 2024,
+        semester: 1,
       });
     } catch (err) {
       notifyError(err);
@@ -165,7 +166,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
               >
                 {academicYear.map((acadyear) => (
                   <Dropdown.Item
-                    key={acadyear.academicyear_id}
+                    key={acadyear.academic_year_id}
                     onClick={() => getAcadYearValue(acadyear)}
                   >
                     {acadyear.start_year}/{acadyear.end_year}(

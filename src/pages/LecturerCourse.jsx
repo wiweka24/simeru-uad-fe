@@ -33,7 +33,7 @@ export default function LecturerCourse({ acyear }) {
         setLoading(true);
         const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOfferedSubClass(res.data.data);
-        console.log(acyear);
+        console.log(acyear, "acyear baru");
         const res1 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res1.data.data);
 

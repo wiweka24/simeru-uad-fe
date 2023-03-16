@@ -32,6 +32,7 @@ export default function CourseHelp({ acyear }) {
 
         const res1 = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOffered(res1.data.data);
+        console.log(acyear)
 
         const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res2.data.data);

@@ -16,14 +16,14 @@ import { Lecturer, Room, Subclass } from "./pages/InputData";
 
 export default function App() {
   const [acadYear, setAcadYear] = useState({
-    start_year: "2021",
-    end_year: "2022",
-    semester: " 1",
-    academicyear_id: "1",
+    academic_year_id: 1,
+    end_year: "2023",
+    semester: " 0",
+    start_year: "2022",
   });
   // const { token, setToken } = useToken();
   // const getToken = localStorage.getItem("auth_token");
-  // console.log(getToken, "ini token dah dipassing");
+  console.log(acadYear,"ini year dipassing");
 
   axiosInstance.interceptors.request.use(function (config) {
     // const tokenString = localStorage.getItem("auth_token");
@@ -67,16 +67,16 @@ export default function App() {
                 <Route path="/Ruangan" element={<Room />} />
                 <Route
                   path="/DosenMatkul"
-                  element={<LecturerCourse acyear={acadYear.academicyear_id} />}
+                  element={<LecturerCourse acyear={acadYear.academic_year_id} />}
                 />
                 <Route path="/RuangWaktu" element={<RoomTime />} />
                 <Route
                   path="/MKTerselenggara"
-                  element={<CourseHelp acyear={acadYear.academicyear_id} />}
+                  element={<CourseHelp acyear={acadYear.academic_year_id} />}
                 />
                 <Route
                   path="/Jadwal"
-                  element={<Schedule acyear={acadYear.academicyear_id} />}
+                  element={<Schedule acyear={acadYear.academic_year_id} />}
                 />
                 <Route
                   path="/*"
