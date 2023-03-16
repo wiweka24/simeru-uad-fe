@@ -31,7 +31,6 @@ export default function InputData({
   const [input, setInput] = useState(defaultInput);
   const [excelName, setExcelName] = useState("");
   const [excelFile, setExcelFile] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   function dataJson(data) {
