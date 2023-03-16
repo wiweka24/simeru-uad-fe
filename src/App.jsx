@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -22,19 +22,10 @@ export default function App() {
     academic_year_id: "",
   });
 
-  // const { token, setToken } = useToken();
-  // const getToken = localStorage.getItem("auth_token");
-  // console.log(acadYear,"ini year dipassing");
-
   axiosInstance.interceptors.request.use(function (config) {
-    // const tokenString = localStorage.getItem("auth_token");
-    // console.log(tokenString);
-
     config.headers.Authorization = localStorage.getItem("auth_token")
       ? `Bearer ${localStorage.getItem("auth_token")}`
       : "";
-    // console.log(config.headers.Authorization);
-    // console.log(localStorage.getItem("auth_token"));
     return config;
   });
 
