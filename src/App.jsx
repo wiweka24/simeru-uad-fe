@@ -23,7 +23,6 @@ export default function App() {
   });
   // const { token, setToken } = useToken();
   // const getToken = localStorage.getItem("auth_token");
-  console.log(acadYear,"ini year dipassing");
 
   axiosInstance.interceptors.request.use(function (config) {
     // const tokenString = localStorage.getItem("auth_token");
@@ -67,7 +66,9 @@ export default function App() {
                 <Route path="/Ruangan" element={<Room />} />
                 <Route
                   path="/DosenMatkul"
-                  element={<LecturerCourse acyear={acadYear.academic_year_id} />}
+                  element={
+                    <LecturerCourse acyear={acadYear.academic_year_id} />
+                  }
                 />
                 <Route path="/RuangWaktu" element={<RoomTime />} />
                 <Route

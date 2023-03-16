@@ -5,23 +5,24 @@ import { notifyError } from "../../atoms/notification";
 import TableHeader from "../InputData/TableHeader";
 import TablePagination from "../InputData/TablePagination";
 
-export default function TableLecturerCredits(update) {
+export default function TableLecturerCredits({ update, acadyear }) {
   const [subClass, setSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
 
-  const URL = `${process.env.REACT_APP_BASE_URL}lecturers/1`;
+  const URL = `${process.env.REACT_APP_BASE_URL}lecturers/${acadyear}`;
 
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [term, setTerm] = useState("");
 
+  //Melakukan get data credit pengajar pada tabel lecturers berdasarkan academic year
   useEffect(() => {
     (async () => {
       try {
         const res = await axiosInstance.get(URL);
         setSubClass(res.data.data);
       } catch (err) {
-        notifyError(err)
+        notifyError(err);
       }
     })();
   }, [update, URL]);
@@ -29,6 +30,7 @@ export default function TableLecturerCredits(update) {
   return (
     <div className="relative py-7 overflow-x-auto">
       <p className="px-7 text-xl font-bold mb-5">Data Dosen</p>
+      {/* header tabel dari template weka */}
       <TableHeader
         onChange={setTerm}
         onClick={setPostPerPage}
@@ -36,7 +38,7 @@ export default function TableLecturerCredits(update) {
         jsonData={subClass}
       />
 
-      {/* Table */}
+      {/* Table credit dosen*/}
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="border-y text-gray-700/50 bg-gray-50">
           <tr>
@@ -55,6 +57,8 @@ export default function TableLecturerCredits(update) {
           </tr>
         </thead>
         <tbody>
+          {/* Map data json yang didapat saat get
+          (properti yang dimap lecturer_credit_id, lecturer_name, credit, sub_class_count) */}
           {currentSubClass.map((lectcredit) => (
             <tr
               key={lectcredit.lecturer_credit_id}
