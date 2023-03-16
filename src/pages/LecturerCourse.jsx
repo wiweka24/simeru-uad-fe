@@ -8,7 +8,6 @@ import TablePagination from "../components/InputData/TablePagination";
 import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
 import { axiosInstance } from "../atoms/config";
 import { notifyError, notifySucces } from "../atoms/notification";
-import { Dropdown } from "flowbite-react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -26,19 +25,19 @@ export default function LecturerCourse({ acyear }) {
   const [updateChild, setUpdateChild] = useState();
   const [testyear, setTestYear] = useState();
   const [tooLongReq, setTooLongReq] = useState(false);
-
   const [loading, setLoading] = useState(true);
-  const default_acyear = [1, 2, 3, 4, 5, 6];
+
+  // Get data data yang dibutuhkan di tabel lecturer Course
+  //(offered class) kelas terselenggara, (lecturer_plot) jadwal dosen, dan (dosen)lecturer)
+  //Use effect akan rerender jika terdapat update value pada acyear atau updateChild
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOfferedSubClass(res.data.data);
-        console.log(acyear, "acyear baru");
         const res1 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res1.data.data);
-
         const res2 = await axiosInstance.get(`${URL}lecturer`);
         setDosen(res2.data.data);
       } catch (err) {
@@ -52,16 +51,21 @@ export default function LecturerCourse({ acyear }) {
     })();
   }, [updateChild, acyear]);
 
+  // Melakukan merge tabel antara tabel offered subclass dan lecturerplot
   useEffect(() => {
+    // Map offeredsubclass
     const mergeData = offeredSubClass.map((item) => {
+      // find data pada lecturerplot yang memiliki subclass_id yang sama antara lecturer plot dan offered subclass
       const lecturer = lecturerPlot.find(
         (item2) => item2.sub_class_id === item.sub_class_id
       );
+      //Cek apakah lecturer name sudah ada/belum
       return {
         ...item,
         lecturer_name: lecturer ? lecturer.lecturer_name : "Mohon Isi Dosen",
       };
     });
+
     setSubClass(mergeData);
   }, [offeredSubClass, lecturerPlot]);
 
@@ -135,106 +139,13 @@ export default function LecturerCourse({ acyear }) {
     }
   }
 
-  async function SaveYearTemplateClick() {
-    const getYear = Number(acyear) - 2;
-    const acadyear = `${getYear}`;
-
-    try {
-      // const res = await axiosInstance.get(`${URL}offered_classes/${acadyear}`);
-      // setOfferedSubClass(res.data.data);
-      // console.log("ini year");
-      // console.log(acyear, "ini year sekarang");
-      const res_template = await axiosInstance.get(
-        `${URL}lecturer_plot/${acadyear}`
-      );
-      console.log(res_template.data.data);
-      const template_data = res_template.data.data;
-      console.log(template_data);
-      const post_data = template_data.map((item) => {
-        console.log(item.lecturer_id);
-        let container = {};
-        container.lecturer_id = Number(item.lecturer_id);
-        container.sub_class_id = Number(item.sub_class_id);
-        container.academic_year_id = acyear;
-        return container;
-      });
-
-      try {
-        await axiosInstance.post(`${URL}lecturer_plot`, {
-          data: post_data,
-        });
-        setUpdateChild(`update${Math.random()}`);
-      } catch (err) {
-        notifyError(err);
-      }
-
-      // ).then ((res_template) => {
-      //   if(res_template.status == 200){
-      //     try{
-      //       await axiosInstance.post(`${URL}lecturer_plot`, {
-      //       data: [
-      //         {
-      //           lecturer_id: text.lecturer_id,
-      //           sub_class_id: text.sub_class_id,
-      //           academic_year_id: acyear,
-      //         },
-      //       ],
-      //     });
-      //     }
-      //     catch{
-
-      //     }
-
-      //   }
-      // }
-
-      //setLecturerPlot(res_template.data.data);
-      console.log(res_template.data.data);
-
-      // const res2 = await axiosInstance.get(`${URL}lecturer`);
-      //  setDosen(res2.data.data);
-    } catch (err) {
-      notifyError(err);
-    }
-  }
-
-  function ButtonYear() {
-    console.log(acyear, "ini year sekarang");
-    const num = Number(acyear);
-
-    if (acyear > 2) {
-      const templateyear = num - 2;
-      console.log(templateyear, " ini year yang jadi template");
-
-      return (
-        <button
-          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold hover:bg-sky-600 hover:text-grey-light ease duration-100"
-          onClick={SaveYearTemplateClick}
-        >
-          Set Template
-        </button>
-      );
-    }
-    if (acyear < 3) {
-      console.log("Button < 3");
-      return (
-        <button
-          className="w-full bg-grey-light border-2 py-2 rounded-md text-grey-dark font-semibold"
-          disabled
-        >
-          Set Template
-        </button>
-      );
-    }
-  }
-
   if (tooLongReq) {
     return (
-      <Error redirect="/Jadwal" message="Too long request. Please try again" />
+      <Error type="reload" message="Too long request. Please try again" />
     );
   } else {
     return (
-      <div className="relative">
+      <div className="relative h-full">
         <Spinner isLoading={loading} />
         <div className="h-10 border-b bg-white" />
         <div className="grid grid-cols-8 m-10 gap-5">
@@ -247,7 +158,6 @@ export default function LecturerCourse({ acyear }) {
                 postsPerPage={postsPerPage}
                 jsonData={subClass}
               />
-              <ButtonYear />
               <div className="mt-4">
                 {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
                 <div className="pl-2"></div>
@@ -315,7 +225,7 @@ export default function LecturerCourse({ acyear }) {
             {/* <TableLecturerPlot /> */}
           </div>
           <div className="border-2 rounded-lg bg-white col-span-3 h-max">
-            <TableLecturerCredits update={updateChild} />
+            <TableLecturerCredits update={updateChild} acadyear={acyear}/>
           </div>
         </div>
       </div>

@@ -4,12 +4,14 @@ import Error from "./Error";
 import Spinner from "../atoms/Spinner";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
+import Button from "../components/Button";
 import { axiosInstance } from "../atoms/config";
 
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
 import { Dropdown } from "flowbite-react";
-import { notifyError} from "../atoms/notification";
+import { notifyError } from "../atoms/notification";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -226,9 +228,19 @@ export default function Schedule({ acyear }) {
     }
   }
 
+  function handleExport(jsonData) {
+    const ws = XLSX.utils.json_to_sheet(jsonData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+    FileSaver.saveAs(data, "data.xlsx");
+  }
+
   if (tooLongReq) {
     return (
-      <Error redirect="/Jadwal" message="Too long request. Please try again" />
+      <Error type="reload" message="Too long request. Please try again" />
     );
   } else {
     return (
@@ -256,6 +268,17 @@ export default function Schedule({ acyear }) {
                 </Dropdown.Item>
               ))}
             </Dropdown>
+
+            <Button
+              text={
+                <div className="flex items-center">
+                  <ArrowUpTrayIcon className="h-5 mr-1" />
+                  Export Excel
+                </div>
+              }
+              color="dark"
+              onClick={() => handleExport(formattedSchedules)}
+            />
           </nav>
 
           <Spinner isLoading={loading} />

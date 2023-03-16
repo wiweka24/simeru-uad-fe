@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
+import { Modal } from "flowbite-react";
+
+import Button from "../Button";
+import Spinner from "../../atoms/Spinner";
+import { axiosInstance } from "../../atoms/config";
+import { notifySucces, scheduleError } from "../../atoms/notification";
+
 import {
   PlusCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { Modal } from "flowbite-react";
-
-import Button from "../Button";
-import { Dropdown } from "flowbite-react";
-import Spinner from "../../atoms/Spinner";
-import { axiosInstance } from "../../atoms/config";
-import {
-  notifyError,
-  notifySucces,
-  scheduleError,
-} from "../../atoms/notification";
 
 export default function ScheduleCheckbox({
   time,

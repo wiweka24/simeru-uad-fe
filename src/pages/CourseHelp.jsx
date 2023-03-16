@@ -293,7 +293,7 @@ export default function CourseHelp({ acyear }) {
   //Render the websitee
   if (tooLongReq) {
     return (
-      <Error redirect="/Jadwal" message="Too long request. Please try again" />
+      <Error type="reload" message="Too long request. Please try again" />
     );
   } else {
     return (

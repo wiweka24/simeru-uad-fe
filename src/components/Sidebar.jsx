@@ -41,16 +41,18 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     (async () => {
       try {
         const res = await axiosInstance.get(`${URL}academic_year`);
-        const sortedAcademicYear = res.data.data.sort(
-          (a, b) => a.start_year - b.start_year
-        );
+        const sortedAcademicYear = res.data.data.sort((a, b) => {
+          if (a.start_year === b.start_year) {
+            return a.semester - b.semester;
+          }
+          return a.start_year - b.start_year;
+        });
         setAcademicYear(sortedAcademicYear);
       } catch (err) {
         notifyError(err);
       }
     })();
   }, [update]);
-
   useEffect(() => {
     (async () => {
       try {

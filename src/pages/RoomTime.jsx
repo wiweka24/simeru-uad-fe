@@ -53,7 +53,7 @@ export default function RoomTime({ acyear }) {
     };
 
     fetchData();
-  }, [update]);
+  }, [update, acyear]);
 
   //For adding "all room" mode of sorting
   useEffect(() => {
@@ -162,7 +162,7 @@ export default function RoomTime({ acyear }) {
 
   if (tooLongReq) {
     return (
-      <Error redirect="/Jadwal" message="Too long request. Please try again" />
+      <Error type="reload" message="Too long request. Please try again" />
     );
   } else {
     return (
