@@ -31,9 +31,9 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get("dummy_acyear.json");
+        const res = await axiosInstance.get(`${URL}academic_year`);
         setAcademicYear(res.data.data);
-        console.log(res.data.data);
+        console.log(res.data.data, "data acadyear");
       } catch (err) {
         notifyError(err);
       }
@@ -49,7 +49,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   // ];
 
   function SidebarTitle({ text }) {
-    return <div className='text-grey font-bold ml-3 py-2'>{text}</div>;
+    return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
 
   function SidebarLink({ Icon, text, linkto }) {
@@ -66,9 +66,22 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             activePage === linkto ? "stroke-[2.5px]" : "stroke-1.5px]"
           }`}
         />
-        <span className='inline truncate'>{text}</span>
+        <span className="inline truncate">{text}</span>
       </Link>
     );
+  }
+
+  async function postAcadYearTemplate() {
+    getAcadYearValue(acyear);
+    try {
+      await axiosInstance.post(`${URL}academic_year`, {
+        start_year: acyear.start_year,
+        end_year: acyear.end_year,
+        semester: acyear.semester,
+      });
+    } catch (err) {
+      notifyError(err);
+    }
   }
 
   async function logoutSubmit(e) {
@@ -96,54 +109,54 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   return (
-    <div className='flex flex-col justify-between col-span-1 border-r'>
+    <div className="flex flex-col justify-between col-span-1 border-r">
       <div>
-        <div className='text-grey items-center px-2 mt-6 ml-3'>
-          <div className='h-12 w-12 border rounded-full'>
+        <div className="text-grey items-center px-2 mt-6 ml-3">
+          <div className="h-12 w-12 border rounded-full">
             <img
-              src='https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png'
-              alt=''
-              className='p-1 rounded-full'
+              src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
+              alt=""
+              className="p-1 rounded-full"
             />
           </div>
-          <div className='py-4 leading-5'>
-            <h4 className=''>Admin</h4>
-            <p className='text-xl text-grey-dark font-bold'>Scheduler</p>
+          <div className="py-4 leading-5">
+            <h4 className="">Admin</h4>
+            <p className="text-xl text-grey-dark font-bold">Scheduler</p>
           </div>
         </div>
 
-        <div className='px-2'>
-          <SidebarTitle text='Input Data' />
-          <SidebarLink text='Matkul' Icon={BookOpenIcon} linkto='/MataKuliah' />
-          <SidebarLink text='Dosen' Icon={UserIcon} linkto='/Dosen' />
-          <SidebarLink text='Ruang Kelas' Icon={HomeIcon} linkto='/Ruangan' />
+        <div className="px-2">
+          <SidebarTitle text="Input Data" />
+          <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/MataKuliah" />
+          <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen" />
+          <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan" />
 
-          <SidebarTitle text='Konfigurasi' />
+          <SidebarTitle text="Konfigurasi" />
           <SidebarLink
-            text='Matkul Terselenggara'
+            text="Matkul Terselenggara"
             Icon={ClipboardDocumentCheckIcon}
-            linkto='/MKTerselenggara'
+            linkto="/MKTerselenggara"
           />
           <SidebarLink
-            text='Dosen Matkul'
+            text="Dosen Matkul"
             Icon={IdentificationIcon}
-            linkto='/DosenMatkul'
+            linkto="/DosenMatkul"
           />
           <SidebarLink
-            text='Ruang Kelas dan Waktu'
+            text="Ruang Kelas dan Waktu"
             Icon={ClockIcon}
-            linkto='/RuangWaktu'
+            linkto="/RuangWaktu"
           />
 
-          <SidebarTitle text='Jadwal' />
+          <SidebarTitle text="Jadwal" />
           <SidebarLink
-            text='Jadwal Matkul'
-            linkto='/Jadwal'
+            text="Jadwal Matkul"
+            linkto="/Jadwal"
             Icon={BookmarkIcon}
           />
-          <div className='mt-4'>
-            <SidebarTitle text='Atur Tahun Ajaran' />
-            <div className='pl-2'>
+          <div className="mt-4">
+            <SidebarTitle text="Atur Tahun Ajaran" />
+            <div className="pl-2">
               <Dropdown
                 label={acyear_string}
                 color="dark"
@@ -176,20 +189,20 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
               </div>
             }
             color="dark"
-            onClick={logoutSubmit}
+            onClick={postAcadYearTemplate}
           />
         </div>
       </div>
 
-      <div className='px-4 mb-5'>
+      <div className="px-4 mb-5">
         <Button
           text={
-            <div className='flex items-center'>
-              <ArrowRightOnRectangleIcon className='h-5 mr-1' />
+            <div className="flex items-center">
+              <ArrowRightOnRectangleIcon className="h-5 mr-1" />
               Logout
             </div>
           }
-          color='dark'
+          color="dark"
           onClick={logoutSubmit}
         />
       </div>

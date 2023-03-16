@@ -15,7 +15,12 @@ import { axiosInstance } from "./atoms/config";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
 
 export default function App() {
-  const [acadYear, setAcadYear] = useState({ start_year: "2021", end_year:"2022", semester: " 1", academicyear_id: "1" });
+  const [acadYear, setAcadYear] = useState({
+    start_year: "2021",
+    end_year: "2022",
+    semester: " 1",
+    academicyear_id: "1",
+  });
   // const { token, setToken } = useToken();
   // const getToken = localStorage.getItem("auth_token");
   // console.log(getToken, "ini token dah dipassing");
@@ -34,17 +39,17 @@ export default function App() {
 
   //App
   return (
-    <div className='grid grid-cols-7 overflow-hidden h-screen'>
+    <div className="grid grid-cols-7 overflow-hidden h-screen">
       <Router>
         {!localStorage.getItem("auth_token") ? (
           // Login and Logout Route
-          <div className='col-span-7 overflow-y-hidden h-screen bg-grey-light'>
+          <div className="col-span-7 overflow-y-hidden h-screen bg-grey-light">
             <Routes>
-              <Route path='/Login' element={<Login />} />
+              <Route path="/Login" element={<Login />} />
               <Route
-                path='/*'
+                path="/*"
                 element={
-                  <Error redirect='/Login' message='Login terlebih dahulu' />
+                  <Error redirect="/Login" message="Login terlebih dahulu" />
                 }
               />
             </Routes>
@@ -55,16 +60,16 @@ export default function App() {
             <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
 
             {/* App Route */}
-            <div className='col-span-6 overflow-y-scroll bg-grey-light'>
+            <div className="col-span-6 overflow-y-scroll bg-grey-light">
               <Routes>
-                <Route path='/MataKuliah' element={<Subclass />} />
-                <Route path='/Dosen' element={<Lecturer />} />
-                <Route path='/Ruangan' element={<Room />} />
+                <Route path="/MataKuliah" element={<Subclass />} />
+                <Route path="/Dosen" element={<Lecturer />} />
+                <Route path="/Ruangan" element={<Room />} />
                 <Route
                   path="/DosenMatkul"
                   element={<LecturerCourse acyear={acadYear.academicyear_id} />}
                 />
-                <Route path='/RuangWaktu' element={<RoomTime />} />
+                <Route path="/RuangWaktu" element={<RoomTime />} />
                 <Route
                   path="/MKTerselenggara"
                   element={<CourseHelp acyear={acadYear.academicyear_id} />}

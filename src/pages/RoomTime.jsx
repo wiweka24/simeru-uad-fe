@@ -37,7 +37,7 @@ export default function RoomTime() {
         setRooms(res.data.data);
 
         const res1 = await axiosInstance.get(
-          "https://dev.bekisar.net/api/v1/room_time_helper"
+          `https://dev.bekisar.net/api/v1/room_time_helper/`
         );
         setRoomtimes(res1.data.data);
         setTimeout(() => {
