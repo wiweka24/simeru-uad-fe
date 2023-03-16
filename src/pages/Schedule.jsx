@@ -5,6 +5,11 @@ import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import { Dropdown } from "flowbite-react";
 import { axiosInstance } from "../atoms/config";
+import Button from "../components/Button";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -16,8 +21,10 @@ export default function Schedule({ acyear }) {
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [schedules, setSchedules] = useState([]);
+  const [formattedSchedules, setFormattedSchedules] = useState([]);
   const [update, setUpdate] = useState("");
   const [currentDays, setCurrentDays] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
@@ -61,11 +68,9 @@ export default function Schedule({ acyear }) {
     },
   ];
 
-  const [loading, setLoading] = useState(true);
-
-  const rerender = () => {
+  function rerender() {
     setUpdate(`update ${Math.random()}`);
-  };
+  }
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -90,7 +95,9 @@ export default function Schedule({ acyear }) {
         const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
-        const res1 = await axiosInstance.get(`${URL}room_time_helper`);
+        const res1 = await axiosInstance.get(
+          `${URL}room_time_helper/${acyear}`
+        );
         setNormalRoomTimeHelper(res1.data.data);
         // setRoomTimeHelper(assignRoom(res1.data.data));
 
@@ -98,11 +105,16 @@ export default function Schedule({ acyear }) {
         setSubClass(res2.data.data);
         // console.log(res2.data.data);
 
-        const res3 = await axiosInstance.get(`${URL}room_time`);
+        const res3 = await axiosInstance.get(`${URL}room_time/${acyear}`);
         setRoomTime(res3.data.data);
 
         const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
+
+        const res5 = await axiosInstance.get(
+          `${URL}schedule/formatted/${acyear}`
+        );
+        setFormattedSchedules(res5.data.data);
 
         // setLoading(false);
       } catch (err) {
@@ -140,6 +152,16 @@ export default function Schedule({ acyear }) {
       assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
     );
   }, [normalRoomTimeHelper, roomTime, currentLabel]);
+
+  function handleExport(jsonData) {
+    const ws = XLSX.utils.json_to_sheet(jsonData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+    FileSaver.saveAs(data, "data.xlsx");
+  }
 
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata, start, end) {
@@ -193,6 +215,17 @@ export default function Schedule({ acyear }) {
               </Dropdown.Item>
             ))}
           </Dropdown>
+
+          <Button
+            text={
+              <div className="flex items-center">
+                <ArrowUpTrayIcon className="h-5 mr-1" />
+                Export Excel
+              </div>
+            }
+            color="dark"
+            onClick={() => handleExport(formattedSchedules)}
+          />
         </nav>
 
         <Spinner isLoading={loading} />

@@ -355,7 +355,7 @@ export default function InputData({
                     <td className='flex pt-2 space-x-3'>
                       <Button
                         text='🖊'
-                        color='success'
+                        color='succes'
                         onClick={() => handleEdit(subcls)}
                       />
                       <Button

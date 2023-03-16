@@ -40,13 +40,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     })();
   }, []);
 
-  // const academicYear = [
-  //   { year: "2022/2023", value: 1 },
-  //   { year: "2023/2024", value: 2 },
-  //   { year: "2024/2025", value: 3 },
-  //   { year: "2025/2026", value: 4 },
-  //   { year: "2026/2027", value: 5 },
-  // ];
 
   function SidebarTitle({ text }) {
     return <div className='text-grey font-bold ml-3 py-2'>{text}</div>;
