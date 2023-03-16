@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 
+import Error from "./Error";
 import Spinner from "../atoms/Spinner";
 import TimePlaceholder from "../components/RoomTime/TimePlaceholder";
 import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
-import { Dropdown } from "flowbite-react";
+import Button from "../components/Button";
 import { axiosInstance } from "../atoms/config";
+
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
+import { Dropdown } from "flowbite-react";
+import { notifyError } from "../atoms/notification";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -16,9 +23,11 @@ export default function Schedule({ acyear }) {
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [schedules, setSchedules] = useState([]);
+  const [formattedSchedules, setFormattedSchedules] = useState([]);
   const [update, setUpdate] = useState("");
   const [currentDays, setCurrentDays] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [tooLongReq, setTooLongReq] = useState(false);
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
@@ -62,10 +71,9 @@ export default function Schedule({ acyear }) {
     },
   ];
 
-  // Rerender value
-  const rerender = () => {
+  function rerender() {
     setUpdate(`update ${Math.random()}`);
-  };
+  }
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -83,36 +91,37 @@ export default function Schedule({ acyear }) {
     ["18:00", 12],
   ];
 
-  //Get all necessary data
+  //Getting the data
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(`${URL}room`);
-        setRooms(res.data.data);
+        const [
+          roomResponse,
+          helperResponse,
+          plotResponse,
+          timeResponse,
+          scheduleResponse,
+        ] = await Promise.all([
+          axiosInstance.get(`${URL}room`),
+          axiosInstance.get(`${URL}room_time_helper/${acyear}`),
+          axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
+          axiosInstance.get(`${URL}room_time/${acyear}`),
+          axiosInstance.get(`${URL}schedule/${acyear}`),
+        ]);
 
-        const res1 = await axiosInstance.get(
-          `${URL}room_time_helper/${acyear}`
-        );
-        setNormalRoomTimeHelper(res1.data.data);
-        // setRoomTimeHelper(assignRoom(res1.data.data));
-
-        const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
-        setSubClass(res2.data.data);
-        // console.log(res2.data.data);
-
-        const res3 = await axiosInstance.get(`${URL}room_time/${acyear}`);
-        setRoomTime(res3.data.data);
-
-        const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
-        setSchedules(res4.data.data);
-
+        setRooms(roomResponse.data.data);
+        setNormalRoomTimeHelper(helperResponse.data.data);
+        setSubClass(plotResponse.data.data);
+        setRoomTime(timeResponse.data.data);
+        setSchedules(scheduleResponse.data.data);
+      } catch (err) {
+        notifyError(err);
+        setTooLongReq(true);
+      } finally {
         setTimeout(() => {
           setLoading(false);
         }, 500);
-        // setLoading(false);
-      } catch (err) {
-        console.log(err);
       }
     })();
   }, [update, acyear]);
@@ -145,6 +154,16 @@ export default function Schedule({ acyear }) {
     );
   }, [normalRoomTimeHelper, roomTime, currentLabel]);
 
+  function handleExport(jsonData) {
+    const ws = XLSX.utils.json_to_sheet(jsonData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+    FileSaver.saveAs(data, "data.xlsx");
+  }
+
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata, start, end) {
     let finalArrRooms = [];
@@ -163,7 +182,6 @@ export default function Schedule({ acyear }) {
       //Push to make final array
       finalArrRooms.push(arrRooms);
     }
-    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -176,7 +194,7 @@ export default function Schedule({ acyear }) {
     );
   }, [subClass, searchQuery]);
 
-  //Mapping schedule by filterring the data.
+  //Mapping schedule by filterring the data to be addedd to the checkbox.
   function scheduleMapping(
     session,
     rooms,
@@ -210,81 +228,116 @@ export default function Schedule({ acyear }) {
     }
   }
 
-  return (
-    <div className="relative">
-      <div className="h-10 border-b bg-white" />
-      <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
-        <p className="px-7 mb-5 text-xl font-bold">
-          Jadwal Kuliah Terselenggara
-        </p>
-        {/* Dropdown & Search */}
-        <nav className="mx-8 flex mb-3 items-center justify-between">
-          <Dropdown
-            label={currentLabel.day}
-            color="dark"
-            outline="true"
-            className="bg-grey-light"
-            size="sm"
-          >
-            {dateList.map((date) => (
-              <Dropdown.Item onClick={() => setCurrentLabel(date)}>
-                {date.day}
-              </Dropdown.Item>
-            ))}
-          </Dropdown>
-        </nav>
+  function handleExport(jsonData) {
+    const ws = XLSX.utils.json_to_sheet(jsonData);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+    FileSaver.saveAs(data, "data.xlsx");
+  }
 
-        <Spinner isLoading={loading} />
-
-        {/* Table */}
-        <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
-          <thead className="text-gray-700/50 bg-gray-50 sticky top-0 z-40">
-            <tr>
-              <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
-              <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
-              {rooms.map((room) => (
-                <th className="bg-gray-50 w-40 border px-6 py-3 ">
-                  {room.name}
-                </th>
+  if (tooLongReq) {
+    return (
+      <Error type="reload" message="Too long request. Please try again" />
+    );
+  } else {
+    return (
+      <div className="relative">
+        <div className="h-10 border-b bg-white" />
+        <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
+          <p className="px-7 mb-5 text-xl font-bold">
+            Jadwal Kuliah Terselenggara
+          </p>
+          {/* Dropdown & Search */}
+          <nav className="mx-8 flex mb-3 items-center justify-between">
+            <Dropdown
+              label={currentLabel.day}
+              color="dark"
+              outline="true"
+              className="bg-grey-light"
+              size="sm"
+            >
+              {dateList.map((date) => (
+                <Dropdown.Item
+                  onClick={() => setCurrentLabel(date)}
+                  className="z-50"
+                >
+                  {date.day}
+                </Dropdown.Item>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {roomTimeHelper.map((day, index) => (
-              <tr className="bg-white">
-                <td className="border-b border-r w-20 pt-6 text-center align-top font-medium text-gray-900">
-                  {currentDays[index]}
-                </td>
+            </Dropdown>
 
-                <td className="border-b font-medium text-gray-900 w-max flex flex-col">
-                  {sessions.map((session) => (
-                    <div className="px-1 h-20 py-4 text-center">
-                      <TimePlaceholder text={session[0]} number={session[1]} />
-                    </div>
-                  ))}
-                </td>
+            <Button
+              text={
+                <div className="flex items-center">
+                  <ArrowUpTrayIcon className="h-5 mr-1" />
+                  Export Excel
+                </div>
+              }
+              color="dark"
+              onClick={() => handleExport(formattedSchedules)}
+            />
+          </nav>
 
-                {day.map((dayRoom) => (
-                  <td className="border w-40 font-medium text-gray-900 bg-grey-light">
-                    <div className="flex flex-col">
-                      {dayRoom.map((session) =>
-                        scheduleMapping(
-                          session,
-                          rooms,
-                          currentSubClass,
-                          setSearchQuery,
-                          schedules,
-                          rerender
-                        )
-                      )}
-                    </div>
-                  </td>
+          <Spinner isLoading={loading} />
+
+          {/* Table */}
+          <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
+            <thead className="text-gray-700/50 bg-gray-50 sticky top-0">
+              <tr>
+                <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
+                <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
+                {rooms.map((room) => (
+                  <th className="bg-gray-50 w-40 border px-6 py-3 ">
+                    {room.name}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {roomTimeHelper.map((day, index) => (
+                <tr className="bg-white">
+                  <td className="border-b border-r w-20 pt-6 text-center align-top font-medium text-gray-900">
+                    {currentDays[index]}
+                  </td>
+
+                  {/* Time Column */}
+                  <td className="border-b font-medium text-gray-900 w-max flex flex-col">
+                    {sessions.map((session) => (
+                      <div className="px-1 h-20 py-4 text-center">
+                        <TimePlaceholder
+                          text={session[0]}
+                          number={session[1]}
+                        />
+                      </div>
+                    ))}
+                  </td>
+
+                  {/* Shape of the schedule box */}
+                  {day.map((dayRoom) => (
+                    <td className="border w-40 font-medium text-gray-900 bg-grey-light">
+                      <div className="flex flex-col">
+                        {dayRoom.map((session) =>
+                          scheduleMapping(
+                            session,
+                            rooms,
+                            currentSubClass,
+                            setSearchQuery,
+                            schedules,
+                            rerender
+                          )
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

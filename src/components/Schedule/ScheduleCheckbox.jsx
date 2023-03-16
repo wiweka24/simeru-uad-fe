@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
+import { Modal } from "flowbite-react";
+
+import Button from "../Button";
+import Spinner from "../../atoms/Spinner";
+import { axiosInstance } from "../../atoms/config";
+import { notifySucces, scheduleError } from "../../atoms/notification";
 
 import {
   PlusCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { Modal } from "flowbite-react";
-
-import Button from "../Button";
-import { Dropdown } from "flowbite-react";
-import Spinner from "../../atoms/Spinner";
-import { axiosInstance } from "../../atoms/config";
-import { notifyError, notifySucces } from "../../atoms/notification";
 
 export default function ScheduleCheckbox({
   time,
@@ -24,6 +23,16 @@ export default function ScheduleCheckbox({
   const [subClass, setSubClass] = useState();
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
   const [colorPalette, setColorPalette] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const colorList = [
+    "red-400",
+    "green-400",
+    "indigo-400",
+    "cyan-400",
+    "lime-400",
+    "pink-400",
+  ];
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
     "07:00",
@@ -39,19 +48,10 @@ export default function ScheduleCheckbox({
     "17:00",
     "18:00",
   ];
-  const colorList = ["red-400", "green-400", "indigo-400"];
-  const [loading, setLoading] = useState(false);
 
   // Setting up cursor click able checkbox
   useEffect(() => {
     setSubClass(occupiedSchedule);
-
-    // occupiedSchedule.color_data
-    //   ? setColorPalette(occupiedSchedule.color_data)
-    //   : setColorPalette();
-    // setColorPalette(
-    //   occupiedSchedule.color_data ? occupiedSchedule.color_data : "slate"
-    // );
 
     if (occupiedSchedule) {
       setCursorMode("cursor-not-allowed pointer-events-none");
@@ -64,7 +64,6 @@ export default function ScheduleCheckbox({
   // Add Data
   async function postData(obj) {
     try {
-      // console.log(obj);
       const res = await axiosInstance.post(
         "https://dev.bekisar.net/api/v1/schedule",
         {
@@ -79,11 +78,12 @@ export default function ScheduleCheckbox({
         }
       );
       setModalShow(false);
-      setLoading(false);
       onChange();
       notifySucces("Dosen Pengampu Berhasil Ditambahkan");
     } catch (err) {
-      notifyError(err);
+      scheduleError(err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -105,12 +105,14 @@ export default function ScheduleCheckbox({
             },
           }
         );
-        // setModalShow(false);
-        setLoading(false);
+
         onChange();
+        setColorPalette();
         notifySucces("Dosen Pengampu Berhasil Dihapus");
       } catch (err) {
-        notifyError(err);
+        scheduleError(err);
+      } finally {
+        setLoading(false);
       }
     } else {
       // if data not id db yet, reset state
@@ -132,6 +134,7 @@ export default function ScheduleCheckbox({
 
   return (
     <>
+      {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
           colorPalette || "grey"
@@ -155,6 +158,7 @@ export default function ScheduleCheckbox({
         </div>
       </label>
 
+      {/* PopUp Modal */}
       <Modal className="h-96" show={modalShow} onClose={closeModal}>
         <Modal.Header>
           {days[Math.ceil(time.time_id / 12) - 1]},{" "}
@@ -196,21 +200,6 @@ export default function ScheduleCheckbox({
                       setColorPalette();
                     }}
                   />
-                  {/* <div className="flex flex-row gap-3">
-                    <Dropdown
-                      label={colorPalette}
-                      color="dark"
-                      outline="true"
-                      className="bg-grey-light"
-                      size="sm"
-                    >
-                      {colorList.map((color) => (
-                        <Dropdown.Item onClick={() => setColorPalette(color)}>
-                          {color}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown>
-                  </div> */}
                 </div>
                 <div className="flex justify-end">
                   {colorList.map((color) => (
