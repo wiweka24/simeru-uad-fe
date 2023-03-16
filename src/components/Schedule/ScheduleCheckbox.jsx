@@ -118,6 +118,7 @@ export default function ScheduleCheckbox({
     }
   }
 
+  //Resetting State when modal get closed
   function closeModal() {
     if (occupiedSchedule) {
       setSubClass(occupiedSchedule);
