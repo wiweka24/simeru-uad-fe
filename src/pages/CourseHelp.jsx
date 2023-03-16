@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
+// Kode untuk halaman MKTerselenggara, dapat diakses melalui rute /MKTerselenggara dan tombol 
+// EN: Code for MKTerselenggara
 
+import { useState, useEffect } from "react";
 import Spinner from "../atoms/Spinner";
+import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../../src/atoms/config";
-import { notifySucces, notifyError } from "../../src/atoms/notification";
+import { notifySucces } from "../../src/atoms/notification";
+import { toast } from "react-toastify";
 
 export default function CourseHelp({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
@@ -19,7 +23,6 @@ export default function CourseHelp({ acyear }) {
   const [offeredID, setOfferedID] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +34,7 @@ export default function CourseHelp({ acyear }) {
 
         const res1 = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOffered(res1.data.data);
+        console.log(acyear)
 
         const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res2.data.data);
@@ -41,7 +45,20 @@ export default function CourseHelp({ acyear }) {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [update, acyear]);
+  }, [URL, update, acyear]);
+
+  function notifyError(message) {
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
 
   useEffect(() => {
     const mergeData = offered.map((item) => {
@@ -53,7 +70,7 @@ export default function CourseHelp({ acyear }) {
         lecturer_id: lecturer ? lecturer.lecturer_id : "default",
       };
     });
-    console.log(mergeData);
+    // console.log(mergeData);
     setMergeOffered(mergeData);
   }, [offered, lecturerPlot]);
 
@@ -74,20 +91,80 @@ export default function CourseHelp({ acyear }) {
     setOfferedID(mergeOffered.map((item) => Number(item.sub_class_id)));
   }, [mergeOffered]);
 
-  // console.log(subClass);
-  // console.log(offered);
+  async function selectAll(obj) {
+    let offeredData = [];
+    for (const item of obj) {
+      if (!offeredID.includes(item.sub_class_id)) {
+        offeredData.push({
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+      }
+    }
+    try {
+      setLoading(true);
+      await axiosInstance.post(`${URL}offered_classes`, {
+        data: offeredData,
+      });
+      setUpdate(`update${Math.random()}`);
+    } catch (err) {
+      notifyError("Semua mata kuliah telah terselenggara!");
+      notifyError(err.message);
+      console.log(err);
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }
 
-  // const subClassID = subClass.map((item) => item.sub_class_id);
-  // const offeredID = offeredID_str.map(function (e) {
-  //   return Number(e);
-  // });
-
-  // console.log(subClassID);
-  // console.log(offeredID);
+  async function deselectAll(obj) {
+    // console.log(obj);
+    let plotData = [];
+    let offeredData = [];
+    for (const item of obj) {
+      if (offeredID.includes(item.sub_class_id)) {
+        plotData.push({
+          lecturer_id: item.lecturer_id,
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+        offeredData.push({
+          sub_class_id: item.sub_class_id,
+          academic_year_id: acyear,
+        });
+      }
+    }
+    if (!plotData.length || !offeredData.length) {
+      notifyError("Belum ada mata kuliah yang terselenggara!");
+    } else {
+      try {
+        setLoading(true);
+        await axiosInstance
+          .delete(`${URL}lecturer_plot`, {
+            data: {
+              data: plotData,
+            },
+          })
+          .then(
+            await axiosInstance.delete(`${URL}offered_classes`, {
+              data: {
+                data: offeredData,
+              },
+            })
+          );
+        setUpdate(`update${Math.random()}`);
+      } catch (err) {
+        notifyError(err.message);
+      }
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
+    }
+  }
 
   async function HandleCheck(obj) {
     if (offeredID.includes(obj.sub_class_id)) {
-      console.log(obj);
+      // console.log(obj);
       //remove item from offered list
       // const classIndex = subClass.findIndex(
       //   (item) => item.sub_class_id === obj.sub_class_id
@@ -143,7 +220,7 @@ export default function CourseHelp({ acyear }) {
           data: [
             {
               sub_class_id: obj.sub_class_id,
-              academic_year_id: 1,
+              academic_year_id: acyear,
             },
           ],
         });
@@ -160,59 +237,70 @@ export default function CourseHelp({ acyear }) {
   }
 
   return (
-    <div className='relative'>
+    <div className="relative">
       <Spinner isLoading={loading} />
-      <div className='h-10 border-b bg-white'></div>
-      <div className='border-2 rounded-lg bg-white m-10 gap-5'>
-        <div className='relative py-7 overflow-x-auto'>
-          {/* Search */}
-          <p className='px-7 mb-5 text-xl font-bold'>
+      <div className="h-10 border-b bg-white"></div>
+      <div className="border-2 rounded-lg bg-white m-10 gap-5">
+        <div className="relative py-7 overflow-x-auto">
+          <p className="px-7 mb-5 text-xl font-bold">
             Mata Kuliah Terselenggara
           </p>
+          <div className='justify-start mx-8 flex mb-3 gap-2	'>
+            <Button
+              text='Pilih Semua'
+              color='dark'
+              color1='succes'
+              onClick={() => selectAll(mergeSubClass)}
+            />
+            <Button
+              text='Batalkan Semua'
+              color='dark'
+              color1='danger'
+              onClick={() => deselectAll(mergeSubClass)}
+            />
+          </div>
           <TableHeader
             onChange={setTerm}
             onClick={setPostPerPage}
             postsPerPage={postsPerPage}
             jsonData={currentSubClass}
           />
-
           {/*Table*/}
-          <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-            <thead className='border-y text-gray-700/50 bg-gray-50'>
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="border-y text-gray-700/50 bg-gray-50">
               <tr>
-                <th scope='col' className='pl-8 pr-4 py-3'>
+                <th scope="col" className="pl-8 pr-4 py-3">
                   ID
                 </th>
-                <th scope='col' className='pl-8 pr-4 py-3'>
+                <th scope="col" className="pl-8 pr-4 py-3">
                   Nama Mata Kuliah
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   Semester
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   SKS
                 </th>
-                <th scope='col' className='pl-8 pr-4'>
+                <th scope="col" className="pl-8 pr-4">
                   Terselenggara
                 </th>
               </tr>
             </thead>
             <tbody>
               {currentSubClass.map((item) => (
-                <tr key={item.sub_class_id} className='bg-white border-b'>
+                <tr key={item.sub_class_id} className="bg-white border-b">
                   <td
-                    scope='row'
-                    className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
+                    className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
                   >
                     {item.sub_class_id}
                   </td>
-                  <td className='pl-8 pr-4'>{item.name}</td>
-                  <td className='pl-8 pr-4'>{item.semester}</td>
-                  <td className='pl-8 pr-4'>{item.credit}</td>
-                  <td className='pl-8 pr-4 py-4 flex items-center'>
+                  <td className="pl-8 pr-4">{item.name}</td>
+                  <td className="pl-8 pr-4">{item.semester}</td>
+                  <td className="pl-8 pr-4">{item.credit}</td>
+                  <td className="pl-8 pr-4 py-4 flex items-center">
                     <input
-                      className='w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2'
-                      type='checkbox'
+                      className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                      type="checkbox"
                       checked={offeredID.includes(item.sub_class_id)}
                       onChange={() => HandleCheck(item)}
                     />
@@ -221,7 +309,6 @@ export default function CourseHelp({ acyear }) {
               ))}
             </tbody>
           </table>
-
           {/* Pagination */}
           <TablePagination
             subClass={mergeSubClass}
@@ -230,7 +317,7 @@ export default function CourseHelp({ acyear }) {
             currentPage={currentPage}
             postsPerPage={postsPerPage}
             term={term}
-            columnName='name'
+            columnName="name"
           />
         </div>
       </div>

@@ -6,7 +6,6 @@ import ScheduleCheckbox from "../components/Schedule/ScheduleCheckbox";
 import { Dropdown } from "flowbite-react";
 import { axiosInstance } from "../atoms/config";
 
-
 export default function Schedule({ acyear }) {
   const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
@@ -19,51 +18,51 @@ export default function Schedule({ acyear }) {
   const [schedules, setSchedules] = useState([]);
   const [update, setUpdate] = useState("");
   const [currentDays, setCurrentDays] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
-    end: 24,
+    end: 72,
   });
   const dateList = [
     {
       day: "All",
       start: 1,
-      end: 24,
+      end: 72,
     },
     {
       day: "Senin",
       start: 1,
-      end: 4,
-    },
-    {
-      day: "Selasa",
-      start: 5,
-      end: 8,
-    },
-    {
-      day: "Rabu",
-      start: 9,
       end: 12,
     },
     {
-      day: "Kamis",
+      day: "Selasa",
       start: 13,
-      end: 16,
+      end: 24,
+    },
+    {
+      day: "Rabu",
+      start: 25,
+      end: 36,
+    },
+    {
+      day: "Kamis",
+      start: 37,
+      end: 48,
     },
     {
       day: "Jumat",
-      start: 17,
-      end: 20,
+      start: 49,
+      end: 60,
     },
     {
       day: "Sabtu",
-      start: 21,
-      end: 24,
+      start: 61,
+      end: 72,
     },
   ];
 
-  const [loading, setLoading] = useState(true);
-
+  // Rerender value
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
   };
@@ -84,6 +83,7 @@ export default function Schedule({ acyear }) {
     ["18:00", 12],
   ];
 
+  //Get all necessary data
   useEffect(() => {
     (async () => {
       try {
@@ -91,7 +91,9 @@ export default function Schedule({ acyear }) {
         const res = await axiosInstance.get(`${URL}room`);
         setRooms(res.data.data);
 
-        const res1 = await axiosInstance.get(`${URL}room_time_helper`);
+        const res1 = await axiosInstance.get(
+          `${URL}room_time_helper/${acyear}`
+        );
         setNormalRoomTimeHelper(res1.data.data);
         // setRoomTimeHelper(assignRoom(res1.data.data));
 
@@ -99,22 +101,23 @@ export default function Schedule({ acyear }) {
         setSubClass(res2.data.data);
         // console.log(res2.data.data);
 
-        const res3 = await axiosInstance.get(`${URL}room_time`);
+        const res3 = await axiosInstance.get(`${URL}room_time/${acyear}`);
         setRoomTime(res3.data.data);
 
         const res4 = await axiosInstance.get(`${URL}schedule/${acyear}`);
         setSchedules(res4.data.data);
 
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
         // setLoading(false);
       } catch (err) {
         console.log(err);
       }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [update, acyear]);
 
+  //Merging and filtering data
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
       ...item,
@@ -148,21 +151,23 @@ export default function Schedule({ acyear }) {
     // todo : make i to min value of room_id, and i to length + max value
     // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
     // For dividing data to 6 days
-    for (let i = start; i < end; i = i + 4) {
+    for (let i = start; i < end; i = i + 12) {
       let arrDays = roomdata.filter(
-        (item) => item.time_id > i && item.time_id <= i + 4
+        (item) => item.time_id > i && item.time_id <= i + 12
       );
       let arrRooms = [];
-      // For setting the data into 8 rooms, 4 session each
-      for (let j = 0; j < arrDays.length; j = j + 4) {
-        arrRooms.push(arrDays.slice(j, j + 4));
+      // For setting the data into 8 rooms, 12 session each
+      for (let j = 0; j < arrDays.length; j = j + 12) {
+        arrRooms.push(arrDays.slice(j, j + 12));
       }
       //Push to make final array
       finalArrRooms.push(arrRooms);
     }
+    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
+  //Search Logic
   useEffect(() => {
     setCurrentSubClass(
       subClass.filter((item) =>
@@ -171,17 +176,39 @@ export default function Schedule({ acyear }) {
     );
   }, [subClass, searchQuery]);
 
-  // useEffect(() => {
-  //   const lolo = [roomTimeHelper[0]];
-  //   console.log(
-  //     lolo.map((day) => (
-  //       day
-  //     ))
-  //   );
-  //   setCurrentRoomTimeHelper([roomTimeHelper[0]])
-  // }, [roomTimeHelper, currentLabel]);
+  //Mapping schedule by filterring the data.
+  function scheduleMapping(
+    session,
+    rooms,
+    currentSubClass,
+    setSearchQuery,
+    schedules,
+    rerender
+  ) {
+    const occupiedSchedule = schedules.find(
+      (item) =>
+        item.time_id === session.time_id &&
+        item.room_id === session.room_id &&
+        item.academic_year_id === session.academic_year_id
+    );
 
-  // console.log(currentDays);
+    if (session.is_possible === "1") {
+      return (
+        <ScheduleCheckbox
+          time={session}
+          room={rooms}
+          availableClass={currentSubClass}
+          setSearchQuery={setSearchQuery}
+          occupiedSchedule={occupiedSchedule}
+          onChange={rerender}
+        />
+      );
+    } else {
+      return (
+        <label className="relative border-b h-20 items-center w-full cursor-not-allowed"></label>
+      );
+    }
+  }
 
   return (
     <div className="relative">
@@ -225,13 +252,13 @@ export default function Schedule({ acyear }) {
           <tbody>
             {roomTimeHelper.map((day, index) => (
               <tr className="bg-white">
-                <td className="border w-20 pt-6 text-center align-top font-medium text-gray-900">
+                <td className="border-b border-r w-20 pt-6 text-center align-top font-medium text-gray-900">
                   {currentDays[index]}
                 </td>
 
-                <td className="border w-0 font-medium text-gray-900">
+                <td className="border-b font-medium text-gray-900 w-max flex flex-col">
                   {sessions.map((session) => (
-                    <div className="p-1 w-fit text-center flex flex-col">
+                    <div className="px-1 h-20 py-4 text-center">
                       <TimePlaceholder text={session[0]} number={session[1]} />
                     </div>
                   ))}
@@ -241,23 +268,13 @@ export default function Schedule({ acyear }) {
                   <td className="border w-40 font-medium text-gray-900 bg-grey-light">
                     <div className="flex flex-col">
                       {dayRoom.map((session) =>
-                        session.is_possible === "1" ? (
-                          <ScheduleCheckbox
-                            time={session}
-                            room={rooms}
-                            availableClass={currentSubClass}
-                            setSearchQuery={setSearchQuery}
-                            occupiedSchedule={schedules.find(
-                              (item) =>
-                                item.time_id === session.time_id &&
-                                item.room_id === session.room_id &&
-                                item.academic_year_id ===
-                                  session.academic_year_id
-                            )}
-                            onChange={rerender}
-                          />
-                        ) : (
-                          <label className="relative border-b h-40 items-center w-full cursor-not-allowed"></label>
+                        scheduleMapping(
+                          session,
+                          rooms,
+                          currentSubClass,
+                          setSearchQuery,
+                          schedules,
+                          rerender
                         )
                       )}
                     </div>
