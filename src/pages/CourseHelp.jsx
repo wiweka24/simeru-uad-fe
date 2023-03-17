@@ -5,6 +5,7 @@
 // EN: Importing libraries
 import { useState, useEffect } from "react";
 import Spinner from "../atoms/Spinner";
+import Error from "./Error";
 import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
@@ -28,6 +29,7 @@ export default function CourseHelp({ acyear }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
+  const [tooLongReq, setTooLongReq] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -48,7 +50,10 @@ export default function CourseHelp({ acyear }) {
         // Catch error dan keluarkan notifikasi toast
         // EN: Catch error(s) and show toast notification
       } catch (err) {
+        setTooLongReq(true);
         notifyError(err);
+      } finally {
+        setLoading(false);
       }
     })();
     // Mengatur waktu timeout
@@ -296,6 +301,7 @@ export default function CourseHelp({ acyear }) {
         setUpdate(`update${Math.random()}`);
         notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
       } catch (err) {
+        setTooLongReq(true);
         notifyError(err.message);
         console.log(err);
       }
