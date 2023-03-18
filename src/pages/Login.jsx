@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 export default function Login() {
   const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
-  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -50,6 +50,17 @@ export default function Login() {
     } catch (err) {
       notifyError(err);
     }
+  }
+
+  const btn = document.getElementById("login");
+  if (btn) {
+    // Not called
+    btn.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("login").click();
+      }
+    });
   }
 
   return (

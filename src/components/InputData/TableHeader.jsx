@@ -16,7 +16,7 @@ export default function TableHeader({
 }) {
   const pageNumber = ["10", "25", "50", "100"];
 
-  const handleExport = () => {
+  function handleExport() {
     const ws = XLSX.utils.json_to_sheet(jsonData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });

@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 
 import Button from "../components/Button";
 import Spinner from "../atoms/Spinner";
+import Error from "./Error";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import TableLecturerCredits from "../components/LecturerCourse/TableLecturerCredits";
 import { axiosInstance } from "../atoms/config";
 import { notifyError, notifySucces } from "../atoms/notification";
-import { Dropdown } from "flowbite-react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -23,6 +23,8 @@ export default function LecturerCourse({ acyear }) {
   const [postsPerPage, setPostPerPage] = useState(10);
   const [term, setTerm] = useState("");
   const [updateChild, setUpdateChild] = useState();
+  const [testyear, setTestYear] = useState();
+  const [tooLongReq, setTooLongReq] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Get data data yang dibutuhkan di tabel lecturer Course
@@ -39,12 +41,14 @@ export default function LecturerCourse({ acyear }) {
         const res2 = await axiosInstance.get(`${URL}lecturer`);
         setDosen(res2.data.data);
       } catch (err) {
+        setTooLongReq(true);
         notifyError(err);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [updateChild, acyear]);
 
   // Melakukan merge tabel antara tabel offered subclass dan lecturerplot
@@ -135,88 +139,96 @@ export default function LecturerCourse({ acyear }) {
     }
   }
 
-  return (
-    <div className="relative">
-      <Spinner isLoading={loading} />
-      <div className="h-10 border-b bg-white" />
-      <div className="grid grid-cols-8 m-10 gap-5">
-        <div className="border-2 rounded-lg bg-white col-span-5 py-7 h-max">
-          <div className="relative overflow-x-auto">
-            <p className="px-7 text-xl font-bold mb-5">Dosen dan Matkul</p>
-            <TableHeader
-              onChange={setTerm}
-              onClick={setPostPerPage}
-              postsPerPage={postsPerPage}
-              jsonData={subClass}
-            />
-            <div className="mt-4">
-              {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
-              <div className="pl-2"></div>
+  if (tooLongReq) {
+    return (
+      <Error type="reload" message="Too long request. Please try again" />
+    );
+  } else {
+    return (
+      <div className="relative h-full">
+        <Spinner isLoading={loading} />
+        <div className="h-10 border-b bg-white" />
+        <div className="grid grid-cols-8 m-10 gap-5">
+          <div className="border-2 rounded-lg bg-white col-span-5 py-7 h-max">
+            <div className="relative overflow-x-auto">
+              <p className="px-7 text-xl font-bold mb-5">Dosen dan Matkul</p>
+              <TableHeader
+                onChange={setTerm}
+                onClick={setPostPerPage}
+                postsPerPage={postsPerPage}
+                jsonData={subClass}
+              />
+              <div className="mt-4">
+                {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
+                <div className="pl-2"></div>
+              </div>
+
+              {/* Table */}
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="border-y text-gray-700/50 bg-gray-50">
+                  <tr>
+                    <th scope="col" className="pl-8 pr-6 py-3">
+                      Id
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Nama Matkul
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Semester
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Kelas
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Dosen
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentSubClass.map((subcls) => (
+                    <tr key={subcls.sub_class_id} className="bg-white border-b">
+                      <th
+                        scope="row"
+                        className="pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      >
+                        {subcls.sub_class_id}
+                      </th>
+                      <td className="px-6 py-4 cursor-default">
+                        {subcls.name}
+                      </td>
+                      <td className="px-6 py-4 cursor-default">
+                        {subcls.semester}
+                      </td>
+                      <td className="px-6 py-4 cursor-default">
+                        {subcls.credit}
+                      </td>
+                      <td className="pl-6 cursor-pointer">
+                        <Cell value={subcls} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              <TablePagination
+                subClass={subClass}
+                setCurrentSubClass={setCurrentSubClass}
+                setCurrentPage={setCurrentPage}
+                currentPage={currentPage}
+                postsPerPage={postsPerPage}
+                term={term}
+                columnName="name"
+              />
             </div>
 
-            {/* Table */}
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="border-y text-gray-700/50 bg-gray-50">
-                <tr>
-                  <th scope="col" className="pl-8 pr-6 py-3">
-                    Id
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Nama Matkul
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Semester
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Kelas
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Dosen
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentSubClass.map((subcls) => (
-                  <tr key={subcls.sub_class_id} className="bg-white border-b">
-                    <th
-                      scope="row"
-                      className="pl-8 pr-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {subcls.sub_class_id}
-                    </th>
-                    <td className="px-6 py-4 cursor-default">{subcls.name}</td>
-                    <td className="px-6 py-4 cursor-default">
-                      {subcls.semester}
-                    </td>
-                    <td className="px-6 py-4 cursor-default">
-                      {subcls.credit}
-                    </td>
-                    <td className="pl-6 cursor-pointer">
-                      <Cell value={subcls} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Pagination */}
-            <TablePagination
-              subClass={subClass}
-              setCurrentSubClass={setCurrentSubClass}
-              setCurrentPage={setCurrentPage}
-              currentPage={currentPage}
-              postsPerPage={postsPerPage}
-              term={term}
-              columnName="name"
-            />
+            {/* <TableLecturerPlot /> */}
           </div>
-
-          {/* <TableLecturerPlot /> */}
-        </div>
-        <div className="border-2 rounded-lg bg-white col-span-3 h-max">
-          <TableLecturerCredits update={updateChild} acadyear={acyear} />
+          <div className="border-2 rounded-lg bg-white col-span-3 h-max">
+            <TableLecturerCredits update={updateChild} acadyear={acyear}/>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }

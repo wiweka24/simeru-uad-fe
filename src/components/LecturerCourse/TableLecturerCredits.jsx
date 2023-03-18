@@ -6,12 +6,10 @@ import TableHeader from "../InputData/TableHeader";
 import TablePagination from "../InputData/TablePagination";
 
 export default function TableLecturerCredits({ update, acadyear }) {
+  const URL = process.env.REACT_APP_BASE_URL;
   const [subClass, setSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
-
-  const URL = `${process.env.REACT_APP_BASE_URL}lecturers/${acadyear}`;
-
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [term, setTerm] = useState("");
 
@@ -19,13 +17,13 @@ export default function TableLecturerCredits({ update, acadyear }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(URL);
+        const res = await axiosInstance.get(`${URL}lecturers/${acadyear}`);
         setSubClass(res.data.data);
       } catch (err) {
         notifyError(err);
       }
     })();
-  }, [update, URL]);
+  }, [update, URL, acadyear]);
 
   return (
     <div className="relative py-7 overflow-x-auto">
