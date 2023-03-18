@@ -1,4 +1,4 @@
-// Kode untuk halaman MKTerselenggara, dapat diakses melalui rute /MKTerselenggara dan tombol 
+// Kode untuk halaman MKTerselenggara, dapat diakses melalui rute /MKTerselenggara dan tombol
 // EN: Code for MKTerselenggara
 
 import { useState, useEffect } from "react";
@@ -34,7 +34,7 @@ export default function CourseHelp({ acyear }) {
 
         const res1 = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
         setOffered(res1.data.data);
-        console.log(acyear)
+        console.log(acyear);
 
         const res2 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res2.data.data);
@@ -245,17 +245,17 @@ export default function CourseHelp({ acyear }) {
           <p className="px-7 mb-5 text-xl font-bold">
             Mata Kuliah Terselenggara
           </p>
-          <div className='justify-start mx-8 flex mb-3 gap-2	'>
+          <div className="justify-start mx-8 flex mb-3 gap-2	">
             <Button
-              text='Pilih Semua'
-              color='dark'
-              color1='succes'
+              text="Pilih Semua"
+              color="dark"
+              color1="succes"
               onClick={() => selectAll(mergeSubClass)}
             />
             <Button
-              text='Batalkan Semua'
-              color='dark'
-              color1='danger'
+              text="Batalkan Semua"
+              color="dark"
+              color1="danger"
               onClick={() => deselectAll(mergeSubClass)}
             />
           </div>
@@ -289,9 +289,7 @@ export default function CourseHelp({ acyear }) {
             <tbody>
               {currentSubClass.map((item) => (
                 <tr key={item.sub_class_id} className="bg-white border-b">
-                  <td
-                    className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
-                  >
+                  <td className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap">
                     {item.sub_class_id}
                   </td>
                   <td className="pl-8 pr-4">{item.name}</td>
