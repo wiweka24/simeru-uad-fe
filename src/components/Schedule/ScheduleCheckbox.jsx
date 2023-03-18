@@ -91,7 +91,7 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        const res = await axiosInstance.delete(
+        await axiosInstance.delete(
           "https://dev.bekisar.net/api/v1/schedule",
           {
             data: {
@@ -132,6 +132,12 @@ export default function ScheduleCheckbox({
     setModalShow(false);
   }
 
+  function getTimeRoomName(time_id) {
+    console.log(time_id)
+    const matchingRoom = room.find((item) => item.room_id == time_id);
+    return matchingRoom ? matchingRoom.name : null;
+  };
+
   return (
     <>
       {/* Checkbox shape and content */}
@@ -163,7 +169,7 @@ export default function ScheduleCheckbox({
         <Modal.Header>
           {days[Math.ceil(time.time_id / 12) - 1]},{" "}
           {sessions[(Number(time.time_id) + 11) % 12]}, Ruang{" "}
-          {room[time.room_id - 1].name}
+          {getTimeRoomName(time.room_id)}
         </Modal.Header>
 
         <Modal.Body className=" ">
