@@ -52,6 +52,17 @@ export default function Login() {
     }
   }
 
+  const btn = document.getElementById("login");
+  if (btn) {
+    // Not called
+    btn.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.getElementById("login").click();
+      }
+    });
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-grey-light">
       <div className="max-w-md w-full bg-white rounded-xl shadow-md space-y-8  ">
