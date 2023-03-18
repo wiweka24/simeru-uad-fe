@@ -15,7 +15,7 @@ export function Subclass() {
       placeholder: "Masukkan nama matkul",
       valuefor: "name",
       type: "text",
-      width: "3",
+      width: "col-span-3",
     },
     {
       id: 2,
@@ -23,7 +23,7 @@ export function Subclass() {
       placeholder: "32",
       valuefor: "quota",
       type: "number",
-      width: "1",
+      width: "col-span-1",
     },
     {
       id: 3,
@@ -31,7 +31,7 @@ export function Subclass() {
       placeholder: "3",
       valuefor: "credit",
       type: "number",
-      width: "1",
+      width: "col-span-1",
     },
     {
       id: 4,
@@ -39,7 +39,7 @@ export function Subclass() {
       placeholder: "1",
       valuefor: "semester",
       type: "number",
-      width: "1",
+      width: "col-span-1",
     },
   ];
 
@@ -68,7 +68,7 @@ export function Lecturer() {
       placeholder: "Masukkan nama dosen",
       valuefor: "name",
       type: "text",
-      width: "2",
+      width: "col-span-2",
     },
     {
       id: 2,
@@ -76,7 +76,7 @@ export function Lecturer() {
       placeholder: "***@mail.com",
       valuefor: "email",
       type: "email",
-      width: "2",
+      width: "col-span-2",
     },
     {
       id: 3,
@@ -84,7 +84,7 @@ export function Lecturer() {
       placeholder: "(+62) xxxx xxxx",
       valuefor: "phone_number",
       type: "text",
-      width: "2",
+      width: "col-span-2",
     },
   ];
 
@@ -112,7 +112,7 @@ export function Room() {
       placeholder: "Masukkan nama ruangan",
       valuefor: "name",
       type: "text",
-      width: "4",
+      width: "col-span-4",
     },
     {
       id: 2,
@@ -120,7 +120,7 @@ export function Room() {
       placeholder: "75",
       valuefor: "quota",
       type: "number",
-      width: "2",
+      width: "col-span-2",
     },
   ];
 
