@@ -180,7 +180,9 @@ export default function Schedule({ acyear }) {
         arrRooms.push(arrDays.slice(j, j + 12));
       }
       //Push to make final array
-      finalArrRooms.push(arrRooms);
+      if (arrRooms.length != 0) {
+        finalArrRooms.push(arrRooms);
+      }
     }
     return finalArrRooms;
   }
@@ -239,9 +241,7 @@ export default function Schedule({ acyear }) {
   }
 
   if (tooLongReq) {
-    return (
-      <Error type="reload" message="Too long request. Please try again" />
-    );
+    return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
       <div className="relative">
