@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
 function notifyError(message) {
-  toast.error(message.response.data.message, {
+  toast.error(message.response.data.message || "format data salah", {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
