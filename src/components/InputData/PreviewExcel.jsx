@@ -91,7 +91,7 @@ export default function PreviewExcel({
     <>
       {isShow ? (
         <div className='flex p-7 border-2 rounded-lg bg-white col-span-4 h-auto justify-between'>
-          <div className='flex space-x-2 items-center'>
+          <div className='flex space-x-2 items-center '>
             <img
               src='https://cdn-icons-png.flaticon.com/512/2504/2504768.png'
               className='h-9'

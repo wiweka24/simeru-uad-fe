@@ -40,10 +40,11 @@ export default function RoomTime({ acyear }) {
             `https://dev.bekisar.net/api/v1/room_time_helper/${acyear}`
           ),
         ]);
+
         setRooms(roomRes.data.data);
         setRoomtimes(roomtimehelperRes.data.data);
       } catch (err) {
-        setTooLongReq(true);
+        //setTooLongReq(true);
         notifyError(err);
       } finally {
         setTimeout(() => {
@@ -161,9 +162,7 @@ export default function RoomTime({ acyear }) {
   }
 
   if (tooLongReq) {
-    return (
-      <Error type="reload" message="Too long request. Please try again" />
-    );
+    return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
       <div className="relative">
