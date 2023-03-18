@@ -115,6 +115,7 @@ export default function InputData({
       rerender();
     } catch (err) {
       notifyError(err);
+      console.log(err.response.data)
     }
     setTimeout(() => {
       setLoading(false);
@@ -214,7 +215,7 @@ export default function InputData({
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
-                  className={`col-span-${inpt.width || '2'} space-y-1`}
+                  className={`${inpt.width} space-y-1`}
                 >
                   <p className='text-grey'>
                     {inpt.name}
@@ -245,7 +246,7 @@ export default function InputData({
               {inputField.map((inpt) => (
                 <div
                   key={inpt.id}
-                  className={`col-span-${inpt.width} space-y-1`}
+                  className={`${inpt.width} space-y-1`}
                 >
                   <p className='text-grey'>
                     {inpt.name}

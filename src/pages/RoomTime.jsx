@@ -31,7 +31,7 @@ export default function RoomTime({ acyear }) {
 
   //Getting the data
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         setLoading(true);
         const [roomRes, roomtimehelperRes] = await Promise.all([
@@ -43,16 +43,14 @@ export default function RoomTime({ acyear }) {
         setRooms(roomRes.data.data);
         setRoomtimes(roomtimehelperRes.data.data);
       } catch (err) {
-        setTooLongReq(true);
+        // setTooLongReq(true);
         notifyError(err);
       } finally {
         setTimeout(() => {
           setLoading(false);
         }, 500);
       }
-    };
-
-    fetchData();
+    })();
   }, [update, acyear]);
 
   //For adding "all room" mode of sorting
@@ -81,7 +79,8 @@ export default function RoomTime({ acyear }) {
       );
       setRoomsLabel([currentLabel]);
     } else {
-      setCurrentRoomtimes(assignRoom(0, rooms.length, roomtimes));
+      const roomId = rooms.length > 0 ? rooms.at(-1).room_id : rooms.length;
+      setCurrentRoomtimes(assignRoom(0, roomId, roomtimes));
       setRoomsLabel(rooms);
     }
   }, [rooms, currentLabel, roomtimes]);
@@ -93,11 +92,14 @@ export default function RoomTime({ acyear }) {
     // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
     for (let i = start; i < length; i++) {
       let tempArrRooms = roomdata.filter((item) => item.room_id == i + 1);
+      // console.log(length);
       let rdTempArrRooms = [];
       for (let j = 0; j < tempArrRooms.length; j = j + 12) {
         rdTempArrRooms.push(tempArrRooms.slice(j, j + 12));
       }
-      finalArrRooms.push(rdTempArrRooms);
+      if (rdTempArrRooms != 0) {
+        finalArrRooms.push(rdTempArrRooms);
+      }
     }
     // console.log(finalArrRooms);
     return finalArrRooms;
@@ -160,10 +162,10 @@ export default function RoomTime({ acyear }) {
     }
   }
 
+  console.log(currentRoomtimes);
+
   if (tooLongReq) {
-    return (
-      <Error type="reload" message="Too long request. Please try again" />
-    );
+    return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
       <div className="relative">
