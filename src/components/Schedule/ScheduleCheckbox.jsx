@@ -59,7 +59,7 @@ export default function ScheduleCheckbox({
     } else {
       setCursorMode("cursor-pointer");
     }
-  }, [occupiedSchedule]);
+  }, [occupiedSchedule, colorPalette]);
 
   // Add Data
   async function postData(obj) {
@@ -91,23 +91,20 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete(
-          "https://dev.bekisar.net/api/v1/schedule",
-          {
-            data: {
-              data: [
-                {
-                  lecturer_plot_id: Number(obj.lecturer_plot_id),
-                  room_time_id: obj.room_time_id,
-                  academic_year_id: Number(obj.academic_year_id),
-                },
-              ],
-            },
-          }
-        );
+        await axiosInstance.delete("https://dev.bekisar.net/api/v1/schedule", {
+          data: {
+            data: [
+              {
+                lecturer_plot_id: Number(obj.lecturer_plot_id),
+                room_time_id: obj.room_time_id,
+                academic_year_id: Number(obj.academic_year_id),
+              },
+            ],
+          },
+        });
 
-        onChange();
         setColorPalette();
+        onChange();
         notifySucces("Dosen Pengampu Berhasil Dihapus");
       } catch (err) {
         scheduleError(err);
@@ -133,10 +130,10 @@ export default function ScheduleCheckbox({
   }
 
   function getTimeRoomName(time_id) {
-    console.log(time_id)
+    console.log(time_id);
     const matchingRoom = room.find((item) => item.room_id == time_id);
     return matchingRoom ? matchingRoom.name : null;
-  };
+  }
 
   return (
     <>

@@ -72,9 +72,7 @@ export default function RoomTime({ acyear }) {
           // todo : if class not only one
           currentLabel.room_id - 1,
           currentLabel.room_id,
-          roomtimes.filter((item) =>
-            item.room_id.includes(currentLabel.room_id)
-          )
+          roomtimes.filter((item) => item.room_id == currentLabel.room_id)
         )
       );
       setRoomsLabel([currentLabel]);
@@ -85,23 +83,50 @@ export default function RoomTime({ acyear }) {
     }
   }, [rooms, currentLabel, roomtimes]);
 
+  // // Formating roomtimes data to manageable array
+  // function assignRoom(start, length, roomdata) {
+  //   let finalArrRooms = [];
+  //   // todo : make i to min value of room_id, and i to length + max value
+  //   // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
+  //   for (let i = start; i < length; i++) {
+  //     let tempArrRooms = roomdata.filter((item) => item.room_id == i + 1);
+  //     // console.log(length);
+  //     let rdTempArrRooms = [];
+  //     for (let j = 0; j < tempArrRooms.length; j = j + 12) {
+  //       rdTempArrRooms.push(tempArrRooms.slice(j, j + 12));
+  //     }
+  //     if (rdTempArrRooms != 0) {
+  //       finalArrRooms.push(rdTempArrRooms);
+  //     }
+  //   }
+  //   // console.log(finalArrRooms);
+  //   return finalArrRooms;
+  // }
+
   // Formating roomtimes data to manageable array
   function assignRoom(start, length, roomdata) {
     let finalArrRooms = [];
-    // todo : make i to min value of room_id, and i to length + max value
-    // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
-    for (let i = start; i < length; i++) {
-      let tempArrRooms = roomdata.filter((item) => item.room_id == i + 1);
-      // console.log(length);
-      let rdTempArrRooms = [];
-      for (let j = 0; j < tempArrRooms.length; j = j + 12) {
-        rdTempArrRooms.push(tempArrRooms.slice(j, j + 12));
-      }
-      if (rdTempArrRooms != 0) {
-        finalArrRooms.push(rdTempArrRooms);
+    let fixArrRooms = [];
+
+    for (let item of roomdata) {
+      if (fixArrRooms[item.room_id]) {
+        fixArrRooms[item.room_id].push(item);
+      } else {
+        fixArrRooms[item.room_id] = [item];
       }
     }
-    // console.log(finalArrRooms);
+
+    for (let item of fixArrRooms) {
+      if (item) {
+        let rdTempArrRooms = [];
+        for (let j = 0; j < item.length; j = j + 12) {
+          rdTempArrRooms.push(item.slice(j, j + 12));
+        }
+        if (rdTempArrRooms != 0) {
+          finalArrRooms.push(rdTempArrRooms);
+        }
+      }
+    }
     return finalArrRooms;
   }
 
@@ -161,8 +186,6 @@ export default function RoomTime({ acyear }) {
       notifyError(err);
     }
   }
-
-  console.log(currentRoomtimes);
 
   if (tooLongReq) {
     return <Error type="reload" message="Too long request. Please try again" />;
