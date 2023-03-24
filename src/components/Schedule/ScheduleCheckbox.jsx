@@ -59,7 +59,7 @@ export default function ScheduleCheckbox({
     } else {
       setCursorMode("cursor-pointer");
     }
-  }, [occupiedSchedule, colorPalette]);
+  }, [occupiedSchedule]);
 
   // Add Data
   async function postData(obj) {
@@ -130,7 +130,6 @@ export default function ScheduleCheckbox({
   }
 
   function getTimeRoomName(time_id) {
-    console.log(time_id);
     const matchingRoom = room.find((item) => item.room_id == time_id);
     return matchingRoom ? matchingRoom.name : null;
   }
@@ -140,10 +139,15 @@ export default function ScheduleCheckbox({
       {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
-          colorPalette || "grey"
+          occupiedSchedule ? occupiedSchedule.color_data : "grey"
         } overflow-hidden`}
       >
-        <input className="sr-only" onClick={() => setModalShow(true)} />
+        <input
+          className="sr-only"
+          onClick={() => {
+            setModalShow(true);
+          }}
+        />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
