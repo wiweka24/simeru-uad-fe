@@ -91,23 +91,20 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete(
-          "https://dev.bekisar.net/api/v1/schedule",
-          {
-            data: {
-              data: [
-                {
-                  lecturer_plot_id: Number(obj.lecturer_plot_id),
-                  room_time_id: obj.room_time_id,
-                  academic_year_id: Number(obj.academic_year_id),
-                },
-              ],
-            },
-          }
-        );
+        await axiosInstance.delete("https://dev.bekisar.net/api/v1/schedule", {
+          data: {
+            data: [
+              {
+                lecturer_plot_id: Number(obj.lecturer_plot_id),
+                room_time_id: obj.room_time_id,
+                academic_year_id: Number(obj.academic_year_id),
+              },
+            ],
+          },
+        });
 
-        onChange();
         setColorPalette();
+        onChange();
         notifySucces("Dosen Pengampu Berhasil Dihapus");
       } catch (err) {
         scheduleError(err);
@@ -133,20 +130,24 @@ export default function ScheduleCheckbox({
   }
 
   function getTimeRoomName(time_id) {
-    console.log(time_id)
     const matchingRoom = room.find((item) => item.room_id == time_id);
     return matchingRoom ? matchingRoom.name : null;
-  };
+  }
 
   return (
     <>
       {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
-          colorPalette || "grey"
+          occupiedSchedule ? occupiedSchedule.color_data : "grey"
         } overflow-hidden`}
       >
-        <input className="sr-only" onClick={() => setModalShow(true)} />
+        <input
+          className="sr-only"
+          onClick={() => {
+            setModalShow(true);
+          }}
+        />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
