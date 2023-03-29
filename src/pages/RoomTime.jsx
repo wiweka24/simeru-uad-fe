@@ -70,7 +70,6 @@ export default function RoomTime({ acyear }) {
     if (currentLabel.name !== "All") {
       setCurrentRoomtimes(
         assignRoom(
-          // todo : if class not only one
           currentLabel.room_id - 1,
           currentLabel.room_id,
           roomtimes.filter((item) =>
