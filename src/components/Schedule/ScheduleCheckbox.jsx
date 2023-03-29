@@ -24,14 +24,18 @@ export default function ScheduleCheckbox({
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
   const [colorPalette, setColorPalette] = useState();
   const [loading, setLoading] = useState(false);
+  const URL = process.env.REACT_APP_BASE_URL;
 
   const colorList = [
+    "red-100",
     "red-400",
+    "green-100",
     "green-400",
+    "indigo-100",
     "indigo-400",
-    "cyan-400",
+    "yellow-100",
     "lime-400",
-    "pink-400",
+    "cyan-500",
   ];
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -52,7 +56,6 @@ export default function ScheduleCheckbox({
   // Setting up cursor click able checkbox
   useEffect(() => {
     setSubClass(occupiedSchedule);
-
     if (occupiedSchedule) {
       setCursorMode("cursor-not-allowed pointer-events-none");
       setColorPalette(occupiedSchedule.color_data);
@@ -64,19 +67,16 @@ export default function ScheduleCheckbox({
   // Add Data
   async function postData(obj) {
     try {
-      const res = await axiosInstance.post(
-        "https://dev.bekisar.net/api/v1/schedule",
-        {
-          data: [
-            {
-              lecturer_plot_id: Number(obj.lecturer_plot_id),
-              room_time_id: obj.room_time_id,
-              academic_year_id: Number(obj.academic_year_id),
-              color_data: colorPalette || "white",
-            },
-          ],
-        }
-      );
+      const res = await axiosInstance.post(`${URL}schedule`, {
+        data: [
+          {
+            lecturer_plot_id: Number(obj.lecturer_plot_id),
+            room_time_id: obj.room_time_id,
+            academic_year_id: Number(obj.academic_year_id),
+            color_data: colorPalette || "white",
+          },
+        ],
+      });
       setModalShow(false);
       onChange();
       notifySucces("Dosen Pengampu Berhasil Ditambahkan");
@@ -91,23 +91,20 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete(
-          "https://dev.bekisar.net/api/v1/schedule",
-          {
-            data: {
-              data: [
-                {
-                  lecturer_plot_id: Number(obj.lecturer_plot_id),
-                  room_time_id: obj.room_time_id,
-                  academic_year_id: Number(obj.academic_year_id),
-                },
-              ],
-            },
-          }
-        );
+        await axiosInstance.delete(`${URL}schedule`, {
+          data: {
+            data: [
+              {
+                lecturer_plot_id: Number(obj.lecturer_plot_id),
+                room_time_id: obj.room_time_id,
+                academic_year_id: Number(obj.academic_year_id),
+              },
+            ],
+          },
+        });
 
-        onChange();
         setColorPalette();
+        onChange();
         notifySucces("Dosen Pengampu Berhasil Dihapus");
       } catch (err) {
         scheduleError(err);
@@ -133,20 +130,24 @@ export default function ScheduleCheckbox({
   }
 
   function getTimeRoomName(time_id) {
-    console.log(time_id)
     const matchingRoom = room.find((item) => item.room_id == time_id);
     return matchingRoom ? matchingRoom.name : null;
-  };
+  }
 
   return (
     <>
       {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
-          colorPalette || "grey"
-        } overflow-hidden`}
+          occupiedSchedule ? occupiedSchedule.color_data : "grey"
+        } overflow-hidden z-0`}
       >
-        <input className="sr-only" onClick={() => setModalShow(true)} />
+        <input
+          className="sr-only"
+          onClick={() => {
+            setModalShow(true);
+          }}
+        />
         <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">

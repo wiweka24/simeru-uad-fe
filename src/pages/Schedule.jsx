@@ -109,7 +109,6 @@ export default function Schedule({ acyear }) {
           axiosInstance.get(`${URL}room_time/${acyear}`),
           axiosInstance.get(`${URL}schedule/${acyear}`),
         ]);
-
         setRooms(roomResponse.data.data);
         setNormalRoomTimeHelper(helperResponse.data.data);
         setSubClass(plotResponse.data.data);
@@ -154,6 +153,7 @@ export default function Schedule({ acyear }) {
     );
   }, [normalRoomTimeHelper, roomTime, currentLabel]);
 
+  //Export data ke Excel format
   function handleExport(jsonData) {
     const ws = XLSX.utils.json_to_sheet(jsonData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
@@ -167,8 +167,9 @@ export default function Schedule({ acyear }) {
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata, start, end) {
     let finalArrRooms = [];
-    // todo : make i to min value of room_id, and i to length + max value
-    // todo : what if the room sparse, ex. 1,4,17,19 => how to handle? => save the each room id to array
+    //TODO : This code just blindly take range of data, then assign it to the
+    //       coresponding array.
+    //TODO : Make checking for each id.
     // For dividing data to 6 days
     for (let i = start; i < end; i = i + 12) {
       let arrDays = roomdata.filter(
@@ -260,10 +261,7 @@ export default function Schedule({ acyear }) {
               size="sm"
             >
               {dateList.map((date) => (
-                <Dropdown.Item
-                  onClick={() => setCurrentLabel(date)}
-                  className="z-50"
-                >
+                <Dropdown.Item onClick={() => setCurrentLabel(date)}>
                   {date.day}
                 </Dropdown.Item>
               ))}
@@ -284,9 +282,9 @@ export default function Schedule({ acyear }) {
           <Spinner isLoading={loading} />
 
           {/* Table */}
-          <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
-            <thead className="text-gray-700/50 bg-gray-50 sticky top-0">
-              <tr>
+          <table className="relative border-collapse w-full text-sm text-gray-500 overflow-x-auto">
+            <thead className="text-gray-700/50 bg-gray-50">
+              <tr className="sticky top-0">
                 <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
                 <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
                 {rooms.map((room) => (
@@ -318,7 +316,7 @@ export default function Schedule({ acyear }) {
                   {/* Shape of the schedule box */}
                   {day.map((dayRoom) => (
                     <td className="border w-40 font-medium text-gray-900 bg-grey-light">
-                      <div className="flex flex-col">
+                      <div className="relative flex flex-col">
                         {dayRoom.map((session) =>
                           scheduleMapping(
                             session,
