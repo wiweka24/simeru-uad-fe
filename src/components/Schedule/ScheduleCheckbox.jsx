@@ -24,6 +24,7 @@ export default function ScheduleCheckbox({
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
   const [colorPalette, setColorPalette] = useState();
   const [loading, setLoading] = useState(false);
+  const URL = process.env.REACT_APP_BASE_URL;
 
   const colorList = [
     "red-100",
@@ -66,19 +67,16 @@ export default function ScheduleCheckbox({
   // Add Data
   async function postData(obj) {
     try {
-      const res = await axiosInstance.post(
-        "https://dev.bekisar.net/api/v1/schedule",
-        {
-          data: [
-            {
-              lecturer_plot_id: Number(obj.lecturer_plot_id),
-              room_time_id: obj.room_time_id,
-              academic_year_id: Number(obj.academic_year_id),
-              color_data: colorPalette || "white",
-            },
-          ],
-        }
-      );
+      const res = await axiosInstance.post(`${URL}schedule`, {
+        data: [
+          {
+            lecturer_plot_id: Number(obj.lecturer_plot_id),
+            room_time_id: obj.room_time_id,
+            academic_year_id: Number(obj.academic_year_id),
+            color_data: colorPalette || "white",
+          },
+        ],
+      });
       setModalShow(false);
       onChange();
       notifySucces("Dosen Pengampu Berhasil Ditambahkan");
@@ -93,7 +91,7 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete("https://dev.bekisar.net/api/v1/schedule", {
+        await axiosInstance.delete(`${URL}schedule`, {
           data: {
             data: [
               {

@@ -35,10 +35,8 @@ export default function RoomTime({ acyear }) {
       try {
         setLoading(true);
         const [roomRes, roomtimehelperRes] = await Promise.all([
-          axiosInstance.get("https://dev.bekisar.net/api/v1/room"),
-          axiosInstance.get(
-            `https://dev.bekisar.net/api/v1/room_time_helper/${acyear}`
-          ),
+          axiosInstance.get(`${URL}room`),
+          axiosInstance.get(`${URL}room_time_helper/${acyear}`),
         ]);
         setRooms(roomRes.data.data);
         setRoomtimes(roomtimehelperRes.data.data);
