@@ -282,17 +282,13 @@ export default function Schedule({ acyear }) {
           <Spinner isLoading={loading} />
 
           {/* Table */}
-          <table className="border-collapse w-full text-sm text-gray-500 overflow-x-auto">
+          <table className="relative border-collapse w-full text-sm text-gray-500 overflow-x-auto">
             <thead className="text-gray-700/50 bg-gray-50">
-              <tr>
-                <th className="sticky top-0 bg-gray-50 w-20 border py-3 ">
-                  Hari
-                </th>
-                <th className="sticky top-0 bg-gray-50 w-0 border py-3 ">
-                  Sesi
-                </th>
+              <tr className="sticky top-0">
+                <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
+                <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
                 {rooms.map((room) => (
-                  <th className="sticky top-0 bg-gray-50 w-40 border px-6 py-3 ">
+                  <th className="bg-gray-50 w-40 border px-6 py-3 ">
                     {room.name}
                   </th>
                 ))}
@@ -320,7 +316,7 @@ export default function Schedule({ acyear }) {
                   {/* Shape of the schedule box */}
                   {day.map((dayRoom) => (
                     <td className="border w-40 font-medium text-gray-900 bg-grey-light">
-                      <div className="flex flex-col">
+                      <div className="relative flex flex-col">
                         {dayRoom.map((session) =>
                           scheduleMapping(
                             session,

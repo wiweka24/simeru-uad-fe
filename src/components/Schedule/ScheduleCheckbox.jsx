@@ -26,12 +26,15 @@ export default function ScheduleCheckbox({
   const [loading, setLoading] = useState(false);
 
   const colorList = [
+    "red-100",
     "red-400",
+    "green-100",
     "green-400",
+    "indigo-100",
     "indigo-400",
-    "cyan-400",
+    "yellow-100",
     "lime-400",
-    "pink-400",
+    "cyan-500",
   ];
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -52,7 +55,6 @@ export default function ScheduleCheckbox({
   // Setting up cursor click able checkbox
   useEffect(() => {
     setSubClass(occupiedSchedule);
-
     if (occupiedSchedule) {
       setCursorMode("cursor-not-allowed pointer-events-none");
       setColorPalette(occupiedSchedule.color_data);
@@ -140,7 +142,7 @@ export default function ScheduleCheckbox({
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
           occupiedSchedule ? occupiedSchedule.color_data : "grey"
-        } overflow-hidden`}
+        } overflow-hidden z-0`}
       >
         <input
           className="sr-only"
