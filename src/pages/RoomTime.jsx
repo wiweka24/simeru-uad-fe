@@ -204,17 +204,15 @@ export default function RoomTime({ acyear }) {
           {/* Table */}
           <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="">
-              <tr className="border-y text-gray-700/50 ">
-                <th className="sticky top-0 text-center py-3 bg-gray-50">
-                  Ruang Kelas
-                </th>
-                <th className="sticky top-0 pl-5 bg-gray-50">Sesi</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Senin</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Selasa</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Rabu</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Kamis</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Jumat</th>
-                <th className="sticky top-0 pl-4 bg-gray-50">Sabtu</th>
+              <tr className="sticky top-0 border-y text-gray-700/50 ">
+                <th className="text-center py-3 bg-gray-50">Ruang Kelas</th>
+                <th className="pl-5 bg-gray-50">Sesi</th>
+                <th className="pl-4 bg-gray-50">Senin</th>
+                <th className="pl-4 bg-gray-50">Selasa</th>
+                <th className="pl-4 bg-gray-50">Rabu</th>
+                <th className="pl-4 bg-gray-50">Kamis</th>
+                <th className="pl-4 bg-gray-50">Jumat</th>
+                <th className="pl-4 bg-gray-50">Sabtu</th>
               </tr>
             </thead>
             <tbody className="">
