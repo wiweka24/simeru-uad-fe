@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
 import Button from "./Button";
 import { useEffect } from "react";
-import { notifyError } from "../atoms/notification";
+import { notifyError, notifySucces } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 import { Modal } from "flowbite-react";
 
@@ -118,6 +118,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         semester: input.semester,
       });
       setInput(defaultInput);
+      notifySucces("Tahun Ajaran Baru Berhasil Ditambahkab");
       rerender();
     } catch (err) {
       notifyError(err);
@@ -127,7 +128,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   function logoutCheck(e) {
     Swal.fire({
       html: `Anda yakin ingin keluar?`,
-      toast: true,
+      toast: false,
       icon: "warning",
       iconColor: "#000000",
       showCancelButton: true,

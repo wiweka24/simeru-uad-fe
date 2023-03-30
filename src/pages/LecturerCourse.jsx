@@ -140,12 +140,10 @@ export default function LecturerCourse({ acyear }) {
   }
 
   if (tooLongReq) {
-    return (
-      <Error type="reload" message="Too long request. Please try again" />
-    );
+    return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
-      <div className="relative h-full">
+      <div className="relative h-screen">
         <Spinner isLoading={loading} />
         <div className="h-10 border-b bg-white" />
         <div className="grid grid-cols-8 m-10 gap-5">
@@ -225,7 +223,7 @@ export default function LecturerCourse({ acyear }) {
             {/* <TableLecturerPlot /> */}
           </div>
           <div className="border-2 rounded-lg bg-white col-span-3 h-max">
-            <TableLecturerCredits update={updateChild} acadyear={acyear}/>
+            <TableLecturerCredits update={updateChild} acadyear={acyear} />
           </div>
         </div>
       </div>
