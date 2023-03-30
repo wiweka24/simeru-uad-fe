@@ -19,7 +19,8 @@ export default function RoomTime({ acyear }) {
   const [roomsLabel, setRoomsLabel] = useState([]);
   const [update, setUpdate] = useState("");
   const [loading, setLoading] = useState(true);
-  const [tooLongReq, setTooLongReq] = useState(false);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [error, setError] = useState([]);
   const [currentLabel, setCurrentLabel] = useState({
     name: "All",
     room_id: 0,
@@ -42,15 +43,15 @@ export default function RoomTime({ acyear }) {
         setRooms(roomRes.data.data);
         setRoomtimes(roomtimehelperRes.data.data);
       } catch (err) {
-        // setTooLongReq(true);
-        notifyError(err);
+        setFetchFailed(true);
+        setError(err.response);
       } finally {
         setTimeout(() => {
           setLoading(false);
         }, 500);
       }
     })();
-  }, [update, acyear]);
+  }, [update, acyear, URL]);
 
   //For adding "all room" mode of sorting
   useEffect(() => {
@@ -68,11 +69,9 @@ export default function RoomTime({ acyear }) {
     if (currentLabel.name !== "All") {
       setCurrentRoomtimes(
         assignRoom(
-            roomtimes.filter((item) => item.room_id == currentLabel.room_id)
-          
-          )
+          roomtimes.filter((item) => item.room_id == currentLabel.room_id)
         )
-      ;
+      );
       setRoomsLabel([currentLabel]);
     } else {
       setCurrentRoomtimes(assignRoom(roomtimes));
@@ -104,7 +103,6 @@ export default function RoomTime({ acyear }) {
         }
       }
     }
-    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -141,7 +139,6 @@ export default function RoomTime({ acyear }) {
     for (let rooms of obj) {
       for (let days of rooms) {
         for (let session of days) {
-          // console.log(session);
           if (session.is_possible === "1") {
             sendData.push({
               room_id: session.room_id,
@@ -165,14 +162,11 @@ export default function RoomTime({ acyear }) {
     }
   }
 
-  if (tooLongReq) {
-    return <Error type="reload" message="Too long request. Please try again" />;
-  } else {
-    return (
-      <div className="relative h-screen">
-        <Spinner isLoading={loading} />
-        <div className="h-10 border-b bg-white" />
-        <div className=" py-7 m-10 border-2 rounded-lg bg-white">
+  return (
+    <div className="relative h-screen">
+      <Spinner isLoading={loading} />
+      <div className="p-10">
+        <div className="py-7 border-2 rounded-lg bg-white">
           <p className="px-7 mb-5 text-xl font-bold">Ruang Kelas Tersedia</p>
           {/* Dropdown */}
           <nav className="mx-8 grid mb-3 grid-flow-col">
@@ -203,59 +197,67 @@ export default function RoomTime({ acyear }) {
             </div>
           </nav>
 
-          {/* Table */}
-          <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="">
-              <tr className="sticky top-0 border-y text-gray-700/50 ">
-                <th className="text-center py-3 bg-gray-50">Ruang Kelas</th>
-                <th className="pl-5 bg-gray-50">Sesi</th>
-                <th className="pl-4 bg-gray-50">Senin</th>
-                <th className="pl-4 bg-gray-50">Selasa</th>
-                <th className="pl-4 bg-gray-50">Rabu</th>
-                <th className="pl-4 bg-gray-50">Kamis</th>
-                <th className="pl-4 bg-gray-50">Jumat</th>
-                <th className="pl-4 bg-gray-50">Sabtu</th>
-              </tr>
-            </thead>
-            <tbody className="">
-              {currentRoomtimes.map((room, index) => (
-                <tr className="bg-white border-b">
-                  <td className="text-center font-medium text-gray-900 whitespace-nowrap">
-                    {roomsLabel[index].name}
-                  </td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-start flex-col space-y-4">
-                      <TimePlaceholder text="07:00" number="1" />
-                      <TimePlaceholder text="08:00" number="2" />
-                      <TimePlaceholder text="09:00" number="3" />
-                      <TimePlaceholder text="10:00" number="4" />
-                      <TimePlaceholder text="11:00" number="5" />
-                      <TimePlaceholder text="12:00" number="6" />
-                      <TimePlaceholder text="13:00" number="7" />
-                      <TimePlaceholder text="14:00" number="8" />
-                      <TimePlaceholder text="15:00" number="9" />
-                      <TimePlaceholder text="16:00" number="10" />
-                      <TimePlaceholder text="17:00" number="11" />
-                      <TimePlaceholder text="18:00" number="12" />
-                    </div>
-                  </td>
-                  {room.map((session) => (
-                    <td className="px-6 py-5 ">
-                      <div className="mt-1 flex items-start flex-col space-y-11">
-                        {session.map((time) => (
-                          <Checkbox
-                            value={time}
-                            onChange={rerender}
-                            setLoading={setLoading}
-                          />
-                        ))}
+          {/* If Dont Get Data Display Error Instead Of Table */}
+          {fetchFailed ? (
+            <Error
+              type="reload"
+              status={error.status}
+              message={error.data.message}
+            />
+          ) : (
+            <table className="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="">
+                <tr className="sticky top-0 border-y text-gray-700/50 ">
+                  <th className="text-center py-3 bg-gray-50">Ruang Kelas</th>
+                  <th className="pl-5 bg-gray-50">Sesi</th>
+                  <th className="pl-4 bg-gray-50">Senin</th>
+                  <th className="pl-4 bg-gray-50">Selasa</th>
+                  <th className="pl-4 bg-gray-50">Rabu</th>
+                  <th className="pl-4 bg-gray-50">Kamis</th>
+                  <th className="pl-4 bg-gray-50">Jumat</th>
+                  <th className="pl-4 bg-gray-50">Sabtu</th>
+                </tr>
+              </thead>
+              <tbody className="">
+                {currentRoomtimes.map((room, index) => (
+                  <tr className="bg-white border-b">
+                    <td className="text-center font-medium text-gray-900 whitespace-nowrap">
+                      {roomsLabel[index].name}
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-start flex-col space-y-4">
+                        <TimePlaceholder text="07:00" number="1" />
+                        <TimePlaceholder text="08:00" number="2" />
+                        <TimePlaceholder text="09:00" number="3" />
+                        <TimePlaceholder text="10:00" number="4" />
+                        <TimePlaceholder text="11:00" number="5" />
+                        <TimePlaceholder text="12:00" number="6" />
+                        <TimePlaceholder text="13:00" number="7" />
+                        <TimePlaceholder text="14:00" number="8" />
+                        <TimePlaceholder text="15:00" number="9" />
+                        <TimePlaceholder text="16:00" number="10" />
+                        <TimePlaceholder text="17:00" number="11" />
+                        <TimePlaceholder text="18:00" number="12" />
                       </div>
                     </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {room.map((session) => (
+                      <td className="px-6 py-5 ">
+                        <div className="mt-1 flex items-start flex-col space-y-11">
+                          {session.map((time) => (
+                            <Checkbox
+                              value={time}
+                              onChange={rerender}
+                              setLoading={setLoading}
+                            />
+                          ))}
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
           {/* Pagination */}
           <nav
@@ -264,6 +266,6 @@ export default function RoomTime({ acyear }) {
           ></nav>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   UserIcon,
@@ -14,8 +14,8 @@ import {
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Dropdown } from "flowbite-react";
+
 import Button from "./Button";
-import { useEffect } from "react";
 import { notifyError, notifySucces } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 import { Modal } from "flowbite-react";
@@ -52,7 +52,8 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         notifyError(err);
       }
     })();
-  }, [update]);
+  }, [update, URL]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -81,14 +82,14 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         });
       }
     })();
-  }, []);
+  }, [URL, getAcadYearValue]);
 
   function rerender() {
     setUpdate(`update ${Math.random()}`);
   }
 
   function SidebarTitle({ text }) {
-    return <div className='text-grey font-bold ml-3 py-2'>{text}</div>;
+    return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
 
   function SidebarLink({ Icon, text, linkto }) {
@@ -105,7 +106,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             activePage === linkto ? "stroke-[2.5px]" : "stroke-1.5px]"
           }`}
         />
-        <span className='inline truncate'>{text}</span>
+        <span className="inline truncate">{text}</span>
       </Link>
     );
   }
@@ -171,14 +172,14 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   return (
-    <div className='flex flex-col justify-between col-span-1 border-r'>
+    <>
       <div>
-        <div className='text-grey items-center px-2 mt-6 ml-3'>
-          <div className='h-12 w-12 border rounded-full'>
+        <div className="text-grey items-center px-2 mt-6 ml-3">
+          <div className="h-12 w-12 border rounded-full">
             <img
-              src='https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png'
-              alt=''
-              className='p-1 rounded-full'
+              src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
+              alt=""
+              className="p-1 rounded-full"
             />
           </div>
           <div className="py-4 leading-5">
@@ -190,33 +191,33 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           </div>
         </div>
 
-        <div className='px-2'>
-          <SidebarTitle text='Input Data' />
-          <SidebarLink text='Matkul' Icon={BookOpenIcon} linkto='/MataKuliah' />
-          <SidebarLink text='Dosen' Icon={UserIcon} linkto='/Dosen' />
-          <SidebarLink text='Ruang Kelas' Icon={HomeIcon} linkto='/Ruangan' />
+        <div className="px-2">
+          <SidebarTitle text="Input Data" />
+          <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/MataKuliah" />
+          <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen" />
+          <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan" />
 
-          <SidebarTitle text='Konfigurasi' />
+          <SidebarTitle text="Konfigurasi" />
           <SidebarLink
-            text='Matkul Terselenggara'
+            text="Matkul Terselenggara"
             Icon={ClipboardDocumentCheckIcon}
-            linkto='/MKTerselenggara'
+            linkto="/MKTerselenggara"
           />
           <SidebarLink
-            text='Dosen Matkul'
+            text="Dosen Matkul"
             Icon={IdentificationIcon}
-            linkto='/DosenMatkul'
+            linkto="/DosenMatkul"
           />
           <SidebarLink
-            text='Ruang Kelas dan Waktu'
+            text="Ruang Kelas dan Waktu"
             Icon={ClockIcon}
-            linkto='/RuangWaktu'
+            linkto="/RuangWaktu"
           />
 
-          <SidebarTitle text='Jadwal' />
+          <SidebarTitle text="Jadwal" />
           <SidebarLink
-            text='Jadwal Matkul'
-            linkto='/Jadwal'
+            text="Jadwal Matkul"
+            linkto="/Jadwal"
             Icon={BookmarkIcon}
           />
           <div className="mt-4">
@@ -232,23 +233,25 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         </div>
       </div>
 
-      <div className='px-4 mb-5'>
+      <div className="px-4 mb-5">
         <Button
           text={
-            <div className='flex items-center'>
-              <ArrowRightOnRectangleIcon className='h-5 mr-1' />
+            <div className="flex items-center">
+              <ArrowRightOnRectangleIcon className="h-5 mr-1" />
               Logout
             </div>
           }
-          color='dark'
+          color="dark"
           onClick={logoutCheck}
         />
       </div>
 
+      {/* <div onClick={() => setShowModal(false)}> */}
       <Modal
         show={showModal}
         position="bottom-left"
         onClose={() => setShowModal(false)}
+        onClick={(e) => e.stopPropagation()}
       >
         <Modal.Header>Atur Tahun Ajaran</Modal.Header>
         <Modal.Body>
@@ -368,6 +371,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           </div>
         </Modal.Body>
       </Modal>
-    </div>
+      {/* </div> */}
+    </>
   );
 }
