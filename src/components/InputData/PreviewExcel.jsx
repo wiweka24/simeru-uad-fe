@@ -4,12 +4,7 @@ import { Modal } from "flowbite-react";
 
 import Button from "../Button";
 import { axiosInstance } from "../../atoms/config";
-import {
-  notifyError,
-  notifySucces,
-  scheduleError,
-} from "../../atoms/notification";
-import Schedule from "../../pages/Schedule";
+import { notifyErrorMessage, notifySucces } from "../../atoms/notification";
 
 export default function PreviewExcel({
   filename,
@@ -68,11 +63,10 @@ export default function PreviewExcel({
     } else {
       setNotif("");
     }
-  }, [header]);
+  }, [header, path]);
 
   async function handlePostExcel() {
     try {
-      console.log(excelfile);
       await axiosInstance.post(URL, {
         data: excelfile,
       });
@@ -81,12 +75,7 @@ export default function PreviewExcel({
       rerender();
       resetExcel();
     } catch (err) {
-      // for (let data of err.response.data.errors) {
-      //   console.log(data);
-      // }
-      console.log(err.response.data)
-      console.log(err.response.data.errors)
-      notifyError(err);
+      notifyErrorMessage("format data salah");
     }
   }
 
@@ -138,10 +127,7 @@ export default function PreviewExcel({
                 ))}
               </tr>
             </thead>
-            <tbody
-              scope="row"
-              className="border text-gray-900 whitespace-nowrap"
-            >
+            <tbody className="border text-gray-900 whitespace-nowrap">
               {excelfile.map((row, index) => (
                 <tr key={index}>
                   {Object.values(row).map((cell, index) => (

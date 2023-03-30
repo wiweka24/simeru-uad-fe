@@ -13,6 +13,7 @@ export default function TableHeader({
   onChange,
   postsPerPage,
   jsonData,
+  jsonName
 }) {
   const pageNumber = ["10", "25", "50", "100"];
 
@@ -23,12 +24,12 @@ export default function TableHeader({
     const data = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
     });
-    FileSaver.saveAs(data, "data.xlsx");
-  };
+    FileSaver.saveAs(data, `${jsonName || "data"}.xlsx`);
+  }
 
   return (
-    <nav className='mx-8 flex mb-3 items-center justify-between'>
-      <Dropdown label={postsPerPage} color='dark' outline='false' size='sm'>
+    <nav className="mx-8 flex mb-3 items-center justify-between">
+      <Dropdown label={postsPerPage} color="dark" outline="false" size="sm">
         {pageNumber.map((number) => (
           <Dropdown.Item key={number} onClick={() => onClick(number)}>
             {number}
@@ -36,28 +37,28 @@ export default function TableHeader({
         ))}
       </Dropdown>
 
-      <div className='flex items-center'>
-        <div className='relative mr-2'>
-          <div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none'>
-            <MagnifyingGlassIcon className='h-5' />
+      <div className="flex items-center">
+        <div className="relative mr-2">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <MagnifyingGlassIcon className="h-5" />
           </div>
           <input
-            type='text'
-            id='table-search'
-            className='block p-2 pl-10 text-sm border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80'
-            placeholder='Cari Item'
+            type="text"
+            id="table-search"
+            className="block p-2 pl-10 text-sm border-2 rounded-lg w-60 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+            placeholder="Cari Item"
             onChange={(e) => onChange(e.target.value.toLowerCase())}
           />
         </div>
 
         <Button
           text={
-            <div className='flex items-center'>
-              <ArrowUpTrayIcon className='h-5 mr-1' />
+            <div className="flex items-center">
+              <ArrowUpTrayIcon className="h-5 mr-1" />
               Export Excel
             </div>
           }
-          color='dark'
+          color="dark"
           onClick={() => handleExport()}
         />
       </div>

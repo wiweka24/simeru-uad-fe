@@ -11,6 +11,7 @@ import TablePagination from "./TablePagination";
 import PreviewExcel from "./PreviewExcel";
 import { axiosInstance } from "../../atoms/config";
 import { notifyError, notifySucces } from "../../atoms/notification";
+import Error from "../../pages/Error";
 
 export default function InputData({
   defaultInput,
@@ -32,7 +33,10 @@ export default function InputData({
   const [excelName, setExcelName] = useState("");
   const [excelFile, setExcelFile] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [error, setError] = useState([]);
 
+  // Menampilkan data tergantung dari halaman yang dipilih
   function dataJson(data) {
     if (path === "subclass") {
       return {
@@ -90,16 +94,16 @@ export default function InputData({
       try {
         setLoading(true);
         const res = await axiosInstance.get(URL);
-        // "dummy_data/matkul.json"
         setSubClass(res.data.data);
       } catch (err) {
-        console.log(err);
-        notifyError(err);
+        setFetchFailed(true);
+        setError(err.response);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }, [update, URL]);
 
   // post new data
@@ -109,13 +113,12 @@ export default function InputData({
       await axiosInstance.post(URL, {
         data: [dataJson(input)],
       });
-      
+
       notifySucces(`${input.name} ditambahkan`);
       setInput(defaultInput);
       rerender();
     } catch (err) {
       notifyError(err);
-      console.log(err.response.data)
     }
     setTimeout(() => {
       setLoading(false);
@@ -124,11 +127,12 @@ export default function InputData({
 
   // edit one custom data
   function handleEdit(obj) {
-    console.log(obj);
     setEdit(dataJson(obj));
     setMode("edit");
   }
 
+  // notif apa yakin ngedit
+  // jika ya lanjut fungsi bawahnya
   function submitEdit() {
     Swal.fire({
       html: `Anda yakin mengubah <b>${edit.name}</b> ?`,
@@ -150,10 +154,10 @@ export default function InputData({
     });
   }
 
+  // handle edit data then patch
   async function handlePatch() {
     try {
       setLoading(true);
-      console.log(edit);
       await axiosInstance.put(`${URL}/${edit[attribute]}`, dataJson(edit));
       setTimeout(() => {
         setLoading(false);
@@ -166,7 +170,8 @@ export default function InputData({
     }
   }
 
-  // delete one data
+  // confirmation delete one data
+  // if yes lanjut kode bawahnya
   function submitDelete(obj) {
     Swal.fire({
       html: `Anda yakin menghapus <b>${obj.name}</b> ?`,
@@ -188,6 +193,7 @@ export default function InputData({
     });
   }
 
+  // handle hapus data
   async function handleDelete(obj) {
     try {
       setLoading(true);
@@ -196,178 +202,189 @@ export default function InputData({
       rerender();
     } catch (err) {
       notifyError(err);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
   }
 
   return (
-    <div className='relative h-screen'>
+    <div className="relative h-screen">
       <Spinner isLoading={loading} />
-      <div className='h-10 border-b bg-white' />
-      <div className='grid grid-cols-4 m-10 gap-5'>
-        {/* Input & Edit Field */}
-        {mode === "input" ? (
-          <div className='p-7 border-2 rounded-lg col-span-3 bg-white'>
-            <p className='text-xl font-bold mb-2'>Tambah {title}</p>
-            <div className='grid grid-cols-6 space-x-4'>
-              {inputField.map((inpt) => (
-                <div
-                  key={inpt.id}
-                  className={`${inpt.width} space-y-1`}
-                >
-                  <p className='text-grey'>
-                    {inpt.name}
-                    <span className='text-red-500'>*</span>
-                  </p>
-
-                  <input
-                    id={inpt.valuefor}
-                    type={inpt.type}
-                    placeholder={inpt.placeholder}
-                    value={input[inpt.valuefor]}
-                    className='border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80'
-                    onChange={(e) =>
-                      setInput({ ...input, [e.target.id]: e.target.value })
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-            <div className='flex mt-2 justify-end'>
-              <Button text='Tambah' color='dark' onClick={handlePost} />
-            </div>
-          </div>
+      <div className="grid grid-cols-4 p-10 gap-5">
+        {/* Display Error Instead Input when Fetch Failed */}
+        {fetchFailed ? (
+          <></>
         ) : (
-          <div className='p-7 border-2 rounded-lg col-span-3 bg-white'>
-            <p className='text-xl font-bold mb-2'>Edit {title}</p>
-            <div className='grid grid-cols-6 space-x-4'>
-              {inputField.map((inpt) => (
-                <div
-                  key={inpt.id}
-                  className={`${inpt.width} space-y-1`}
-                >
-                  <p className='text-grey'>
-                    {inpt.name}
-                    <span className='text-red-500'>*</span>
-                  </p>
+          <>
+            {/* Input & Edit Field */}
+            {mode === "input" ? (
+              <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
+                <p className="text-xl font-bold mb-2">Tambah {title}</p>
+                <div className="grid grid-cols-6 space-x-4">
+                  {inputField.map((inpt) => (
+                    <div key={inpt.id} className={`${inpt.width} space-y-1`}>
+                      <p className="text-grey">
+                        {inpt.name}
+                        <span className="text-red-500">*</span>
+                      </p>
 
-                  <input
-                    id={inpt.valuefor}
-                    type={inpt.type}
-                    placeholder={inpt.placeholder}
-                    value={edit[inpt.valuefor]}
-                    className='border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80'
-                    onChange={(e) =>
-                      setEdit({ ...edit, [e.target.id]: e.target.value })
-                    }
+                      <input
+                        id={inpt.valuefor}
+                        type={inpt.type}
+                        placeholder={inpt.placeholder}
+                        value={input[inpt.valuefor]}
+                        className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                        onChange={(e) =>
+                          setInput({ ...input, [e.target.id]: e.target.value })
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex mt-2 justify-end">
+                  <Button text="Tambah" color="dark" onClick={handlePost} />
+                </div>
+              </div>
+            ) : (
+              <div className="p-7 border-2 rounded-lg col-span-3 bg-white">
+                <p className="text-xl font-bold mb-2">Edit {title}</p>
+                <div className="grid grid-cols-6 space-x-4">
+                  {inputField.map((inpt) => (
+                    <div key={inpt.id} className={`${inpt.width} space-y-1`}>
+                      <p className="text-grey">
+                        {inpt.name}
+                        <span className="text-red-500">*</span>
+                      </p>
+
+                      <input
+                        id={inpt.valuefor}
+                        type={inpt.type}
+                        placeholder={inpt.placeholder}
+                        value={edit[inpt.valuefor]}
+                        className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                        onChange={(e) =>
+                          setEdit({ ...edit, [e.target.id]: e.target.value })
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end mt-2 space-x-2">
+                  <Button text="Edit" color="succes" onClick={submitEdit} />
+                  <Button
+                    text="Batal"
+                    color="danger"
+                    onClick={() => setMode("input")}
                   />
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* Import Excel Field */}
+            <div className="p-7 border-2 rounded-lg col-span-1 bg-white">
+              <p className="text-xl font-bold mb-2">Import Excel</p>
+              <label className="flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none">
+                <span className="flex items-center space-x-2">
+                  <ArrowUpTrayIcon className="h-5" />
+                  <span className="font-medium text-gray-600">
+                    Drop file di sini, atau
+                    <span className="text-blue-600"> cari</span>
+                  </span>
+                </span>
+                <input
+                  type="file"
+                  name="file_upload"
+                  className="hidden"
+                  accept=".csv, .xlsx, .xls"
+                  onInput={handleFileUpload}
+                />
+              </label>
             </div>
 
-            <div className='flex justify-end mt-2 space-x-2'>
-              <Button text='Edit' color='succes' onClick={submitEdit} />
-              <Button
-                text='Batal'
-                color='danger'
-                onClick={() => setMode("input")}
-              />
-            </div>
-          </div>
+            <PreviewExcel
+              filename={excelName}
+              file={excelFile}
+              rerender={rerender}
+              path={path}
+              URL={URL}
+              deleteFile={() => {
+                setExcelFile([]);
+                setExcelName("");
+              }}
+            />
+          </>
         )}
 
-        {/* Import Excel Field */}
-        <div className='p-7 border-2 rounded-lg col-span-1 bg-white'>
-          <p className='text-xl font-bold mb-2'>Import Excel</p>
-          <label className='flex justify-center w-full h-32 px-4 transition bg-grey-light border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-grey-dark focus:outline-none'>
-            <span className='flex items-center space-x-2'>
-              <ArrowUpTrayIcon className='h-5' />
-              <span className='font-medium text-gray-600'>
-                Drop file di sini, atau
-                <span className='text-blue-600'> cari</span>
-              </span>
-            </span>
-            <input
-              type='file'
-              name='file_upload'
-              className='hidden'
-              accept='.csv, .xlsx, .xls'
-              onInput={handleFileUpload}
-            />
-          </label>
-        </div>
-
-        <PreviewExcel
-          filename={excelName}
-          file={excelFile}
-          rerender={rerender}
-          path={path}
-          URL={URL}
-          deleteFile={() => {
-            setExcelFile([]);
-            setExcelName("");
-          }}
-        />
-
-        <div className='py-7 border-2 rounded-lg bg-white col-span-4 h-auto'>
-          <p className='px-7 text-xl font-bold mb-5'>Daftar {title}</p>
-          <div className=' overflow-x-auto'>
+        {/* Data */}
+        <div className="py-7 border-2 rounded-lg bg-white col-span-4 h-auto">
+          <p className="px-7 text-xl font-bold mb-5">Daftar {title}</p>
+          <div className=" overflow-x-auto">
             {/* Dropdown & Search */}
             <TableHeader
               onChange={setTerm}
               onClick={setPostPerPage}
               postsPerPage={postsPerPage}
               jsonData={currentSubClass}
+              jsonName={title}
             />
 
-            {/* Table */}
-            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-              <thead className='border-y text-gray-700/50 bg-gray-50'>
-                <tr>
-                  {inputField.map((data) => (
-                    <th key={data.id} scope='col' className='pl-8 pr-4 py-3'>
-                      {data.name}
-                    </th>
-                  ))}
-                  <th scope='col'></th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentSubClass.map((subcls) => (
-                  <tr key={subcls.sub_class_id} className='bg-white border-b'>
-                    {inputField.map((data) =>
-                      // <key></>
-                      data.id === 1 ? (
-                        <td
-                          key={data.id}
-                          className='pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap'
-                        >
-                          {subcls[`${data.valuefor}`]}
-                        </td>
-                      ) : (
-                        <td key={data.id} className='pl-8 pr-4 py-4'>
-                          {subcls[`${data.valuefor}`]}
-                        </td>
-                      )
-                    )}
-                    <td className='flex pt-2 space-x-3'>
-                      <Button
-                        text='🖊'
-                        color='succes'
-                        onClick={() => handleEdit(subcls)}
-                      />
-                      <Button
-                        text='❌'
-                        color='danger'
-                        onClick={() => submitDelete(subcls)}
-                      />
-                    </td>
+            {/* If Dont Get Data Display Error Instead Of Table */}
+            {fetchFailed ? (
+              <Error
+                type="reload"
+                status={error.status}
+                message={error.data.message}
+              />
+            ) : (
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="border-y text-gray-700/50 bg-gray-50">
+                  <tr>
+                    {inputField.map((data) => (
+                      <th key={data.id} scope="col" className="pl-8 pr-4 py-3">
+                        {data.name}
+                      </th>
+                    ))}
+                    <th scope="col"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentSubClass.map((subcls) => (
+                    <tr key={subcls.sub_class_id} className="bg-white border-b">
+                      {inputField.map((data) =>
+                        // <key></>
+                        data.id === 1 ? (
+                          <td
+                            key={data.id}
+                            className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap"
+                          >
+                            {subcls[`${data.valuefor}`]}
+                          </td>
+                        ) : (
+                          <td key={data.id} className="pl-8 pr-4 py-4">
+                            {subcls[`${data.valuefor}`]}
+                          </td>
+                        )
+                      )}
+                      <td className="flex pt-2 space-x-3">
+                        <Button
+                          text="🖊"
+                          color="succes"
+                          onClick={() => handleEdit(subcls)}
+                        />
+                        <Button
+                          text="❌"
+                          color="danger"
+                          onClick={() => submitDelete(subcls)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
             {/* Pagination */}
             <TablePagination
@@ -377,7 +394,7 @@ export default function InputData({
               currentPage={currentPage}
               postsPerPage={postsPerPage}
               term={term}
-              columnName='name'
+              columnName="name"
             />
           </div>
         </div>

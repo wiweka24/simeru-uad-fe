@@ -4,6 +4,7 @@
 // Melakukan import library
 // EN: Importing libraries
 import { useState, useEffect } from "react";
+
 import Spinner from "../atoms/Spinner";
 import Error from "./Error";
 import Button from "../components/Button";
@@ -28,7 +29,12 @@ export default function CourseHelp({ acyear }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
-  const [tooLongReq, setTooLongReq] = useState(false);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [error, setError] = useState([]);
+
+  function rerender() {
+    setUpdate(`update ${Math.random()}`);
+  }
 
   useEffect(() => {
     (async () => {
@@ -52,8 +58,8 @@ export default function CourseHelp({ acyear }) {
         // Catch error dan keluarkan notifikasi toast
         // EN: Catch error(s) and show toast notification
       } catch (err) {
-        setTooLongReq(true);
-        notifyError(err);
+        setFetchFailed(true);
+        setError(err.response);
       } finally {
         setLoading(false);
       }
@@ -65,10 +71,10 @@ export default function CourseHelp({ acyear }) {
     }, 500);
   }, [URL, update, acyear]);
 
-  useEffect(() => {
+  function mergeData(data, lecturerPlot) {
     // Melakukan mapping data (offered) yang sudah di-GET di atas. mergeData adalah hasil merging dua objek JSON, offered dan lecturerPlot
     // EN: Map data (offered) from GET request above. mergeData is the result of merging two JSON objects, offered and lecturerPlot
-    const mergeData = offered.map((item) => {
+    return data.map((item) => {
       // Melakukan merge dua object pada variabel sub_class_id, menambahkan lecturer_id dari lecturerPlot
       // EN: Merging two JSON objects on sub_class_id, adding lecturer_id from lecturerPlot
       const lecturer = lecturerPlot.find(
@@ -79,28 +85,20 @@ export default function CourseHelp({ acyear }) {
         lecturer_id: lecturer ? lecturer.lecturer_id : "default",
       };
     });
+  }
+
+  useEffect(() => {
     //Mengisi state mergeOffered dengan variabel mergeData
     //EN: Set mergeData as state for mergeOffered
-    setMergeOffered(mergeData);
+    const mergedOffered = mergeData(offered, lecturerPlot);
+    setMergeOffered(mergedOffered);
   }, [offered, lecturerPlot]);
 
   useEffect(() => {
-    // Melakukan mapping data (subClass) yang sudah di-GET di atas. mergeSubClass adalah hasil merging dua objek JSON, subClass dan lecturerPlot
-    // EN: Map data (subClass) from GET request above. mergeSubClass is the result of merging two JSON objects, subClass and lecturerPlot
-    const mergeClassData = subClass.map((item) => {
-      // Melakukan merge dua object pada variabel sub_class_id, menambahkan lecturer_id dari lecturerPlot
-      // EN: Merging two JSON objects on sub_class_id, adding lecturer_id from lecturerPlot
-      const lecturer = lecturerPlot.find(
-        (item2) => item2.sub_class_id == item.sub_class_id
-      );
-      return {
-        ...item,
-        lecturer_id: lecturer ? lecturer.lecturer_id : "default",
-      };
-    });
     //Mengisi state mergeSubClass dengan variabel mergeClassData
     //EN: Set mergeClassData as state for mergeSubClass
-    setMergeSubClass(mergeClassData);
+    const mergedSubClass = mergeData(subClass, lecturerPlot);
+    setMergeSubClass(mergedSubClass);
   }, [subClass, lecturerPlot]);
 
   // Melakukan mapping sub_class_id milik data mergeOffered, disimpan pada offeredID
@@ -108,7 +106,6 @@ export default function CourseHelp({ acyear }) {
   useEffect(() => {
     setOfferedID(mergeOffered.map((item) => Number(item.sub_class_id)));
   }, [mergeOffered]);
-
   // Fungsi untuk memilih semua mata kuliah, digunakan oleh button 'Pilih Semua'
   // EN: Function to select all classes, used by button: 'Pilih Semua'/'Select All'
   async function selectAll(obj) {
@@ -136,14 +133,12 @@ export default function CourseHelp({ acyear }) {
       await axiosInstance.post(`${URL}offered_classes`, {
         data: offeredData,
       });
-      setUpdate(`update${Math.random()}`);
+      rerender();
       // Mengeluarkan error jika semua mata kuliah telah terselenggara.
       // EN: Throws an error if every class has been offered.
     } catch (err) {
-      notifyError("Semua mata kuliah telah terselenggara!");
-      notifyError(err.message);
-
-      console.log(err);
+      // notifyError("Semua mata kuliah telah terselenggara!");
+      notifyError(err);
     }
 
     setTimeout(() => {
@@ -187,38 +182,31 @@ export default function CourseHelp({ acyear }) {
       notifyError("Belum ada mata kuliah yang terselenggara!");
     } else {
       // Runs when plotData and offeredData aren't empty
-
       try {
         setLoading(true);
 
-        // Request DELETE untuk menghapus semua data lecturer_plot
-        // EN: DELETE request to, well, delete all data from lecturer_plot
-        await axiosInstance
-          .delete(`${URL}lecturer_plot`, {
-            data: {
-              data: plotData,
-            },
-          })
-          .then(
-            // EN: Runs after lecturer_plot DELETE request is complete.
+        // Use Promise.all to wait for both axios delete requests to complete
+        await axiosInstance.delete(`${URL}lecturer_plot`, {
+          data: {
+            data: plotData,
+          },
+        });
 
-            // Request DELETE untuk menghapus semua data offered_classes (membatalkan semua kelas)
-            // EN: DELETE request to delete all data from offered_classes (canceling all classes)
-            await axiosInstance.delete(`${URL}offered_classes`, {
-              data: {
-                data: offeredData,
-              },
-            })
-          );
+        // If the first DELETE request succeeds, continue with the second one
+        await axiosInstance.delete(`${URL}offered_classes`, {
+          data: {
+            data: offeredData,
+          },
+        });
 
-        setUpdate(`update${Math.random()}`);
+        rerender();
       } catch (err) {
-        notifyError(err.message);
+        notifyError(err);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
-
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
     }
   }
 
@@ -234,6 +222,7 @@ export default function CourseHelp({ acyear }) {
       try {
         setLoading(true);
 
+        // Use Promise.all to wait for both axios delete requests to complete
         await axiosInstance.delete(`${URL}lecturer_plot`, {
           data: {
             data: [
@@ -246,6 +235,7 @@ export default function CourseHelp({ acyear }) {
           },
         });
 
+        // If the first DELETE request succeeds, continue with the second one
         await axiosInstance.delete(`${URL}offered_classes`, {
           data: {
             data: [
@@ -257,15 +247,13 @@ export default function CourseHelp({ acyear }) {
           },
         });
 
-        setUpdate(`update${Math.random()}`);
+        rerender();
         notifySucces(`Mata kuliah ${obj.name} berhasil dihapus`);
       } catch (err) {
-        console.log(err);
         notifyError(err);
-      }
-      setTimeout(() => {
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     } else {
       //add item to offered list
       // const classIndex = subClass.findIndex(
@@ -284,12 +272,11 @@ export default function CourseHelp({ acyear }) {
             },
           ],
         });
-        setUpdate(`update${Math.random()}`);
+        rerender();
         notifySucces(`Mata kuliah ${obj.name} berhasil ditambahkan.`);
       } catch (err) {
-        setTooLongReq(true);
+        setFetchFailed(true);
         notifyError(err);
-        console.log(err);
       }
       setTimeout(() => {
         setLoading(false);
@@ -297,93 +284,101 @@ export default function CourseHelp({ acyear }) {
     }
   }
 
-  if (tooLongReq) {
-    return <Error type="reload" message="Too long request. Please try again" />;
-  } else {
   return (
     <div className="relative h-screen">
       <Spinner isLoading={loading} />
-      <div className="h-10 border-b bg-white"></div>
-      <div className="border-2 rounded-lg bg-white m-10 gap-5">
-        <div className="relative py-7 overflow-x-auto">
-          <p className="px-7 mb-5 text-xl font-bold">
-            Mata Kuliah Terselenggara
-          </p>
-          <div className="justify-start mx-8 flex mb-3 gap-2	">
-            <Button
-              text="Pilih Semua"
-              color="dark"
-              color1="succes"
-              onClick={() => selectAll(mergeSubClass)}
+      <div className="p-10">
+        <div className="border-2 rounded-lg bg-white gap-5">
+          <div className="relative py-7 overflow-x-auto">
+            <p className="px-7 mb-5 text-xl font-bold">
+              Mata Kuliah Terselenggara
+            </p>
+            <div className="justify-start mx-8 flex mb-3 gap-2	">
+              <Button
+                text="Pilih Semua"
+                color="dark"
+                color1="succes"
+                onClick={() => selectAll(mergeSubClass)}
+              />
+              <Button
+                text="Batalkan Semua"
+                color="dark"
+                color1="danger"
+                onClick={() => deselectAll(mergeSubClass)}
+              />
+            </div>
+            <TableHeader
+              onChange={setTerm}
+              onClick={setPostPerPage}
+              postsPerPage={postsPerPage}
+              jsonData={currentSubClass}
+              jsonName="Mata-Kuliah-Terselenggara"
             />
-            <Button
-              text="Batalkan Semua"
-              color="dark"
-              color1="danger"
-              onClick={() => deselectAll(mergeSubClass)}
+
+            {/* If Dont Get Data Display Error Instead Of Table */}
+            {fetchFailed ? (
+              <Error
+                type="reload"
+                status={error.status}
+                message={error.data.message}
+              />
+            ) : (
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="border-y text-gray-700/50 bg-gray-50">
+                  <tr>
+                    <th scope="col" className="pl-8 pr-4 py-3">
+                      ID
+                    </th>
+                    <th scope="col" className="pl-8 pr-4 py-3">
+                      Nama Mata Kuliah
+                    </th>
+                    <th scope="col" className="pl-8 pr-4">
+                      Semester
+                    </th>
+                    <th scope="col" className="pl-8 pr-4">
+                      SKS
+                    </th>
+                    <th scope="col" className="pl-8 pr-4">
+                      Terselenggara
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentSubClass.map((item) => (
+                    <tr key={item.sub_class_id} className="bg-white border-b">
+                      <td className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        {item.sub_class_id}
+                      </td>
+                      <td className="pl-8 pr-4">{item.name}</td>
+                      <td className="pl-8 pr-4">{item.semester}</td>
+                      <td className="pl-8 pr-4">{item.credit}</td>
+                      <td className="pl-8 pr-4 py-4 flex items-center">
+                        <input
+                          className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                          type="checkbox"
+                          checked={offeredID.includes(item.sub_class_id)}
+                          onChange={() => HandleCheck(item)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            {/* Pagination */}
+            <TablePagination
+              subClass={mergeSubClass}
+              setCurrentSubClass={setCurrentSubClass}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              postsPerPage={postsPerPage}
+              term={term}
+              columnName="name"
             />
           </div>
-          <TableHeader
-            onChange={setTerm}
-            onClick={setPostPerPage}
-            postsPerPage={postsPerPage}
-            jsonData={currentSubClass}
-          />
-          {/*Table*/}
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="border-y text-gray-700/50 bg-gray-50">
-              <tr>
-                <th scope="col" className="pl-8 pr-4 py-3">
-                  ID
-                </th>
-                <th scope="col" className="pl-8 pr-4 py-3">
-                  Nama Mata Kuliah
-                </th>
-                <th scope="col" className="pl-8 pr-4">
-                  Semester
-                </th>
-                <th scope="col" className="pl-8 pr-4">
-                  SKS
-                </th>
-                <th scope="col" className="pl-8 pr-4">
-                  Terselenggara
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentSubClass.map((item) => (
-                <tr key={item.sub_class_id} className="bg-white border-b">
-                  <td className="pl-8 pr-4 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {item.sub_class_id}
-                  </td>
-                  <td className="pl-8 pr-4">{item.name}</td>
-                  <td className="pl-8 pr-4">{item.semester}</td>
-                  <td className="pl-8 pr-4">{item.credit}</td>
-                  <td className="pl-8 pr-4 py-4 flex items-center">
-                    <input
-                      className="w-5 h-5 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                      type="checkbox"
-                      checked={offeredID.includes(item.sub_class_id)}
-                      onChange={() => HandleCheck(item)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* Pagination */}
-          <TablePagination
-            subClass={mergeSubClass}
-            setCurrentSubClass={setCurrentSubClass}
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            postsPerPage={postsPerPage}
-            term={term}
-            columnName="name"
-          />
         </div>
       </div>
     </div>
   );
-  }
 }

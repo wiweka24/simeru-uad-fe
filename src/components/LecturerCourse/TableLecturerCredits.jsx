@@ -34,6 +34,7 @@ export default function TableLecturerCredits({ update, acadyear }) {
         onClick={setPostPerPage}
         postsPerPage={postsPerPage}
         jsonData={subClass}
+        jsonName="Kredit-Dosen"
       />
 
       {/* Table credit dosen*/}
@@ -62,10 +63,7 @@ export default function TableLecturerCredits({ update, acadyear }) {
               key={lectcredit.lecturer_credit_id}
               className="bg-white border-b"
             >
-              <td
-                scope="row"
-                className="pl-6 pr-3 font-medium text-gray-900 whitespace-nowrap"
-              >
+              <td className="pl-6 pr-3 font-medium text-gray-900 whitespace-nowrap">
                 {lectcredit.lecturer_credit_id}
               </td>
               <td className="px-3 py-4 cursor-default">{lectcredit.name}</td>

@@ -1,4 +1,5 @@
-import PacmanLoader from "react-spinners/PacmanLoader";
+// import PacmanLoader from "react-spinners/PacmanLoader";
+import PacmanLoader from "react-spinners/SyncLoader";
 
 export default function Spinner({ isLoading }) {
   return (

@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { Modal } from "flowbite-react";
 
-import Button from "../Button";
-import Spinner from "../../atoms/Spinner";
-import { axiosInstance } from "../../atoms/config";
-import { notifySucces, scheduleError } from "../../atoms/notification";
-
 import {
   PlusCircleIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+
+import Button from "../Button";
+import Spinner from "../../atoms/Spinner";
+import { axiosInstance } from "../../atoms/config";
+import { notifySucces, scheduleError } from "../../atoms/notification";
 
 export default function ScheduleCheckbox({
   time,
@@ -67,7 +67,7 @@ export default function ScheduleCheckbox({
   // Add Data
   async function postData(obj) {
     try {
-      const res = await axiosInstance.post(`${URL}schedule`, {
+      await axiosInstance.post(`${URL}schedule`, {
         data: [
           {
             lecturer_plot_id: Number(obj.lecturer_plot_id),
@@ -148,7 +148,7 @@ export default function ScheduleCheckbox({
             setModalShow(true);
           }}
         />
-        <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200x">
+        <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
               <b>

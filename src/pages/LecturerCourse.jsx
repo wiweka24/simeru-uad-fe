@@ -22,10 +22,14 @@ export default function LecturerCourse({ acyear }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostPerPage] = useState(10);
   const [term, setTerm] = useState("");
-  const [updateChild, setUpdateChild] = useState();
-  const [testyear, setTestYear] = useState();
-  const [tooLongReq, setTooLongReq] = useState(false);
+  const [update, setUpdate] = useState();
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [error, setError] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  function rerender() {
+    setUpdate(`update ${Math.random()}`);
+  }
 
   // Get data data yang dibutuhkan di tabel lecturer Course
   //(offered class) kelas terselenggara, (lecturer_plot) jadwal dosen, dan (dosen)lecturer)
@@ -34,22 +38,25 @@ export default function LecturerCourse({ acyear }) {
     (async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(`${URL}offered_classes/${acyear}`);
+        const [res, res1, res2] = await Promise.all([
+          axiosInstance.get(`${URL}offered_classes/${acyear}`),
+          axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
+          axiosInstance.get(`${URL}lecturer`),
+        ]);
+
         setOfferedSubClass(res.data.data);
-        const res1 = await axiosInstance.get(`${URL}lecturer_plot/${acyear}`);
         setLecturerPlot(res1.data.data);
-        const res2 = await axiosInstance.get(`${URL}lecturer`);
         setDosen(res2.data.data);
       } catch (err) {
-        setTooLongReq(true);
-        notifyError(err);
+        setFetchFailed(true);
+        setError(err.response);
       } finally {
         setTimeout(() => {
           setLoading(false);
         }, 500);
       }
     })();
-  }, [updateChild, acyear]);
+  }, [update, acyear, URL]);
 
   // Melakukan merge tabel antara tabel offered subclass dan lecturerplot
   useEffect(() => {
@@ -95,10 +102,10 @@ export default function LecturerCourse({ acyear }) {
             ],
           });
           notifySucces("Dosen Pengampu Berhasil Ditambahkan");
-          setUpdateChild(`update${Math.random()}`);
+          rerender();
         } catch (err) {
           notifyError(err);
-          setUpdateChild(`update${Math.random()}`);
+          rerender();
         }
       }
 
@@ -139,29 +146,37 @@ export default function LecturerCourse({ acyear }) {
     }
   }
 
-  if (tooLongReq) {
-    return <Error type="reload" message="Too long request. Please try again" />;
-  } else {
-    return (
-      <div className="relative h-screen">
-        <Spinner isLoading={loading} />
-        <div className="h-10 border-b bg-white" />
-        <div className="grid grid-cols-8 m-10 gap-5">
-          <div className="border-2 rounded-lg bg-white col-span-5 py-7 h-max">
-            <div className="relative overflow-x-auto">
-              <p className="px-7 text-xl font-bold mb-5">Dosen dan Matkul</p>
-              <TableHeader
-                onChange={setTerm}
-                onClick={setPostPerPage}
-                postsPerPage={postsPerPage}
-                jsonData={subClass}
-              />
-              <div className="mt-4">
-                {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
-                <div className="pl-2"></div>
-              </div>
+  return (
+    <div className="relative h-screen">
+      <Spinner isLoading={loading} />
+      <div className="grid grid-cols-8 p-10 gap-5">
+        <div
+          className={`${
+            fetchFailed ? "col-span-8" : "col-span-5"
+          } border-2 rounded-lg bg-white py-7`}
+        >
+          <div className="relative overflow-x-auto">
+            <p className="px-7 text-xl font-bold mb-5">Dosen dan Matkul</p>
+            <TableHeader
+              onChange={setTerm}
+              onClick={setPostPerPage}
+              postsPerPage={postsPerPage}
+              jsonData={subClass}
+              jsonName="Mata-Kuliah-Dengan-Dosen-Pengampu-Terselenggara"
+            />
+            <div className="mt-4">
+              {/* <SidebarTitle text="Atur Tahun Ajaran" /> */}
+              <div className="pl-2"></div>
+            </div>
 
-              {/* Table */}
+            {/* If Dont Get Data Display Error Instead Of Table */}
+            {fetchFailed ? (
+              <Error
+                type="reload"
+                status={error.status}
+                message={error.data.message}
+              />
+            ) : (
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead className="border-y text-gray-700/50 bg-gray-50">
                   <tr>
@@ -207,26 +222,31 @@ export default function LecturerCourse({ acyear }) {
                   ))}
                 </tbody>
               </table>
+            )}
 
-              {/* Pagination */}
-              <TablePagination
-                subClass={subClass}
-                setCurrentSubClass={setCurrentSubClass}
-                setCurrentPage={setCurrentPage}
-                currentPage={currentPage}
-                postsPerPage={postsPerPage}
-                term={term}
-                columnName="name"
-              />
-            </div>
-
-            {/* <TableLecturerPlot /> */}
-          </div>
-          <div className="border-2 rounded-lg bg-white col-span-3 h-max">
-            <TableLecturerCredits update={updateChild} acadyear={acyear} />
+            {/* Pagination */}
+            <TablePagination
+              subClass={subClass}
+              setCurrentSubClass={setCurrentSubClass}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              postsPerPage={postsPerPage}
+              term={term}
+              columnName="name"
+            />
           </div>
         </div>
+
+        {/* <TableLecturerPlot /> */}
+        {/* if fetch failed dont display table 2 */}
+        {fetchFailed ? (
+          <></>
+        ) : (
+          <div className="border-2 rounded-lg bg-white col-span-3 h-max">
+            <TableLecturerCredits update={update} acadyear={acyear} />
+          </div>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
 }
