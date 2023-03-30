@@ -107,6 +107,7 @@ export default function RoomTime({ acyear }) {
         }
       }
     }
+    console.log(finalArrRooms);
     return finalArrRooms;
   }
 
@@ -127,7 +128,7 @@ export default function RoomTime({ acyear }) {
       }
     }
     try {
-      await axiosInstance.post(URL, {
+      await axiosInstance.post(`${URL}room_time`, {
         data: sendData,
       });
       rerender();
@@ -156,7 +157,7 @@ export default function RoomTime({ acyear }) {
     }
 
     try {
-      await axiosInstance.delete(URL, {
+      await axiosInstance.delete(`${URL}room_time`, {
         data: {
           data: sendData,
         },
