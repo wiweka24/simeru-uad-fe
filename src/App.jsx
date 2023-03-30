@@ -19,7 +19,7 @@ export default function App() {
     start_year: "",
     end_year: "",
     semester: "",
-    academic_year_id: "",
+    academic_year_id: 0,
   });
 
   axiosInstance.interceptors.request.use(function (config) {

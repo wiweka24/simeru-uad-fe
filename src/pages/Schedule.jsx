@@ -245,7 +245,7 @@ export default function Schedule({ acyear }) {
     return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
-      <div className="relative">
+      <div className="relative h-screen">
         <div className="h-10 border-b bg-white" />
         <div className="m-10 py-7 border-2 rounded-lg bg-white h-auto">
           <p className="px-7 mb-5 text-xl font-bold">

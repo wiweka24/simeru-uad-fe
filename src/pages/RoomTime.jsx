@@ -68,14 +68,11 @@ export default function RoomTime({ acyear }) {
     if (currentLabel.name !== "All") {
       setCurrentRoomtimes(
         assignRoom(
-          // todo : if class not only one
-          currentLabel.room_id - 1,
-          currentLabel.room_id,
-          roomtimes.filter((item) =>
-            item.room_id.includes(currentLabel.room_id)
+            roomtimes.filter((item) => item.room_id == currentLabel.room_id)
+          
           )
         )
-      );
+      ;
       setRoomsLabel([currentLabel]);
     } else {
       setCurrentRoomtimes(assignRoom(roomtimes));
@@ -172,7 +169,7 @@ export default function RoomTime({ acyear }) {
     return <Error type="reload" message="Too long request. Please try again" />;
   } else {
     return (
-      <div className="relative">
+      <div className="relative h-screen">
         <Spinner isLoading={loading} />
         <div className="h-10 border-b bg-white" />
         <div className=" py-7 m-10 border-2 rounded-lg bg-white">
