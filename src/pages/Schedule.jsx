@@ -102,18 +102,21 @@ export default function Schedule({ acyear }) {
           plotResponse,
           timeResponse,
           scheduleResponse,
+          formattedSchedulesResponse,
         ] = await Promise.all([
           axiosInstance.get(`${URL}room`),
           axiosInstance.get(`${URL}room_time_helper/${acyear}`),
           axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
           axiosInstance.get(`${URL}room_time/${acyear}`),
           axiosInstance.get(`${URL}schedule/${acyear}`),
+          axiosInstance.get(`${URL}schedule/formatted/${acyear}`),
         ]);
         setRooms(roomResponse.data.data);
         setNormalRoomTimeHelper(helperResponse.data.data);
         setSubClass(plotResponse.data.data);
         setRoomTime(timeResponse.data.data);
         setSchedules(scheduleResponse.data.data);
+        setFormattedSchedules(formattedSchedulesResponse.data.data);
       } catch (err) {
         notifyError(err);
         setTooLongReq(true);
@@ -123,7 +126,7 @@ export default function Schedule({ acyear }) {
         }, 500);
       }
     })();
-  }, [update, acyear]);
+  }, [update, acyear, URL]);
 
   //Merging and filtering data
   useEffect(() => {

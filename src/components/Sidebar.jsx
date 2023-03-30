@@ -88,7 +88,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   function SidebarTitle({ text }) {
-    return <div className='text-grey font-bold ml-3 py-2'>{text}</div>;
+    return <div className="text-grey font-bold ml-3 py-2">{text}</div>;
   }
 
   function SidebarLink({ Icon, text, linkto }) {
@@ -105,7 +105,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             activePage === linkto ? "stroke-[2.5px]" : "stroke-1.5px]"
           }`}
         />
-        <span className='inline truncate'>{text}</span>
+        <span className="inline truncate">{text}</span>
       </Link>
     );
   }
@@ -170,14 +170,14 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   }
 
   return (
-    <div className='flex flex-col justify-between col-span-1 border-r'>
+    <div className="flex flex-col justify-between col-span-1 border-r">
       <div>
-        <div className='text-grey items-center px-2 mt-6 ml-3'>
-          <div className='h-12 w-12 border rounded-full'>
+        <div className="text-grey items-center px-2 mt-6 ml-3">
+          <div className="h-12 w-12 border rounded-full">
             <img
-              src='https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png'
-              alt=''
-              className='p-1 rounded-full'
+              src="https://sbmptmu.id/wp-content/uploads/2022/03/Logo-UAD-Berwarna-1024x1024.png"
+              alt=""
+              className="p-1 rounded-full"
             />
           </div>
           <div className="py-4 leading-5">
@@ -189,33 +189,33 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           </div>
         </div>
 
-        <div className='px-2'>
-          <SidebarTitle text='Input Data' />
-          <SidebarLink text='Matkul' Icon={BookOpenIcon} linkto='/MataKuliah' />
-          <SidebarLink text='Dosen' Icon={UserIcon} linkto='/Dosen' />
-          <SidebarLink text='Ruang Kelas' Icon={HomeIcon} linkto='/Ruangan' />
+        <div className="px-2">
+          <SidebarTitle text="Input Data" />
+          <SidebarLink text="Matkul" Icon={BookOpenIcon} linkto="/MataKuliah" />
+          <SidebarLink text="Dosen" Icon={UserIcon} linkto="/Dosen" />
+          <SidebarLink text="Ruang Kelas" Icon={HomeIcon} linkto="/Ruangan" />
 
-          <SidebarTitle text='Konfigurasi' />
+          <SidebarTitle text="Konfigurasi" />
           <SidebarLink
-            text='Matkul Terselenggara'
+            text="Matkul Terselenggara"
             Icon={ClipboardDocumentCheckIcon}
-            linkto='/MKTerselenggara'
+            linkto="/MKTerselenggara"
           />
           <SidebarLink
-            text='Dosen Matkul'
+            text="Dosen Matkul"
             Icon={IdentificationIcon}
-            linkto='/DosenMatkul'
+            linkto="/DosenMatkul"
           />
           <SidebarLink
-            text='Ruang Kelas dan Waktu'
+            text="Ruang Kelas dan Waktu"
             Icon={ClockIcon}
-            linkto='/RuangWaktu'
+            linkto="/RuangWaktu"
           />
 
-          <SidebarTitle text='Jadwal' />
+          <SidebarTitle text="Jadwal" />
           <SidebarLink
-            text='Jadwal Matkul'
-            linkto='/Jadwal'
+            text="Jadwal Matkul"
+            linkto="/Jadwal"
             Icon={BookmarkIcon}
           />
           <div className="mt-4">
@@ -231,142 +231,145 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         </div>
       </div>
 
-      <div className='px-4 mb-5'>
+      <div className="px-4 mb-5">
         <Button
           text={
-            <div className='flex items-center'>
-              <ArrowRightOnRectangleIcon className='h-5 mr-1' />
+            <div className="flex items-center">
+              <ArrowRightOnRectangleIcon className="h-5 mr-1" />
               Logout
             </div>
           }
-          color='dark'
+          color="dark"
           onClick={logoutCheck}
         />
       </div>
 
-      <Modal
-        show={showModal}
-        position="bottom-left"
-        onClose={() => setShowModal(false)}
-      >
-        <Modal.Header>Atur Tahun Ajaran</Modal.Header>
-        <Modal.Body>
-          <div className="px-2 mb-5">
-            <h2 className="text-lg font-semibold mb-2">Ganti Tahun Ajaran</h2>
-            <Dropdown
-              label={acyear_string}
-              color="dark"
-              outline="false"
-              size="md"
-              arrowPosition="right-end"
-            >
-              {academicYear.map((acadyear) => (
-                <Dropdown.Item
-                  key={acadyear.academic_year_id}
-                  onClick={() => getAcadYearValue(acadyear)}
-                >
-                  {acadyear.start_year}/{acadyear.end_year}(
-                  {String(Number(acadyear.semester) + 1)})
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-            <h2 className="mt-8 text-lg font-semibold mb-2">
-              Tambah Tahun Ajaran
-            </h2>
-            <div className="flex flex-col space-y-3 items-start mb-4">
-              <div className="w-full flex flex-col md:flex-row md:space-x-3">
-                <label htmlFor="start-year-input" className="w-full max-w-xs">
-                  <h3 className="text-md font-medium mb-1">Tahun Mulai:</h3>
-                  <input
-                    id="start-year-input"
-                    type="text"
-                    pattern="\d*"
-                    maxLength="4"
-                    placeholder="YYYY"
-                    value={input["start_year"]}
-                    className="border border-gray-300 rounded-lg p-2 w-full mt-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    onChange={(e) =>
-                      setInput({
-                        ...input,
-                        start_year: Number(e.target.value),
-                        end_year: Number(e.target.value) + 1,
-                      })
-                    }
-                  />
-                </label>
-                <p className="pt-10">-</p>
-                <label htmlFor="end-year-input" className="w-full max-w-xs">
-                  <h3 className="text-md font-medium mb-1">Tahun Akhir:</h3>
-                  <input
-                    id="end-year-input"
-                    type="text"
-                    pattern="\d*"
-                    maxLength="4"
-                    placeholder="YYYY"
-                    value={input["end_year"]}
-                    className="border border-gray-300 rounded-lg p-2 w-full mt-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    onChange={(e) =>
-                      setInput({
-                        ...input,
-                        start_year: Number(e.target.value) - 1,
-                        end_year: Number(e.target.value),
-                      })
-                    }
-                  />
-                </label>
-              </div>
-              <h3 className="text-md font-medium mb-1">Semester:</h3>
-              <div className="flex items-center space-x-3">
-                <input
-                  id="ganjil-radio"
-                  type="radio"
-                  name="semester-radio"
-                  value="0"
-                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                  onChange={(e) =>
-                    setInput({ ...input, semester: parseInt(e.target.value) })
-                  }
-                  checked={input.semester === 0}
-                />
-                <label
-                  htmlFor="ganjil-radio"
-                  className="ml-2 text-md font-medium text-gray-900"
-                >
-                  Ganjil
-                </label>
-                <input
-                  id="genap-radio"
-                  type="radio"
-                  name="semester-radio"
-                  value="1"
-                  className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-                  onChange={(e) =>
-                    setInput({ ...input, semester: parseInt(e.target.value) })
-                  }
-                  checked={input.semester === 1}
-                />
-                <label
-                  htmlFor="genap-radio"
-                  className="ml-2 text-md font-medium text-gray-900"
-                >
-                  Genap
-                </label>
-              </div>
-            </div>
-            <Button
-              text={
-                <div className="flex items-center">
-                  <DocumentPlusIcon className="h-5 mr-2" />
-                  Tambah
+      {/* <div onClick={() => setShowModal(false)}> */}
+        <Modal
+          show={showModal}
+          position="bottom-left"
+          onClose={() => setShowModal(false)}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Modal.Header>Atur Tahun Ajaran</Modal.Header>
+          <Modal.Body>
+            <div className="px-2 mb-5">
+              <h2 className="text-lg font-semibold mb-2">Ganti Tahun Ajaran</h2>
+              <Dropdown
+                label={acyear_string}
+                color="dark"
+                outline="false"
+                size="md"
+                arrowPosition="right-end"
+              >
+                {academicYear.map((acadyear) => (
+                  <Dropdown.Item
+                    key={acadyear.academic_year_id}
+                    onClick={() => getAcadYearValue(acadyear)}
+                  >
+                    {acadyear.start_year}/{acadyear.end_year}(
+                    {String(Number(acadyear.semester) + 1)})
+                  </Dropdown.Item>
+                ))}
+              </Dropdown>
+              <h2 className="mt-8 text-lg font-semibold mb-2">
+                Tambah Tahun Ajaran
+              </h2>
+              <div className="flex flex-col space-y-3 items-start mb-4">
+                <div className="w-full flex flex-col md:flex-row md:space-x-3">
+                  <label htmlFor="start-year-input" className="w-full max-w-xs">
+                    <h3 className="text-md font-medium mb-1">Tahun Mulai:</h3>
+                    <input
+                      id="start-year-input"
+                      type="text"
+                      pattern="\d*"
+                      maxLength="4"
+                      placeholder="YYYY"
+                      value={input["start_year"]}
+                      className="border border-gray-300 rounded-lg p-2 w-full mt-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(e) =>
+                        setInput({
+                          ...input,
+                          start_year: Number(e.target.value),
+                          end_year: Number(e.target.value) + 1,
+                        })
+                      }
+                    />
+                  </label>
+                  <p className="pt-10">-</p>
+                  <label htmlFor="end-year-input" className="w-full max-w-xs">
+                    <h3 className="text-md font-medium mb-1">Tahun Akhir:</h3>
+                    <input
+                      id="end-year-input"
+                      type="text"
+                      pattern="\d*"
+                      maxLength="4"
+                      placeholder="YYYY"
+                      value={input["end_year"]}
+                      className="border border-gray-300 rounded-lg p-2 w-full mt-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      onChange={(e) =>
+                        setInput({
+                          ...input,
+                          start_year: Number(e.target.value) - 1,
+                          end_year: Number(e.target.value),
+                        })
+                      }
+                    />
+                  </label>
                 </div>
-              }
-              color="dark"
-              onClick={postAcadYearTemplate}
-              className="mt-6"
-            />
-          </div>
-        </Modal.Body>
-      </Modal>
+                <h3 className="text-md font-medium mb-1">Semester:</h3>
+                <div className="flex items-center space-x-3">
+                  <input
+                    id="ganjil-radio"
+                    type="radio"
+                    name="semester-radio"
+                    value="0"
+                    className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                    onChange={(e) =>
+                      setInput({ ...input, semester: parseInt(e.target.value) })
+                    }
+                    checked={input.semester === 0}
+                  />
+                  <label
+                    htmlFor="ganjil-radio"
+                    className="ml-2 text-md font-medium text-gray-900"
+                  >
+                    Ganjil
+                  </label>
+                  <input
+                    id="genap-radio"
+                    type="radio"
+                    name="semester-radio"
+                    value="1"
+                    className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+                    onChange={(e) =>
+                      setInput({ ...input, semester: parseInt(e.target.value) })
+                    }
+                    checked={input.semester === 1}
+                  />
+                  <label
+                    htmlFor="genap-radio"
+                    className="ml-2 text-md font-medium text-gray-900"
+                  >
+                    Genap
+                  </label>
+                </div>
+              </div>
+              <Button
+                text={
+                  <div className="flex items-center">
+                    <DocumentPlusIcon className="h-5 mr-2" />
+                    Tambah
+                  </div>
+                }
+                color="dark"
+                onClick={postAcadYearTemplate}
+                className="mt-6"
+              />
+            </div>
+          </Modal.Body>
+        </Modal>
+      {/* </div> */}
     </div>
   );
 }
