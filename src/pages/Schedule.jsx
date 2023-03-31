@@ -28,6 +28,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
   const [loading, setLoading] = useState(true);
   const [fetchFailed, setFetchFailed] = useState(false);
   const [error, setError] = useState([]);
+  const [roomid, setRoomid] = useState([]);
   const [currentLabel, setCurrentLabel] = useState({
     day: "All",
     start: 1,
@@ -162,9 +163,10 @@ export default function Schedule({ acyear, formattedAcyear }) {
     //TODO : This code just blindly take range of data, then assign it to the
     //       coresponding array.
     //TODO : Make checking for each id.
+    let arrDays;
     // For dividing data to 6 days
     for (let i = start; i < end; i = i + 12) {
-      let arrDays = roomdata.filter(
+      arrDays = roomdata.filter(
         (item) => item.time_id > i && item.time_id <= i + 12
       );
       let arrRooms = [];
@@ -177,6 +179,10 @@ export default function Schedule({ acyear, formattedAcyear }) {
         finalArrRooms.push(arrRooms);
       }
     }
+    for (let i = 0; i < arrDays.length; i++) {
+      setRoomid(roomid.push(arrDays[i].room_id));
+    }
+    setRoomid([...new Set(roomid)]);
     return finalArrRooms;
   }
 
@@ -247,14 +253,16 @@ export default function Schedule({ acyear, formattedAcyear }) {
             Jadwal Kuliah Terselenggara
           </p>
           {/* Dropdown & Search */}
-          <nav className="mx-8 flex mb-3 items-center justify-between">
+          <nav className="relative mx-8 flex mb-3 items-center justify-between">
             <Dropdown
               label={currentLabel.day}
               color="dark"
               outline="true"
-              className="bg-grey-light z-20"
               size="sm"
             >
+              <Dropdown.Header>
+                <span className="block text-sm h-5"></span>
+              </Dropdown.Header>
               {dateList.map((date) => (
                 <Dropdown.Item onClick={() => setCurrentLabel(date)}>
                   {date.day}
@@ -289,11 +297,16 @@ export default function Schedule({ acyear, formattedAcyear }) {
                 <tr className="sticky top-0 z-10">
                   <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
                   <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
-                  {rooms.map((room) => (
-                    <th className="bg-gray-50 w-40 border px-6 py-3 ">
-                      {room.name}
-                    </th>
-                  ))}
+                  {rooms.map((room) =>
+                    // Find Related room corespond for acadyear
+                    roomid.find((item) => item == room.room_id) ? (
+                      <th className="bg-gray-50 w-40 border px-6 py-3 ">
+                        {room.name}
+                      </th>
+                    ) : (
+                      <></>
+                    )
+                  )}
                 </tr>
               </thead>
               <tbody>

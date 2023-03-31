@@ -140,7 +140,7 @@ export default function ScheduleCheckbox({
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
           occupiedSchedule ? occupiedSchedule.color_data : "grey"
-        } overflow-hidden z-0`}
+        } overflow-hidden`}
       >
         <input
           className="sr-only"
@@ -148,16 +148,16 @@ export default function ScheduleCheckbox({
             setModalShow(true);
           }}
         />
-        <div className="m-0 p-0 w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="m-0 p-0 w-full h-full flex items-center justify-center">
           {occupiedSchedule ? (
             <div className="p-1 text-center break-all text-xs">
               <b>
-                <p className="mb-1">{occupiedSchedule.sub_class_name}</p>
+                <p className="mb-1">
+                  {occupiedSchedule.sub_class_name} (
+                  {occupiedSchedule.sub_class_credit})
+                </p>
               </b>
               <p className="mb-1">{occupiedSchedule.lecturer_name}</p>
-              <p className="mb-1">
-                Semester {occupiedSchedule.sub_class_credit}
-              </p>
             </div>
           ) : (
             <PlusCircleIcon className="h-5 hover:text-green-600 hover:h-7 duration-100" />
