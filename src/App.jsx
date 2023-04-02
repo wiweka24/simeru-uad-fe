@@ -34,8 +34,6 @@ export default function App() {
     return config;
   });
 
-  console.log(sidebarOpen ? "col-span-6" : "col-span-7");
-
   //App
   return (
     <div className="grid grid-cols-7 overflow-hidden h-screen">
@@ -59,7 +57,7 @@ export default function App() {
             <div
               className={`${
                 sidebarOpen ? "flex" : "hidden"
-              } flex-col justify-between col-span-1 border-r`}
+              } flex-col justify-between col-span-1 border-r transition-all duration-500 ease-in-out`}
             >
               <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
             </div>

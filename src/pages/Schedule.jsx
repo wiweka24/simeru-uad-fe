@@ -35,41 +35,13 @@ export default function Schedule({ acyear, formattedAcyear }) {
     end: 72,
   });
   const dateList = [
-    {
-      day: "All",
-      start: 1,
-      end: 72,
-    },
-    {
-      day: "Senin",
-      start: 1,
-      end: 12,
-    },
-    {
-      day: "Selasa",
-      start: 13,
-      end: 24,
-    },
-    {
-      day: "Rabu",
-      start: 25,
-      end: 36,
-    },
-    {
-      day: "Kamis",
-      start: 37,
-      end: 48,
-    },
-    {
-      day: "Jumat",
-      start: 49,
-      end: 60,
-    },
-    {
-      day: "Sabtu",
-      start: 61,
-      end: 72,
-    },
+    { day: "All", start: 1, end: 72 },
+    { day: "Senin", start: 1, end: 12 },
+    { day: "Selasa", start: 13, end: 24 },
+    { day: "Rabu", start: 25, end: 36 },
+    { day: "Kamis", start: 37, end: 48 },
+    { day: "Jumat", start: 49, end: 60 },
+    { day: "Sabtu", start: 61, end: 72 },
   ];
 
   function rerender() {
@@ -146,11 +118,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
         item.time_id >= currentLabel.start && item.time_id <= currentLabel.end
     );
 
-    if (currentLabel.day === "All") {
-      setCurrentDays(days);
-    } else {
-      setCurrentDays([currentLabel.day]);
-    }
+    setCurrentDays(currentLabel.day === "All" ? days : [currentLabel.day]);
 
     setRoomTimeHelper(
       assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
@@ -160,29 +128,31 @@ export default function Schedule({ acyear, formattedAcyear }) {
   // Formating roomtimes data to manageable array
   function assignRoom(roomdata, start, end) {
     let finalArrRooms = [];
-    //TODO : This code just blindly take range of data, then assign it to the
-    //       coresponding array.
-    //TODO : Make checking for each id.
+    let distinctRoomIds = new Set();
     let arrDays;
-    // For dividing data to 6 days
-    for (let i = start; i < end; i = i + 12) {
-      arrDays = roomdata.filter(
-        (item) => item.time_id > i && item.time_id <= i + 12
-      );
-      let arrRooms = [];
-      // For setting the data into 8 rooms, 12 session each
-      for (let j = 0; j < arrDays.length; j = j + 12) {
-        arrRooms.push(arrDays.slice(j, j + 12));
-      }
-      //Push to make final array
-      if (arrRooms.length != 0) {
+    // Divide data into 6 days
+    for (let i = start; i < end; i += 12) {
+      arrDays = roomdata.filter((item) => {
+        return item.time_id > i && item.time_id <= i + 12;
+      });
+      if (arrDays.length > 0) {
+        // Create an object to track rooms and sessions
+        let roomSessions = {};
+        arrDays.forEach((day) => {
+          if (!roomSessions[day.room_id]) {
+            roomSessions[day.room_id] = [];
+            distinctRoomIds.add(day.room_id);
+          }
+          roomSessions[day.room_id].push(day);
+        });
+        // Convert object to array
+        let arrRooms = Object.keys(roomSessions).map((roomId) => {
+          return roomSessions[roomId];
+        });
         finalArrRooms.push(arrRooms);
       }
     }
-    for (let i = 0; i < arrDays.length; i++) {
-      setRoomid(roomid.push(arrDays[i].room_id));
-    }
-    setRoomid([...new Set(roomid)]);
+    setRoomid(Array.from(distinctRoomIds));
     return finalArrRooms;
   }
 
@@ -244,6 +214,8 @@ export default function Schedule({ acyear, formattedAcyear }) {
       `Jadwal-Kuliah-Terselenggara-${formattedAcyear}.xlsx`
     );
   }
+
+  console.log(roomid);
 
   return (
     <div className="relative h-screen">
@@ -355,3 +327,31 @@ export default function Schedule({ acyear, formattedAcyear }) {
     </div>
   );
 }
+
+// function assignRoom(roomdata, start, end) {
+//   let finalArrRooms = [];
+//   //TODO : This code just blindly take range of data, then assign it to the
+//   //       coresponding array.
+//   //TODO : Make checking for each id.
+//   let arrDays;
+//   // For dividing data to 6 days
+//   for (let i = start; i < end; i = i + 12) {
+//     arrDays = roomdata.filter(
+//       (item) => item.time_id > i && item.time_id <= i + 12
+//     );
+//     let arrRooms = [];
+//     // For setting the data into 8 rooms, 12 session each
+//     for (let j = 0; j < arrDays.length; j = j + 12) {
+//       arrRooms.push(arrDays.slice(j, j + 12));
+//     }
+//     //Push to make final array
+//     if (arrRooms.length != 0) {
+//       finalArrRooms.push(arrRooms);
+//     }
+//   }
+
+//   const distinctRoomIds = new Set(arrDays.map((day) => day.room_id));
+//   setRoomid(Array.from(distinctRoomIds));
+
+//   return finalArrRooms;
+// }

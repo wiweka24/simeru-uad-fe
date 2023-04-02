@@ -11,7 +11,7 @@ import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../../src/atoms/config";
-import { notifySucces, notifyError } from "../../src/atoms/notification";
+import { notifySucces, notifyError, notifyErrorMessage } from "../../src/atoms/notification";
 
 // Melakukan export fungsi halaman MKTerselenggara bernama CourseHelp
 // EN: Exporting whole page, MKTerselenggara with the name CourseHelp
@@ -179,7 +179,7 @@ export default function CourseHelp({ acyear }) {
     // Jika plotData atau offeredData kosong, yang berarti tidak ada data untuk di-DELETE, keluarkan error
     // EN: Throws error if plotData or offeredData is empty, which means no pre-existing data exists, therefore there is nothing to DELETE.
     if (!plotData.length || !offeredData.length) {
-      notifyError("Belum ada mata kuliah yang terselenggara!");
+      notifyErrorMessage("Belum ada mata kuliah yang terselenggara!");
     } else {
       // Runs when plotData and offeredData aren't empty
       try {
