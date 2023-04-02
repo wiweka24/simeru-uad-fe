@@ -20,7 +20,7 @@ export default function TableLecturerCredits({ update, acadyear }) {
         const res = await axiosInstance.get(`${URL}lecturers/${acadyear}`);
         setSubClass(res.data.data);
       } catch (err) {
-        notifyError(err);
+        // notifyError(err);
       }
     })();
   }, [update, URL, acadyear]);

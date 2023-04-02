@@ -49,7 +49,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         });
         setAcademicYear(sortedAcademicYear);
       } catch (err) {
-        notifyError(err);
+        // notifyError(err);
       }
     })();
   }, [update, URL]);
