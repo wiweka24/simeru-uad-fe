@@ -103,11 +103,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
       >
         <Icon
           className={`w-5 h-5 min-h-full stroke-current ${
-<<<<<<< HEAD
             activePage === linkto ? "stroke-[2.5px]" : "stroke-[1.5px]"
-=======
-            activePage === linkto ? "stroke-[2.5px]" : "stroke-1.5px]"
->>>>>>> origin/main
           }`}
         />
         <span className="inline truncate">{text}</span>
