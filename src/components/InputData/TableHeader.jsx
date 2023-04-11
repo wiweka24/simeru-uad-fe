@@ -1,29 +1,31 @@
-import { Dropdown } from "flowbite-react";
 import {
   ArrowUpTrayIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import Button from "../Button";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
+import { Dropdown } from "flowbite-react";
+
+import Button from "../Button";
 
 export default function TableHeader({
   onClick,
   onChange,
   postsPerPage,
   jsonData,
+  jsonName
 }) {
   const pageNumber = ["10", "25", "50", "100"];
 
-  const handleExport = () => {
+  function handleExport() {
     const ws = XLSX.utils.json_to_sheet(jsonData);
     const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
     const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
     });
-    FileSaver.saveAs(data, "data.xlsx");
-  };
+    FileSaver.saveAs(data, `${jsonName || "data"}.xlsx`);
+  }
 
   return (
     <nav className="mx-8 flex mb-3 items-center justify-between">

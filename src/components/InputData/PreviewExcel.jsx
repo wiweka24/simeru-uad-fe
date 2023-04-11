@@ -4,7 +4,7 @@ import { Modal } from "flowbite-react";
 
 import Button from "../Button";
 import { axiosInstance } from "../../atoms/config";
-import { notifyError, notifySucces } from "../../atoms/notification";
+import { notifyErrorMessage, notifySucces } from "../../atoms/notification";
 
 export default function PreviewExcel({
   filename,
@@ -63,7 +63,7 @@ export default function PreviewExcel({
     } else {
       setNotif("");
     }
-  }, [header]);
+  }, [header, path]);
 
   async function handlePostExcel() {
     try {
@@ -75,7 +75,7 @@ export default function PreviewExcel({
       rerender();
       resetExcel();
     } catch (err) {
-      notifyError(err.message);
+      notifyErrorMessage("format data salah");
     }
   }
 
@@ -99,7 +99,7 @@ export default function PreviewExcel({
             />
             <span>{filename}</span>
           </div>
-          <div className="space-x-2">
+          <div className="flex space-x-2">
             <Button
               text="Lihat"
               color="dark"
@@ -127,10 +127,7 @@ export default function PreviewExcel({
                 ))}
               </tr>
             </thead>
-            <tbody
-              scope="row"
-              className="border text-gray-900 whitespace-nowrap"
-            >
+            <tbody className="border text-gray-900 whitespace-nowrap">
               {excelfile.map((row, index) => (
                 <tr key={index}>
                   {Object.values(row).map((cell, index) => (
