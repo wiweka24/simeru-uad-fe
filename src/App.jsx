@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import {
+  ChevronRightIcon,
+  ArrowsPointingOutIcon,
+} from "@heroicons/react/24/outline";
 
 import Login from "./pages/Login";
 import Sidebar from "./components/Sidebar";
@@ -15,20 +19,18 @@ import { axiosInstance } from "./atoms/config";
 import { Lecturer, Room, Subclass } from "./pages/InputData";
 
 export default function App() {
-  const [acadYear, setAcadYear] = useState({ year: "2022/2023", value: 1 });
-  // const { token, setToken } = useToken();
-  // const getToken = localStorage.getItem("auth_token");
-  // console.log(getToken, "ini token dah dipassing");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [acadYear, setAcadYear] = useState({
+    start_year: "",
+    end_year: "",
+    semester: "",
+    academic_year_id: 0,
+  });
 
   axiosInstance.interceptors.request.use(function (config) {
-    // const tokenString = localStorage.getItem("auth_token");
-    // console.log(tokenString);
-
     config.headers.Authorization = localStorage.getItem("auth_token")
       ? `Bearer ${localStorage.getItem("auth_token")}`
       : "";
-    console.log(config.headers.Authorization);
-    console.log(localStorage.getItem("auth_token"));
     return config;
   });
 
@@ -52,33 +54,67 @@ export default function App() {
         ) : (
           <>
             {/* Sidebar */}
-            <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
+            <div
+              className={`${
+                sidebarOpen ? "flex" : "hidden"
+              } flex-col justify-between col-span-1 border-r transition-all duration-500 ease-in-out`}
+            >
+              <Sidebar getAcadYearValue={setAcadYear} acyear={acadYear} />
+            </div>
 
             {/* App Route */}
-            <div className="col-span-6 overflow-y-scroll bg-grey-light">
+            <div
+              className={`${
+                sidebarOpen ? "col-span-6" : "col-span-7"
+              } overflow-y-scroll bg-grey-light`}
+            >
+              <div className="h-10 border-b bg-white">
+                <div
+                  className="p-2 w-10 h-10"
+                  onClick={() => setSidebarOpen((current) => !current)}
+                >
+                  {sidebarOpen ? (
+                    <ArrowsPointingOutIcon />
+                  ) : (
+                    <ChevronRightIcon />
+                  )}
+                </div>
+              </div>
               <Routes>
                 <Route path="/MataKuliah" element={<Subclass />} />
                 <Route path="/Dosen" element={<Lecturer />} />
                 <Route path="/Ruangan" element={<Room />} />
                 <Route
                   path="/DosenMatkul"
-                  element={<LecturerCourse acyear={acadYear.value} />}
+                  element={
+                    <LecturerCourse acyear={acadYear.academic_year_id} />
+                  }
                 />
-                <Route path="/RuangWaktu" element={<RoomTime />} />
+                <Route
+                  path="/RuangWaktu"
+                  element={<RoomTime acyear={acadYear.academic_year_id} />}
+                />
                 <Route
                   path="/MKTerselenggara"
-                  element={<CourseHelp acyear={acadYear.value} />}
+                  element={<CourseHelp acyear={acadYear.academic_year_id} />}
                 />
                 <Route
                   path="/Jadwal"
-                  element={<Schedule acyear={acadYear.value} />}
+                  element={
+                    <Schedule
+                      acyear={acadYear.academic_year_id}
+                      formattedAcyear={`${acadYear.start_year}-${
+                        acadYear.end_year
+                      }-Semester-${Number(acadYear.semester) + 1}`}
+                    />
+                  }
                 />
                 <Route
                   path="/*"
                   element={
                     <Error
                       redirect="/MataKuliah"
-                      message="Kembali ke Homepage"
+                      message="Halaman Tidak Ditemukan"
                     />
                   }
                 />
