@@ -27,13 +27,17 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   const [academicYear, setAcademicYear] = useState([]);
   const [update, setUpdate] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const acyear_string = `${acyear.start_year}/${acyear.end_year}(${acyear.semester == 0 ? "ganjil" : "genap"})`;
+  const evenOdd = ["Ganjil", "Genap"];
+  const acyear_string = `${acyear.start_year}/${acyear.end_year} (${
+    evenOdd[Number(acyear.semester)]
+  })`;
   const defaultInput = {
     start_year: "",
     end_year: "",
     semester: 0,
   };
   const [input, setInput] = useState(defaultInput);
+  
 
   useEffect(() => {
     (async () => {
@@ -183,9 +187,11 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           <div className="py-4 leading-5">
             <h4 className="">Admin</h4>
             <p className="text-xl text-grey-dark font-bold">
-              T.A. {acyear.start_year}/{acyear.end_year} <br />
-              Semester {String(Number(acyear.semester) + 1)}
+              T.A. {acyear.start_year}/{acyear.end_year}
+              <br />
+              Semester {evenOdd[Number(acyear.semester)]}
             </p>
+            
           </div>
         </div>
 
@@ -267,8 +273,8 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
                   key={acadyear.academic_year_id}
                   onClick={() => getAcadYearValue(acadyear)}
                 >
-                  {acadyear.start_year}/{acadyear.end_year}(
-                  {acadyear.semester == 0 ? "ganjil" : "genap"})
+                  {acadyear.start_year}/{acadyear.end_year} (
+                  {evenOdd[Number(acadyear.semester)]})
                 </Dropdown.Item>
               ))}
             </Dropdown>
@@ -369,7 +375,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           </div>
         </Modal.Body>
       </Modal>
-      {/* </div> */}
     </>
   );
 }
