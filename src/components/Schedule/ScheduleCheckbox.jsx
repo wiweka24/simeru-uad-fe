@@ -24,18 +24,21 @@ export default function ScheduleCheckbox({
   const [cursorMode, setCursorMode] = useState("cursor-pointer");
   const [colorPalette, setColorPalette] = useState();
   const [loading, setLoading] = useState(false);
-  const URL = process.env.REACT_APP_BASE_URL;
 
   const colorList = [
-    "red-100",
-    "red-400",
-    "green-100",
-    "green-400",
-    "indigo-100",
-    "indigo-400",
-    "yellow-100",
-    "lime-400",
-    "cyan-500",
+    "bg-white",
+    "bg-red-200",
+    "bg-red-500",
+    "bg-green-200",
+    "bg-green-500",
+    "bg-indigo-200",
+    "bg-indigo-500",
+    "bg-yellow-200",
+    "bg-yellow-500",
+    "bg-lime-200",
+    "bg-lime-500",
+    "bg-cyan-200",
+    "bg-cyan-500",
   ];
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
@@ -67,13 +70,13 @@ export default function ScheduleCheckbox({
   // Add Data
   async function postData(obj) {
     try {
-      await axiosInstance.post(`${URL}schedule`, {
+      await axiosInstance.post(`schedule`, {
         data: [
           {
             lecturer_plot_id: Number(obj.lecturer_plot_id),
             room_time_id: obj.room_time_id,
             academic_year_id: Number(obj.academic_year_id),
-            color_data: colorPalette || "white",
+            color_data: colorPalette || "bg-white",
           },
         ],
       });
@@ -91,7 +94,7 @@ export default function ScheduleCheckbox({
   async function deleteBtAction(obj) {
     if (occupiedSchedule) {
       try {
-        await axiosInstance.delete(`${URL}schedule`, {
+        await axiosInstance.delete(`schedule`, {
           data: {
             data: [
               {
@@ -138,8 +141,8 @@ export default function ScheduleCheckbox({
     <>
       {/* Checkbox shape and content */}
       <label
-        className={`relative w-full border-b border-collapse h-20 cursor-pointer bg-${
-          occupiedSchedule ? occupiedSchedule.color_data : "grey"
+        className={`relative w-full border-b border-collapse h-20 cursor-pointer ${
+          occupiedSchedule ? occupiedSchedule.color_data : "bg-grey-light"
         } overflow-hidden`}
       >
         <input
@@ -153,8 +156,8 @@ export default function ScheduleCheckbox({
             <div className="p-1 text-center break-all text-xs">
               <b>
                 <p className="mb-1">
-                  {occupiedSchedule.sub_class_name} (
-                  {occupiedSchedule.sub_class_credit})
+                  {occupiedSchedule.sub_class_name} 
+                  ({occupiedSchedule.sub_class_credit})
                 </p>
               </b>
               <p className="mb-1">{occupiedSchedule.lecturer_name}</p>
@@ -183,8 +186,8 @@ export default function ScheduleCheckbox({
             {subClass ? (
               <>
                 <div
-                  className={`flex border w-full rounded-lg my-1 py-2 px-4 justify-between align-middle bg-${
-                    colorPalette || "white"
+                  className={`flex border w-full rounded-lg my-1 py-2 px-4 justify-between align-middle ${
+                    colorPalette || "bg-white"
                   }`}
                 >
                   <div>
@@ -211,7 +214,7 @@ export default function ScheduleCheckbox({
                 <div className="flex justify-end">
                   {colorList.map((color) => (
                     <button
-                      className={`border mr-1 rounded-full h-8 w-8 bg-${color}`}
+                      className={`border-2 mr-1 rounded-full h-8 w-8 ${color}`}
                       onClick={() => setColorPalette(color)}
                     />
                   ))}

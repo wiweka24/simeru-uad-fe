@@ -13,7 +13,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
 export default function LecturerCourse({ acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const [offeredSubClass, setOfferedSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [subClass, setSubClass] = useState([]);
@@ -39,9 +38,9 @@ export default function LecturerCourse({ acyear }) {
       try {
         setLoading(true);
         const [res, res1, res2] = await Promise.all([
-          axiosInstance.get(`${URL}offered_classes/${acyear}`),
-          axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
-          axiosInstance.get(`${URL}lecturer`),
+          axiosInstance.get(`offered_classes/${acyear}`),
+          axiosInstance.get(`lecturer_plot/${acyear}`),
+          axiosInstance.get(`lecturer`),
         ]);
 
         setOfferedSubClass(res.data.data);
@@ -56,7 +55,7 @@ export default function LecturerCourse({ acyear }) {
         }, 500);
       }
     })();
-  }, [update, acyear, URL]);
+  }, [update, acyear]);
 
   // Melakukan merge tabel antara tabel offered subclass dan lecturerplot
   useEffect(() => {
@@ -92,7 +91,7 @@ export default function LecturerCourse({ acyear }) {
       async function handleSaveClick() {
         setMode("read");
         try {
-          await axiosInstance.put(`${URL}lecturer_plot`, {
+          await axiosInstance.put(`lecturer_plot`, {
             data: [
               {
                 lecturer_id: text.lecturer_id,
@@ -190,7 +189,7 @@ export default function LecturerCourse({ acyear }) {
                       Semester
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Kelas
+                      SKS
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Dosen

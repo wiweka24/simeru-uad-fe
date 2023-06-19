@@ -21,14 +21,14 @@ import { axiosInstance } from "../atoms/config";
 import { Modal } from "flowbite-react";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
   const [activePage, setActivePage] = useState("/");
   const [academicYear, setAcademicYear] = useState([]);
   const [update, setUpdate] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const acyear_string = `${acyear.start_year}/${acyear.end_year}(${
-    Number(acyear.semester) + 1
+  const evenOdd = ["Ganjil", "Genap"];
+  const acyear_string = `${acyear.start_year}/${acyear.end_year} (${
+    evenOdd[Number(acyear.semester)]
   })`;
   const defaultInput = {
     start_year: "",
@@ -36,11 +36,12 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     semester: 0,
   };
   const [input, setInput] = useState(defaultInput);
+  
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(`${URL}academic_year`);
+        const res = await axiosInstance.get(`academic_year`);
         const sortedAcademicYear = res.data.data.sort((a, b) => {
           if (a.start_year === b.start_year) {
             return a.semester - b.semester;
@@ -52,7 +53,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         // notifyError(err);
       }
     })();
-  }, [update, URL]);
+  }, [update]);
 
   useEffect(() => {
     (async () => {
@@ -62,7 +63,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         const sems = month > 5 ? 0 : 1;
         const year = currentTime.getFullYear() - 1;
 
-        const res = await axiosInstance.get(`${URL}academic_year`);
+        const res = await axiosInstance.get(`academic_year`);
         const filtered = res.data.data.find(
           (item) => item.start_year == year && item.semester == sems
         );
@@ -82,7 +83,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         });
       }
     })();
-  }, [URL, getAcadYearValue]);
+  }, [getAcadYearValue]);
 
   function rerender() {
     setUpdate(`update ${Math.random()}`);
@@ -103,7 +104,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
       >
         <Icon
           className={`w-5 h-5 min-h-full stroke-current ${
-            activePage === linkto ? "stroke-[2.5px]" : "stroke-1.5px]"
+            activePage === linkto ? "stroke-[2.5px]" : "stroke-[1.5px]"
           }`}
         />
         <span className="inline truncate">{text}</span>
@@ -113,7 +114,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
 
   async function postAcadYearTemplate() {
     try {
-      await axiosInstance.post(`${URL}academic_year`, {
+      await axiosInstance.post(`academic_year`, {
         start_year: input.start_year,
         end_year: input.end_year,
         semester: input.semester,
@@ -150,7 +151,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   async function logoutSubmit(e) {
     e.preventDefault();
 
-    await axiosInstance.post(`${URL}logout`).then((res) => {
+    await axiosInstance.post(`logout`).then((res) => {
       if (res.status === 200) {
         localStorage.removeItem("auth_token");
         Swal.fire({
@@ -185,9 +186,11 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           <div className="py-4 leading-5">
             <h4 className="">Admin</h4>
             <p className="text-xl text-grey-dark font-bold">
-              T.A. {acyear.start_year}/{acyear.end_year} <br />
-              Semester {String(Number(acyear.semester) + 1)}
+              T.A. {acyear.start_year}/{acyear.end_year}
+              <br />
+              Semester {evenOdd[Number(acyear.semester)]}
             </p>
+            
           </div>
         </div>
 
@@ -269,8 +272,8 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
                   key={acadyear.academic_year_id}
                   onClick={() => getAcadYearValue(acadyear)}
                 >
-                  {acadyear.start_year}/{acadyear.end_year}(
-                  {String(Number(acadyear.semester) + 1)})
+                  {acadyear.start_year}/{acadyear.end_year} (
+                  {evenOdd[Number(acadyear.semester)]})
                 </Dropdown.Item>
               ))}
             </Dropdown>
@@ -371,7 +374,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
           </div>
         </Modal.Body>
       </Modal>
-      {/* </div> */}
     </>
   );
 }

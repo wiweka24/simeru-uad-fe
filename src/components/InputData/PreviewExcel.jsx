@@ -12,7 +12,6 @@ export default function PreviewExcel({
   deleteFile,
   rerender,
   path,
-  URL,
 }) {
   const [isShow, setIsShow] = useState(false);
   const [modalShow, setModalShow] = useState(false);
@@ -67,7 +66,7 @@ export default function PreviewExcel({
 
   async function handlePostExcel() {
     try {
-      await axiosInstance.post(URL, {
+      await axiosInstance.post(path, {
         data: excelfile,
       });
       setModalShow(false);

@@ -16,7 +16,6 @@ import { notifySucces, notifyError, notifyErrorMessage } from "../../src/atoms/n
 // Melakukan export fungsi halaman MKTerselenggara bernama CourseHelp
 // EN: Exporting whole page, MKTerselenggara with the name CourseHelp
 export default function CourseHelp({ acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const [term, setTerm] = useState("");
   const [update, setUpdate] = useState("");
   const [offered, setOffered] = useState([]);
@@ -44,9 +43,9 @@ export default function CourseHelp({ acyear }) {
         // EN: GET request for all classes (subclass)
         const [subClassResponse, offeredClassResponse, lecturerPlotResponse] =
           await Promise.all([
-            axiosInstance.get(`${URL}subclass`),
-            axiosInstance.get(`${URL}offered_classes/${acyear}`),
-            axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
+            axiosInstance.get(`subclass`),
+            axiosInstance.get(`offered_classes/${acyear}`),
+            axiosInstance.get(`lecturer_plot/${acyear}`),
           ]);
         setSubClass(subClassResponse.data.data);
         setOffered(offeredClassResponse.data.data); // Set state to offered
@@ -69,7 +68,7 @@ export default function CourseHelp({ acyear }) {
     setTimeout(() => {
       setLoading(false);
     }, 500);
-  }, [URL, update, acyear]);
+  }, [update, acyear]);
 
   function mergeData(data, lecturerPlot) {
     // Melakukan mapping data (offered) yang sudah di-GET di atas. mergeData adalah hasil merging dua objek JSON, offered dan lecturerPlot
@@ -130,7 +129,7 @@ export default function CourseHelp({ acyear }) {
       setLoading(true);
       // Request POST ke endpoint matkul terselenggara (offered_classes) menggunakan offeredData. offeredData hanya berisi matkul yang belum terselenggara.
       // EN: POST request to offered_classes endpoint with offeredData. offeredData contains ONLY classes that are NOT offered yet.
-      await axiosInstance.post(`${URL}offered_classes`, {
+      await axiosInstance.post(`offered_classes`, {
         data: offeredData,
       });
       rerender();
@@ -186,14 +185,14 @@ export default function CourseHelp({ acyear }) {
         setLoading(true);
 
         // Use Promise.all to wait for both axios delete requests to complete
-        await axiosInstance.delete(`${URL}lecturer_plot`, {
+        await axiosInstance.delete(`lecturer_plot`, {
           data: {
             data: plotData,
           },
         });
 
         // If the first DELETE request succeeds, continue with the second one
-        await axiosInstance.delete(`${URL}offered_classes`, {
+        await axiosInstance.delete(`offered_classes`, {
           data: {
             data: offeredData,
           },
@@ -223,7 +222,7 @@ export default function CourseHelp({ acyear }) {
         setLoading(true);
 
         // Use Promise.all to wait for both axios delete requests to complete
-        await axiosInstance.delete(`${URL}lecturer_plot`, {
+        await axiosInstance.delete(`lecturer_plot`, {
           data: {
             data: [
               {
@@ -236,7 +235,7 @@ export default function CourseHelp({ acyear }) {
         });
 
         // If the first DELETE request succeeds, continue with the second one
-        await axiosInstance.delete(`${URL}offered_classes`, {
+        await axiosInstance.delete(`offered_classes`, {
           data: {
             data: [
               {
@@ -264,7 +263,7 @@ export default function CourseHelp({ acyear }) {
       // setOffered(ArrAddedItem);
       try {
         setLoading(true);
-        await axiosInstance.post(`${URL}offered_classes`, {
+        await axiosInstance.post(`offered_classes`, {
           data: [
             {
               sub_class_id: obj.sub_class_id,

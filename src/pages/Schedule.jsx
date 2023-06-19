@@ -13,7 +13,6 @@ import Button from "../components/Button";
 import { axiosInstance } from "../atoms/config";
 
 export default function Schedule({ acyear, formattedAcyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const [roomTimeHelper, setRoomTimeHelper] = useState([]);
   const [normalRoomTimeHelper, setNormalRoomTimeHelper] = useState([]);
   const [roomTime, setRoomTime] = useState([]);
@@ -50,21 +49,21 @@ export default function Schedule({ acyear, formattedAcyear }) {
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const sessions = [
-    ["07:00", 1],
-    ["08:00", 2],
-    ["09:00", 3],
-    ["10:00", 4],
-    ["11:00", 5],
-    ["12:00", 6],
-    ["13:00", 7],
-    ["14:00", 8],
-    ["15:00", 9],
-    ["16:00", 10],
-    ["17:00", 11],
-    ["18:00", 12],
+    ["07.00 - 07.50", 1],
+    ["07.50 - 08.40", 2],
+    ["08.45 - 09.35", 3],
+    ["09.35 - 10.25", 4],
+    ["10.30 - 11.20", 5],
+    ["11.20 - 12.10", 6],
+    ["12.30 - 13.20", 7],
+    ["13.20 - 14.10", 8],
+    ["14.15 - 15.05", 9],
+    ["15.15 - 16.05", 10],
+    ["16.10 - 17.00", 11],
+    ["17.00 - 17.50", 12],
   ];
 
-  //Getting the data
+  // Getting the data
   useEffect(() => {
     (async () => {
       try {
@@ -77,19 +76,19 @@ export default function Schedule({ acyear, formattedAcyear }) {
           scheduleResponse,
           formattedSchedulesResponse,
         ] = await Promise.all([
-          axiosInstance.get(`${URL}room`),
-          axiosInstance.get(`${URL}room_time_helper/${acyear}`),
-          axiosInstance.get(`${URL}lecturer_plot/${acyear}`),
-          axiosInstance.get(`${URL}room_time/${acyear}`),
-          axiosInstance.get(`${URL}schedule/${acyear}`),
-          axiosInstance.get(`${URL}schedule/formatted/${acyear}`),
+          axiosInstance.get(`room`),
+          axiosInstance.get(`room_time_helper/${acyear}`),
+          axiosInstance.get(`lecturer_plot/${acyear}`),
+          axiosInstance.get(`room_time/${acyear}`),
+          axiosInstance.get(`schedule/${acyear}`),
+          axiosInstance.get(`schedule/formatted/${acyear}`),
         ]);
         setRooms(roomResponse.data.data);
         setNormalRoomTimeHelper(helperResponse.data.data);
         setSubClass(plotResponse.data.data);
         setRoomTime(timeResponse.data.data);
         setSchedules(scheduleResponse.data.data);
-        setFormattedSchedules(formattedSchedulesResponse.data.data);
+        setFormattedSchedules(sortJSON(formattedSchedulesResponse.data.data));
       } catch (err) {
         setError(err.response);
         setFetchFailed(true);
@@ -99,17 +98,17 @@ export default function Schedule({ acyear, formattedAcyear }) {
         }, 500);
       }
     })();
-  }, [update, acyear, URL]);
+  }, [update, acyear]);
 
-  //Merging and filtering data
+  // Merging and filtering data
   useEffect(() => {
     const mergeData = normalRoomTimeHelper.map((item) => ({
       ...item,
       ...roomTime.find(
         (item2) =>
-          item2.time_id === item.time_id &&
-          item2.room_id === item.room_id &&
-          item2.academic_year_id === item.academic_year_id
+          item2.time_id == item.time_id &&
+          item2.room_id == item.room_id &&
+          item2.academic_year_id == item.academic_year_id
       ),
     }));
 
@@ -119,44 +118,60 @@ export default function Schedule({ acyear, formattedAcyear }) {
     );
 
     setCurrentDays(currentLabel.day === "All" ? days : [currentLabel.day]);
-
     setRoomTimeHelper(
       assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
     );
   }, [normalRoomTimeHelper, roomTime, currentLabel]);
 
-  // Formating roomtimes data to manageable array
   function assignRoom(roomdata, start, end) {
     let finalArrRooms = [];
     let distinctRoomIds = new Set();
-    let arrDays;
-    // Divide data into 6 days
+
+    // Divide into 6 days
     for (let i = start; i < end; i += 12) {
-      arrDays = roomdata.filter((item) => {
-        return item.time_id > i && item.time_id <= i + 12;
-      });
+      // Filter roomdata based on the time range
+      const arrDays = roomdata.filter(
+        (item) => item.time_id > i && item.time_id <= i + 12
+      );
+
       if (arrDays.length > 0) {
-        // Create an object to track rooms and sessions
-        let roomSessions = {};
+        const roomSessions = {};
+
+        // Group roomdata by room_id into roomSessions object
         arrDays.forEach((day) => {
           if (!roomSessions[day.room_id]) {
             roomSessions[day.room_id] = [];
-            distinctRoomIds.add(day.room_id);
           }
           roomSessions[day.room_id].push(day);
         });
-        // Convert object to array
-        let arrRooms = Object.keys(roomSessions).map((roomId) => {
-          return roomSessions[roomId];
-        });
+
+        // Convert roomSessions object to array of room arrays
+        const arrRooms = Object.values(roomSessions);
         finalArrRooms.push(arrRooms);
+
+        // Check each room array for rooms with is_possible === "1" and add corresponding room_id to distinctRoomIds
+        Object.keys(roomSessions).forEach((roomId) => {
+          if (roomSessions[roomId].some((room) => room.is_possible === "1")) {
+            distinctRoomIds.add(roomId);
+          }
+        });
       }
     }
+
+    // Set distinct room IDs in the respective states
     setRoomid(Array.from(distinctRoomIds));
-    return finalArrRooms;
+
+    // Filter semua data dan slice yang room id nya ada di distinctRoomIds
+    const filteredData = finalArrRooms.map((nestedArray) =>
+      nestedArray.filter((roomArray) =>
+        roomArray.some((room) => Array.from(distinctRoomIds).includes(room.room_id))
+      )
+    );
+
+    return filteredData;
   }
 
-  //Search Logic
+  // Search Logic
   useEffect(() => {
     setCurrentSubClass(
       subClass.filter((item) =>
@@ -165,7 +180,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
     );
   }, [subClass, searchQuery]);
 
-  //Mapping schedule by filterring the data to be addedd to the checkbox.
+  // Mapping schedule by filterring the data to be addedd to the checkbox.
   function scheduleMapping(
     session,
     rooms,
@@ -176,9 +191,9 @@ export default function Schedule({ acyear, formattedAcyear }) {
   ) {
     const occupiedSchedule = schedules.find(
       (item) =>
-        item.time_id === session.time_id &&
-        item.room_id === session.room_id &&
-        item.academic_year_id === session.academic_year_id
+        item.time_id == session.time_id &&
+        item.room_id == session.room_id &&
+        item.academic_year_id == session.academic_year_id
     );
 
     if (session.is_possible === "1") {
@@ -213,6 +228,18 @@ export default function Schedule({ acyear, formattedAcyear }) {
       data,
       `Jadwal-Kuliah-Terselenggara-${formattedAcyear}.xlsx`
     );
+  }
+
+  function sortJSON(data) {
+    data.sort((a, b) => {
+      if (a["Mata Kuliah"] !== b["Mata Kuliah"]) {
+        return a["Mata Kuliah"].localeCompare(b["Mata Kuliah"]);
+      } else {
+        return a["Kelas"].localeCompare(b["Kelas"]);
+      }
+    });
+
+    return data;
   }
 
   console.log(roomid);
@@ -267,7 +294,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
             <table className="relative border-collapse w-full text-sm text-gray-500 overflow-x-auto">
               <thead className="text-gray-700/50 bg-gray-50">
                 <tr className="sticky top-0 z-10">
-                  <th className="bg-gray-50 w-20 border py-3 ">Hari</th>
+                  <th className="bg-gray-50 w-20 border-t py-3 ">Hari</th>
                   <th className="bg-gray-50 w-0 border py-3 ">Sesi</th>
                   {rooms.map((room) =>
                     // Find Related room corespond for acadyear
@@ -289,9 +316,9 @@ export default function Schedule({ acyear, formattedAcyear }) {
                     </td>
 
                     {/* Time Column */}
-                    <td className="border-b font-medium text-gray-900 w-max flex flex-col">
+                    <td className="border-b font-medium text-gray-900 w-full flex flex-col">
                       {sessions.map((session) => (
-                        <div className="px-1 h-20 py-4 text-center">
+                        <div className="flex items-center justify-center h-20 w-full px-1 py-4 border-r">
                           <TimePlaceholder
                             text={session[0]}
                             number={session[1]}
@@ -327,31 +354,3 @@ export default function Schedule({ acyear, formattedAcyear }) {
     </div>
   );
 }
-
-// function assignRoom(roomdata, start, end) {
-//   let finalArrRooms = [];
-//   //TODO : This code just blindly take range of data, then assign it to the
-//   //       coresponding array.
-//   //TODO : Make checking for each id.
-//   let arrDays;
-//   // For dividing data to 6 days
-//   for (let i = start; i < end; i = i + 12) {
-//     arrDays = roomdata.filter(
-//       (item) => item.time_id > i && item.time_id <= i + 12
-//     );
-//     let arrRooms = [];
-//     // For setting the data into 8 rooms, 12 session each
-//     for (let j = 0; j < arrDays.length; j = j + 12) {
-//       arrRooms.push(arrDays.slice(j, j + 12));
-//     }
-//     //Push to make final array
-//     if (arrRooms.length != 0) {
-//       finalArrRooms.push(arrRooms);
-//     }
-//   }
-
-//   const distinctRoomIds = new Set(arrDays.map((day) => day.room_id));
-//   setRoomid(Array.from(distinctRoomIds));
-
-//   return finalArrRooms;
-// }

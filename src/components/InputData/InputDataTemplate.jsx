@@ -20,7 +20,6 @@ export default function InputData({
   attribute,
   title,
 }) {
-  const URL = `${process.env.REACT_APP_BASE_URL}${path}`;
   const [subClass, setSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +50,7 @@ export default function InputData({
         lecturer_id: data.lecturer_id || "",
         name: data.name,
         email: data.email,
-        phone_number: data.phone_number,
+        phone_number: data.phone_number || "0000000",
       };
     } else {
       return {
@@ -60,6 +59,18 @@ export default function InputData({
         quota: data.quota,
       };
     }
+  }
+
+  function sortJSON(data) {
+    if (path === "subclass") {
+      data.sort((a, b) => {
+        if (a.name !== b.name) {
+          return a.name.localeCompare(b.name);
+        } 
+      });
+    }
+    
+    return data;
   }
 
   const rerender = () => {
@@ -93,8 +104,8 @@ export default function InputData({
     (async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(URL);
-        setSubClass(res.data.data);
+        const res = await axiosInstance.get(path);
+        setSubClass(sortJSON(res.data.data));
       } catch (err) {
         setFetchFailed(true);
         setError(err.response);
@@ -104,19 +115,40 @@ export default function InputData({
         }, 500);
       }
     })();
-  }, [update, URL]);
+  }, [update]);
 
   // post new data
   async function handlePost() {
     try {
       setLoading(true);
-      await axiosInstance.post(URL, {
-        data: [dataJson(input)],
-      });
-
-      notifySucces(`${input.name} ditambahkan`);
-      setInput(defaultInput);
-      rerender();
+      if (input.credit) {
+        const regex = /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/;
+        if (regex.test(input.name)) {
+          await axiosInstance.post(path, {
+            data: [dataJson(input)],
+          });
+          console.log(dataJson(input));
+          notifySucces(`${input.name} ditambahkan`);
+          setInput(defaultInput);
+          rerender();
+        } else {
+          Swal.fire({
+            html: `Mohon Isi Nama Matkul Sesuai Contoh Berikut: Matematika Wajib B`,
+            toast: false,
+            icon: "warning",
+            iconColor: "#2d2d2f",
+            background: "#f6f7f1",
+            color: "#2d2d2f",
+            showConfirmButton: true,
+            cancelButtonColor: "#9B1C1C",
+            confirmButtonText: "Ya, Saya Mengerti",
+            confirmButtonColor: "#047A55",
+            showClass: {
+              popup: "",
+            },
+          });
+        }
+      }
     } catch (err) {
       notifyError(err);
     }
@@ -158,7 +190,7 @@ export default function InputData({
   async function handlePatch() {
     try {
       setLoading(true);
-      await axiosInstance.put(`${URL}/${edit[attribute]}`, dataJson(edit));
+      await axiosInstance.put(`${path}/${edit[attribute]}`, dataJson(edit));
       setTimeout(() => {
         setLoading(false);
       }, 500);
@@ -197,7 +229,7 @@ export default function InputData({
   async function handleDelete(obj) {
     try {
       setLoading(true);
-      await axiosInstance.delete(`${URL}/${obj[attribute]}`);
+      await axiosInstance.delete(`${path}/${obj[attribute]}`);
       notifySucces(`${obj.name} dihapus`);
       rerender();
     } catch (err) {
@@ -225,21 +257,45 @@ export default function InputData({
                 <div className="grid grid-cols-6 space-x-4">
                   {inputField.map((inpt) => (
                     <div key={inpt.id} className={`${inpt.width} space-y-1`}>
-                      <p className="text-grey">
-                        {inpt.name}
-                        <span className="text-red-500">*</span>
-                      </p>
+                      {inpt.name != "Nomor Telepon" ? (
+                        <div>
+                          <p className="text-grey">
+                            {inpt.name}
+                            <span className="text-red-500">*</span>
+                          </p>
 
-                      <input
-                        id={inpt.valuefor}
-                        type={inpt.type}
-                        placeholder={inpt.placeholder}
-                        value={input[inpt.valuefor]}
-                        className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
-                        onChange={(e) =>
-                          setInput({ ...input, [e.target.id]: e.target.value })
-                        }
-                      />
+                          <input
+                            id={inpt.valuefor}
+                            type={inpt.type}
+                            placeholder={inpt.placeholder}
+                            value={input[inpt.valuefor]}
+                            className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                            onChange={(e) =>
+                              setInput({
+                                ...input,
+                                [e.target.id]: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-grey">{inpt.name}</p>
+                          <input
+                            id={inpt.valuefor}
+                            type={inpt.type}
+                            placeholder="Tidak Wajib"
+                            value={input[inpt.valuefor]}
+                            className="border-2 rounded-lg w-full p-2 bg-grey-light hover:border-grey-dark focus:outline-none focus:border-2 focus:border-grey-dark/80"
+                            onChange={(e) =>
+                              setInput({
+                                ...input,
+                                [e.target.id]: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -309,7 +365,6 @@ export default function InputData({
               file={excelFile}
               rerender={rerender}
               path={path}
-              URL={URL}
               deleteFile={() => {
                 setExcelFile([]);
                 setExcelName("");

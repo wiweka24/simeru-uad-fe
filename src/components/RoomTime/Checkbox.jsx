@@ -4,7 +4,6 @@ import { axiosInstance } from "../../atoms/config";
 import { notifyError } from "../../atoms/notification";
 
 export default function Checkbox({ value, onChange, setLoading }) {
-  const URL = `${process.env.REACT_APP_BASE_URL}room_time`;
   const [isCheck, setIsCheck] = useState(false);
 
   useEffect(() => {
@@ -14,7 +13,7 @@ export default function Checkbox({ value, onChange, setLoading }) {
   async function handleChange(obj) {
     if (obj.is_possible === "0") {
       try {
-        await axiosInstance.post(URL, {
+        await axiosInstance.post("room_time", {
           data: [
             {
               room_id: obj.room_id,
@@ -30,7 +29,7 @@ export default function Checkbox({ value, onChange, setLoading }) {
       }
     } else {
       try {
-        await axiosInstance.delete(URL, {
+        await axiosInstance.delete("room_time", {
           data: {
             data: [
               {
