@@ -190,7 +190,7 @@ export default function LecturerCourse({ acyear }) {
                       Semester
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Kelas
+                      SKS
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Dosen
