@@ -242,8 +242,6 @@ export default function Schedule({ acyear, formattedAcyear }) {
     return data;
   }
 
-  console.log(roomid);
-
   return (
     <div className="relative h-screen">
       <div className="p-10">

@@ -127,7 +127,6 @@ export default function InputData({
           await axiosInstance.post(path, {
             data: [dataJson(input)],
           });
-          console.log(dataJson(input));
           notifySucces(`${input.name} ditambahkan`);
           setInput(defaultInput);
           rerender();
