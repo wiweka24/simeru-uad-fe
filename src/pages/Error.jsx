@@ -20,14 +20,14 @@ export default function Error({ redirect, message, type, status }) {
           {type === "reload" ? (
             <Link
               onClick={() => refreshPage()}
-              className="px-8 py-3 font-semibold rounded "
+              className="px-8 py-3 font-semibold rounded underline"
             >
               Tunggu Sebentar lalu Klik Untuk Reload
             </Link>
           ) : (
             <Link
               to={redirect}
-              className="px-8 py-3 font-semibold rounded "
+              className="px-8 py-3 font-semibold rounded underline"
             >
               Klik untuk Kembali ke Homepage
             </Link>

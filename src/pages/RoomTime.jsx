@@ -11,7 +11,6 @@ import { notifyError } from "../atoms/notification";
 import { axiosInstance } from "../atoms/config";
 
 export default function RoomTime({ acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const [rooms, setRooms] = useState([]);
   const [roomtimes, setRoomtimes] = useState([]);
   const [currentRoomtimes, setCurrentRoomtimes] = useState([]);
@@ -36,8 +35,8 @@ export default function RoomTime({ acyear }) {
       try {
         setLoading(true);
         const [roomRes, roomtimehelperRes] = await Promise.all([
-          axiosInstance.get(`${URL}room`),
-          axiosInstance.get(`${URL}room_time_helper/${acyear}`),
+          axiosInstance.get(`room`),
+          axiosInstance.get(`room_time_helper/${acyear}`),
         ]);
 
         setRooms(roomRes.data.data);
@@ -51,7 +50,7 @@ export default function RoomTime({ acyear }) {
         }, 500);
       }
     })();
-  }, [update, acyear, URL]);
+  }, [update, acyear]);
 
   //For adding "all room" mode of sorting
   useEffect(() => {
@@ -123,7 +122,7 @@ export default function RoomTime({ acyear }) {
       }
     }
     try {
-      await axiosInstance.post(`${URL}room_time`, {
+      await axiosInstance.post(`room_time`, {
         data: sendData,
       });
       rerender();
@@ -151,7 +150,7 @@ export default function RoomTime({ acyear }) {
     }
 
     try {
-      await axiosInstance.delete(`${URL}room_time`, {
+      await axiosInstance.delete(`room_time`, {
         data: {
           data: sendData,
         },

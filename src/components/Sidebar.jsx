@@ -21,7 +21,6 @@ import { axiosInstance } from "../atoms/config";
 import { Modal } from "flowbite-react";
 
 export default function Sidebar({ getAcadYearValue, acyear }) {
-  const URL = process.env.REACT_APP_BASE_URL;
   const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
   const [activePage, setActivePage] = useState("/");
   const [academicYear, setAcademicYear] = useState([]);
@@ -42,7 +41,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axiosInstance.get(`${URL}academic_year`);
+        const res = await axiosInstance.get(`academic_year`);
         const sortedAcademicYear = res.data.data.sort((a, b) => {
           if (a.start_year === b.start_year) {
             return a.semester - b.semester;
@@ -54,7 +53,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         // notifyError(err);
       }
     })();
-  }, [update, URL]);
+  }, [update]);
 
   useEffect(() => {
     (async () => {
@@ -64,7 +63,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         const sems = month > 5 ? 0 : 1;
         const year = currentTime.getFullYear() - 1;
 
-        const res = await axiosInstance.get(`${URL}academic_year`);
+        const res = await axiosInstance.get(`academic_year`);
         const filtered = res.data.data.find(
           (item) => item.start_year == year && item.semester == sems
         );
@@ -84,7 +83,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         });
       }
     })();
-  }, [URL, getAcadYearValue]);
+  }, [getAcadYearValue]);
 
   function rerender() {
     setUpdate(`update ${Math.random()}`);
@@ -115,7 +114,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
 
   async function postAcadYearTemplate() {
     try {
-      await axiosInstance.post(`${URL}academic_year`, {
+      await axiosInstance.post(`academic_year`, {
         start_year: input.start_year,
         end_year: input.end_year,
         semester: input.semester,
@@ -152,7 +151,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   async function logoutSubmit(e) {
     e.preventDefault();
 
-    await axiosInstance.post(`${URL}logout`).then((res) => {
+    await axiosInstance.post(`logout`).then((res) => {
       if (res.status === 200) {
         localStorage.removeItem("auth_token");
         Swal.fire({

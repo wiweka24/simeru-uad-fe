@@ -20,7 +20,6 @@ export default function InputData({
   attribute,
   title,
 }) {
-  const URL = `${process.env.REACT_APP_BASE_URL}${path}`;
   const [subClass, setSubClass] = useState([]);
   const [currentSubClass, setCurrentSubClass] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -62,6 +61,18 @@ export default function InputData({
     }
   }
 
+  function sortJSON(data) {
+    if (path === "subclass") {
+      data.sort((a, b) => {
+        if (a.name !== b.name) {
+          return a.name.localeCompare(b.name);
+        } 
+      });
+    }
+    
+    return data;
+  }
+
   const rerender = () => {
     setUpdate(`update ${Math.random()}`);
   };
@@ -93,8 +104,8 @@ export default function InputData({
     (async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get(URL);
-        setSubClass(res.data.data);
+        const res = await axiosInstance.get(path);
+        setSubClass(sortJSON(res.data.data));
       } catch (err) {
         setFetchFailed(true);
         setError(err.response);
@@ -104,13 +115,13 @@ export default function InputData({
         }, 500);
       }
     })();
-  }, [update, URL]);
+  }, [update]);
 
   // post new data
   async function handlePost() {
     try {
       setLoading(true);
-      await axiosInstance.post(URL, {
+      await axiosInstance.post(path, {
         data: [dataJson(input)],
       });
       console.log(dataJson(input));
@@ -158,7 +169,7 @@ export default function InputData({
   async function handlePatch() {
     try {
       setLoading(true);
-      await axiosInstance.put(`${URL}/${edit[attribute]}`, dataJson(edit));
+      await axiosInstance.put(`${path}/${edit[attribute]}`, dataJson(edit));
       setTimeout(() => {
         setLoading(false);
       }, 500);
@@ -197,7 +208,7 @@ export default function InputData({
   async function handleDelete(obj) {
     try {
       setLoading(true);
-      await axiosInstance.delete(`${URL}/${obj[attribute]}`);
+      await axiosInstance.delete(`${path}/${obj[attribute]}`);
       notifySucces(`${obj.name} dihapus`);
       rerender();
     } catch (err) {
@@ -332,7 +343,6 @@ export default function InputData({
               file={excelFile}
               rerender={rerender}
               path={path}
-              URL={URL}
               deleteFile={() => {
                 setExcelFile([]);
                 setExcelName("");
