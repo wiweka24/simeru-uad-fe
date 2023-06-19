@@ -158,15 +158,15 @@ export default function Schedule({ acyear, formattedAcyear }) {
       }
     }
 
-    // Filter the finalArrRooms to keep only room arrays with at least one room having is_possible === "1"
-    const filteredData = finalArrRooms.map((nestedArray) =>
-      nestedArray.filter((roomArray) =>
-        roomArray.some((room) => room.is_possible === "1")
-      )
-    );
-
     // Set distinct room IDs in the respective states
     setRoomid(Array.from(distinctRoomIds));
+
+    // Filter semua data dan slice yang room id nya ada di distinctRoomIds
+    const filteredData = finalArrRooms.map((nestedArray) =>
+      nestedArray.filter((roomArray) =>
+        roomArray.some((room) => Array.from(distinctRoomIds).includes(room.room_id))
+      )
+    );
 
     return filteredData;
   }
