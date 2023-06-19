@@ -27,9 +27,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
   const [academicYear, setAcademicYear] = useState([]);
   const [update, setUpdate] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const acyear_string = `${acyear.start_year}/${acyear.end_year}(${
-    Number(acyear.semester) + 1
-  })`;
+  const acyear_string = `${acyear.start_year}/${acyear.end_year}(${acyear.semester == 0 ? "ganjil" : "genap"})`;
   const defaultInput = {
     start_year: "",
     end_year: "",
@@ -270,7 +268,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
                   onClick={() => getAcadYearValue(acadyear)}
                 >
                   {acadyear.start_year}/{acadyear.end_year}(
-                  {String(Number(acadyear.semester) + 1)})
+                  {acadyear.semester == 0 ? "ganjil" : "genap"})
                 </Dropdown.Item>
               ))}
             </Dropdown>
