@@ -107,9 +107,9 @@ export default function Schedule({ acyear, formattedAcyear }) {
       ...item,
       ...roomTime.find(
         (item2) =>
-          item2.time_id === item.time_id &&
-          item2.room_id === item.room_id &&
-          item2.academic_year_id === item.academic_year_id
+          item2.time_id == item.time_id &&
+          item2.room_id == item.room_id &&
+          item2.academic_year_id == item.academic_year_id
       ),
     }));
 
@@ -176,9 +176,9 @@ export default function Schedule({ acyear, formattedAcyear }) {
   ) {
     const occupiedSchedule = schedules.find(
       (item) =>
-        item.time_id === session.time_id &&
-        item.room_id === session.room_id &&
-        item.academic_year_id === session.academic_year_id
+        item.time_id == session.time_id &&
+        item.room_id == session.room_id &&
+        item.academic_year_id == session.academic_year_id
     );
 
     if (session.is_possible === "1") {
@@ -214,8 +214,6 @@ export default function Schedule({ acyear, formattedAcyear }) {
       `Jadwal-Kuliah-Terselenggara-${formattedAcyear}.xlsx`
     );
   }
-
-  console.log(roomid);
 
   return (
     <div className="relative h-screen">

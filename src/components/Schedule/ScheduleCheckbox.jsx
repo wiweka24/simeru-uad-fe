@@ -153,8 +153,8 @@ export default function ScheduleCheckbox({
             <div className="p-1 text-center break-all text-xs">
               <b>
                 <p className="mb-1">
-                  {occupiedSchedule.sub_class_name} (
-                  {occupiedSchedule.sub_class_credit})
+                  {occupiedSchedule.sub_class_name} 
+                  ({occupiedSchedule.sub_class_credit})
                 </p>
               </b>
               <p className="mb-1">{occupiedSchedule.lecturer_name}</p>
