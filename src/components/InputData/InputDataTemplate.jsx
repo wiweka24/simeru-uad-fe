@@ -121,13 +121,34 @@ export default function InputData({
   async function handlePost() {
     try {
       setLoading(true);
-      await axiosInstance.post(path, {
-        data: [dataJson(input)],
-      });
-      console.log(dataJson(input));
-      notifySucces(`${input.name} ditambahkan`);
-      setInput(defaultInput);
-      rerender();
+      if (input.credit) {
+        const regex = /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/;
+        if (regex.test(input.name)) {
+          await axiosInstance.post(path, {
+            data: [dataJson(input)],
+          });
+          console.log(dataJson(input));
+          notifySucces(`${input.name} ditambahkan`);
+          setInput(defaultInput);
+          rerender();
+        } else {
+          Swal.fire({
+            html: `Mohon Isi Nama Matkul Sesuai Contoh Berikut: Matematika Wajib B`,
+            toast: false,
+            icon: "warning",
+            iconColor: "#2d2d2f",
+            background: "#f6f7f1",
+            color: "#2d2d2f",
+            showConfirmButton: true,
+            cancelButtonColor: "#9B1C1C",
+            confirmButtonText: "Ya, Saya Mengerti",
+            confirmButtonColor: "#047A55",
+            showClass: {
+              popup: "",
+            },
+          });
+        }
+      }
     } catch (err) {
       notifyError(err);
     }
@@ -242,6 +263,7 @@ export default function InputData({
                             {inpt.name}
                             <span className="text-red-500">*</span>
                           </p>
+
                           <input
                             id={inpt.valuefor}
                             type={inpt.type}
