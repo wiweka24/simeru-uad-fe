@@ -36,7 +36,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
     semester: 0,
   };
   const [input, setInput] = useState(defaultInput);
-  
 
   useEffect(() => {
     (async () => {
@@ -103,11 +102,11 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
         onClick={() => setActivePage(linkto)}
       >
         <Icon
-          className={`w-5 h-5 min-h-full stroke-current ${
-            activePage === linkto ? "stroke-[2.5px]" : "stroke-[1.5px]"
+          className={`min-w-[1.25rem] h-5 stroke-current ${
+            activePage === linkto ? "stroke-[2.5px] fill-gray-300" : "stroke-[1.5px]"
           }`}
         />
-        <span className="inline truncate">{text}</span>
+        <span className="inline truncate hover:whitespace-normal">{text}</span>
       </Link>
     );
   }
@@ -150,7 +149,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
 
   async function logoutSubmit(e) {
     e.preventDefault();
-
     await axiosInstance.post(`logout`).then((res) => {
       if (res.status === 200) {
         localStorage.removeItem("auth_token");
@@ -166,7 +164,7 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
             popup: "",
           },
         }).then(() => {
-          window.location.href = `${CLIENT_URL}Login`;
+          window.location.href = `${window.location.origin}/Login`;
         });
       }
     });
@@ -190,7 +188,6 @@ export default function Sidebar({ getAcadYearValue, acyear }) {
               <br />
               Semester {evenOdd[Number(acyear.semester)]}
             </p>
-            
           </div>
         </div>
 
