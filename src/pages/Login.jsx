@@ -6,7 +6,6 @@ import { notifyError } from "../atoms/notification";
 import Swal from "sweetalert2";
 
 export default function Login() {
-  const CLIENT_URL = process.env.REACT_APP_CLIENT_URL;
   // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   const [loginInput, setLoginInput] = useState({
     email: "",
@@ -42,7 +41,7 @@ export default function Login() {
                 popup: "",
               },
             }).then(() => {
-              window.location.href = `${CLIENT_URL}MataKuliah`;
+              window.location.href = `${window.location.origin}/MataKuliah`;
             });
           }
         });

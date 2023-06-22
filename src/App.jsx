@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Navigate, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -117,6 +117,10 @@ export default function App() {
                       message="Halaman Tidak Ditemukan"
                     />
                   }
+                />
+                <Route
+                  path="/"
+                  element={<Navigate to="/MataKuliah" replace />}
                 />
               </Routes>
             </div>

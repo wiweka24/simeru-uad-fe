@@ -121,42 +121,39 @@ export default function InputData({
   async function handlePost() {
     try {
       setLoading(true);
-      if (input.credit) {
-        const regex = /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/;
-        if (regex.test(input.name)) {
-          await axiosInstance.post(path, {
-            data: [dataJson(input)],
-          });
-          console.log(dataJson(input));
-          notifySucces(`${input.name} ditambahkan`);
-          setInput(defaultInput);
-          rerender();
-        } else {
-          Swal.fire({
-            html: `Mohon Isi Nama Matkul Sesuai Contoh Berikut: Matematika Wajib B`,
-            toast: false,
-            icon: "warning",
-            iconColor: "#2d2d2f",
-            background: "#f6f7f1",
-            color: "#2d2d2f",
-            showConfirmButton: true,
-            cancelButtonColor: "#9B1C1C",
-            confirmButtonText: "Ya, Saya Mengerti",
-            confirmButtonColor: "#047A55",
-            showClass: {
-              popup: "",
-            },
-          });
-        }
+      const isValidInput = input.credit ? /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/.test(input.name) : true;
+  
+      if (isValidInput) {
+        await axiosInstance.post(path, {
+          data: [dataJson(input)],
+        });
+        notifySucces(`${input.name} ditambahkan`);
+        setInput(defaultInput);
+        rerender();
+      } else {
+        Swal.fire({
+          html: `Mohon isi nama matkul sesuai contoh berikut: <br> Nama Matkul (spasi) Kelas <br> contoh: <b>Matematika Wajib B</b>`,
+          toast: false,
+          icon: "warning",
+          iconColor: "#2d2d2f",
+          background: "#f6f7f1",
+          color: "#2d2d2f",
+          showConfirmButton: true,
+          cancelButtonColor: "#9B1C1C",
+          confirmButtonText: "Ya, Saya Mengerti",
+          confirmButtonColor: "#047A55",
+          showClass: {
+            popup: "",
+          },
+        });
       }
     } catch (err) {
       notifyError(err);
-    }
-    setTimeout(() => {
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   }
-
+  
   // edit one custom data
   function handleEdit(obj) {
     setEdit(dataJson(obj));
