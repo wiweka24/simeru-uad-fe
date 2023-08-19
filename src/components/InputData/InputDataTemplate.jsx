@@ -50,7 +50,7 @@ export default function InputData({
         lecturer_id: data.lecturer_id || "",
         name: data.name,
         email: data.email,
-        phone_number: data.phone_number || "0000000",
+        phone_number: data.phone_number || "",
       };
     } else {
       return {
@@ -66,10 +66,10 @@ export default function InputData({
       data.sort((a, b) => {
         if (a.name !== b.name) {
           return a.name.localeCompare(b.name);
-        } 
+        }
       });
     }
-    
+
     return data;
   }
 
@@ -121,8 +121,10 @@ export default function InputData({
   async function handlePost() {
     try {
       setLoading(true);
-      const isValidInput = input.credit ? /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/.test(input.name) : true;
-  
+      const isValidInput = input.credit
+        ? /^[A-Za-z0-9]+(\s[A-Za-z0-9]+)* [A-Za-z0-9]$/.test(input.name)
+        : true;
+
       if (isValidInput) {
         await axiosInstance.post(path, {
           data: [dataJson(input)],
@@ -153,7 +155,7 @@ export default function InputData({
       setLoading(false);
     }
   }
-  
+
   // edit one custom data
   function handleEdit(obj) {
     setEdit(dataJson(obj));
@@ -254,7 +256,7 @@ export default function InputData({
                 <div className="grid grid-cols-6 space-x-4">
                   {inputField.map((inpt) => (
                     <div key={inpt.id} className={`${inpt.width} space-y-1`}>
-                      {inpt.name != "Nomor Telepon" ? (
+                      {inpt.name != "Nomor Telepon" && inpt.name != "Email"? (
                         <div>
                           <p className="text-grey">
                             {inpt.name}
