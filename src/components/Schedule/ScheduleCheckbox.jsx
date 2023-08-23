@@ -134,11 +134,13 @@ export default function ScheduleCheckbox({
 
   function getTimeRoomName(time_id) {
     const matchingRoom = room.find((item) => item.room_id == time_id);
+    
     return matchingRoom ? matchingRoom.name : null;
   }
 
   return (
     <>
+      
       {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer ${
