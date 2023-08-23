@@ -38,7 +38,6 @@ export default function RoomTime({ acyear }) {
           axiosInstance.get(`room`),
           axiosInstance.get(`room_time_helper/${acyear}`),
         ]);
-
         setRooms(roomRes.data.data);
         setRoomtimes(roomtimehelperRes.data.data);
       } catch (err) {
@@ -52,6 +51,7 @@ export default function RoomTime({ acyear }) {
     })();
   }, [update, acyear]);
 
+  console.log(roomtimes);
   //For adding "all room" mode of sorting
   useEffect(() => {
     const extraRoom = {
