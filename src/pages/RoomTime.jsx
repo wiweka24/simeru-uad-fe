@@ -111,7 +111,7 @@ export default function RoomTime({ acyear }) {
     for (let rooms of obj) {
       for (let days of rooms) {
         for (let session of days) {
-          if (session.is_possible === "0") {
+          if (session.is_possible == "0") {
             sendData.push({
               room_id: session.room_id,
               time_id: session.time_id,
@@ -138,7 +138,7 @@ export default function RoomTime({ acyear }) {
     for (let rooms of obj) {
       for (let days of rooms) {
         for (let session of days) {
-          if (session.is_possible === "1") {
+          if (session.is_possible == "1") {
             sendData.push({
               room_id: session.room_id,
               time_id: session.time_id,

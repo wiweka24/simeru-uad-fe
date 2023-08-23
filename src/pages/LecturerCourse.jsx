@@ -63,7 +63,7 @@ export default function LecturerCourse({ acyear }) {
     const mergeData = offeredSubClass.map((item) => {
       // find data pada lecturerplot yang memiliki subclass_id yang sama antara lecturer plot dan offered subclass
       const lecturer = lecturerPlot.find(
-        (item2) => item2.sub_class_id === item.sub_class_id
+        (item2) => item2.sub_class_id == item.sub_class_id
       );
       //Cek apakah lecturer name sudah ada/belum
       return {

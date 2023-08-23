@@ -111,13 +111,13 @@ export default function Schedule({ acyear, formattedAcyear }) {
           item2.academic_year_id == item.academic_year_id
       ),
     }));
-
+    
     const splitData = mergeData.filter(
       (item) =>
         item.time_id >= currentLabel.start && item.time_id <= currentLabel.end
     );
 
-    setCurrentDays(currentLabel.day === "All" ? days : [currentLabel.day]);
+    setCurrentDays(currentLabel.day == "All" ? days : [currentLabel.day]);
     setRoomTimeHelper(
       assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
     );
@@ -151,7 +151,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
 
         // Check each room array for rooms with is_possible === "1" and add corresponding room_id to distinctRoomIds
         Object.keys(roomSessions).forEach((roomId) => {
-          if (roomSessions[roomId].some((room) => room.is_possible === "1")) {
+          if (roomSessions[roomId].some((room) => room.is_possible == "1")) {
             distinctRoomIds.add(roomId);
           }
         });
@@ -160,13 +160,13 @@ export default function Schedule({ acyear, formattedAcyear }) {
 
     // Set distinct room IDs in the respective states
     setRoomid(Array.from(distinctRoomIds));
-
+    const distinctRoomIdArray = Array.from(distinctRoomIds).map(Number);
     // Filter semua data dan slice yang room id nya ada di distinctRoomIds
     const filteredData = finalArrRooms.map((nestedArray) =>
-      nestedArray.filter((roomArray) =>
-        roomArray.some((room) => Array.from(distinctRoomIds).includes(room.room_id))
-      )
-    );
+    nestedArray.filter((roomArray) =>
+      roomArray.some((room) => distinctRoomIdArray.includes(Number(room.room_id)))
+    )
+  );
 
     return filteredData;
   }
@@ -196,7 +196,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
         item.academic_year_id == session.academic_year_id
     );
 
-    if (session.is_possible === "1") {
+    if (session.is_possible == "1") {
       return (
         <ScheduleCheckbox
           time={session}
@@ -324,11 +324,12 @@ export default function Schedule({ acyear, formattedAcyear }) {
                         </div>
                       ))}
                     </td>
-
+                    
                     {/* Shape of the schedule box */}
                     {day.map((dayRoom) => (
                       <td className="border w-40 font-medium text-gray-900 bg-grey-light">
                         <div className="relative flex flex-col">
+                          
                           {dayRoom.map((session) =>
                             scheduleMapping(
                               session,
@@ -339,6 +340,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
                               rerender
                             )
                           )}
+                          
                         </div>
                       </td>
                     ))}

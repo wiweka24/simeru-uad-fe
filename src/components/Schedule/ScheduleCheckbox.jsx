@@ -134,11 +134,13 @@ export default function ScheduleCheckbox({
 
   function getTimeRoomName(time_id) {
     const matchingRoom = room.find((item) => item.room_id == time_id);
+    
     return matchingRoom ? matchingRoom.name : null;
   }
 
   return (
     <>
+      
       {/* Checkbox shape and content */}
       <label
         className={`relative w-full border-b border-collapse h-20 cursor-pointer ${
@@ -246,7 +248,7 @@ export default function ScheduleCheckbox({
           {/* Class Input */}
           <div className="border-2 rounded-lg p-2 h-64 overflow-y-scroll">
             {availableClass.map((classes) =>
-              classes.is_held === "0" ? (
+              classes.is_held == "0" ? (
                 <button
                   onClick={() => setSubClass(classes)}
                   className={`border w-full text-left rounded-lg my-1 py-2 px-4 bg-grey-light ${cursorMode}`}
