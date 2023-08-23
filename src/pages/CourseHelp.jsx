@@ -11,7 +11,11 @@ import Button from "../components/Button";
 import TableHeader from "../components/InputData/TableHeader";
 import TablePagination from "../components/InputData/TablePagination";
 import { axiosInstance } from "../../src/atoms/config";
-import { notifySucces, notifyError, notifyErrorMessage } from "../../src/atoms/notification";
+import {
+  notifySucces,
+  notifyError,
+  notifyErrorMessage,
+} from "../../src/atoms/notification";
 
 // Melakukan export fungsi halaman MKTerselenggara bernama CourseHelp
 // EN: Exporting whole page, MKTerselenggara with the name CourseHelp
@@ -185,11 +189,11 @@ export default function CourseHelp({ acyear }) {
         setLoading(true);
 
         // Use Promise.all to wait for both axios delete requests to complete
-        await axiosInstance.delete(`lecturer_plot`, {
-          data: {
-            data: plotData,
-          },
-        });
+        // await axiosInstance.delete(`lecturer_plot`, {
+        //   data: {
+        //     data: plotData,
+        //   },
+        // });
 
         // If the first DELETE request succeeds, continue with the second one
         await axiosInstance.delete(`offered_classes`, {
@@ -222,17 +226,17 @@ export default function CourseHelp({ acyear }) {
         setLoading(true);
 
         // Use Promise.all to wait for both axios delete requests to complete
-        await axiosInstance.delete(`lecturer_plot`, {
-          data: {
-            data: [
-              {
-                lecturer_id: obj.lecturer_id,
-                sub_class_id: obj.sub_class_id,
-                academic_year_id: acyear,
-              },
-            ],
-          },
-        });
+        // await axiosInstance.delete(`lecturer_plot`, {
+        //   data: {
+        //     data: [
+        //       {
+        //         lecturer_id: obj.lecturer_id,
+        //         sub_class_id: obj.sub_class_id,
+        //         academic_year_id: acyear,
+        //       },
+        //     ],
+        //   },
+        // });
 
         // If the first DELETE request succeeds, continue with the second one
         await axiosInstance.delete(`offered_classes`, {
