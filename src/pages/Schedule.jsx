@@ -117,7 +117,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
         item.time_id >= currentLabel.start && item.time_id <= currentLabel.end
     );
 
-    setCurrentDays(currentLabel.day === "All" ? days : [currentLabel.day]);
+    setCurrentDays(currentLabel.day == "All" ? days : [currentLabel.day]);
     setRoomTimeHelper(
       assignRoom(splitData, currentLabel.start - 1, currentLabel.end)
     );
@@ -151,7 +151,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
 
         // Check each room array for rooms with is_possible === "1" and add corresponding room_id to distinctRoomIds
         Object.keys(roomSessions).forEach((roomId) => {
-          if (roomSessions[roomId].some((room) => room.is_possible === "1")) {
+          if (roomSessions[roomId].some((room) => room.is_possible == "1")) {
             distinctRoomIds.add(roomId);
           }
         });
@@ -196,7 +196,7 @@ export default function Schedule({ acyear, formattedAcyear }) {
         item.academic_year_id == session.academic_year_id
     );
 
-    if (session.is_possible === "1") {
+    if (session.is_possible == "1") {
       return (
         <ScheduleCheckbox
           time={session}

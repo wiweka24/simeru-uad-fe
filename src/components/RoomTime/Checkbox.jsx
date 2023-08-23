@@ -7,11 +7,11 @@ export default function Checkbox({ value, onChange, setLoading }) {
   const [isCheck, setIsCheck] = useState(false);
 
   useEffect(() => {
-    value.is_possible === "0" ? setIsCheck(false) : setIsCheck(true);
+    value.is_possible == "0" ? setIsCheck(false) : setIsCheck(true);
   }, [value]);
 
   async function handleChange(obj) {
-    if (obj.is_possible === "0") {
+    if (obj.is_possible == "0") {
       try {
         await axiosInstance.post("room_time", {
           data: [

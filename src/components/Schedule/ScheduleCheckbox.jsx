@@ -246,7 +246,7 @@ export default function ScheduleCheckbox({
           {/* Class Input */}
           <div className="border-2 rounded-lg p-2 h-64 overflow-y-scroll">
             {availableClass.map((classes) =>
-              classes.is_held === "0" ? (
+              classes.is_held == "0" ? (
                 <button
                   onClick={() => setSubClass(classes)}
                   className={`border w-full text-left rounded-lg my-1 py-2 px-4 bg-grey-light ${cursorMode}`}
